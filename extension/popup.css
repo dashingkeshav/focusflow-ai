@@ -1,0 +1,316 @@
+/* ================================
+   GLOBAL
+================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 280px;
+  margin: 0;
+  padding: 16px;
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(124, 58, 237, 0.20),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 100% 20%,
+      rgba(6, 182, 212, 0.18),
+      transparent 35%
+    ),
+    #07080c;
+
+  color: #f3f4f6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.logo-text {
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+}
+
+.logo-text strong {
+  color: #22d3ee;
+  text-shadow: 0 0 12px rgba(34, 211, 238, 0.7);
+}
+
+
+/* ================================
+   STATUS
+================================ */
+
+.status-badge {
+  font-size: 10px;
+  padding: 4px 9px;
+  border-radius: 20px;
+
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+
+  border: 1px solid rgba(16, 185, 129, 0.35);
+
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+}
+
+
+/* ================================
+   SCORE CARD
+================================ */
+
+.score-card {
+  position: relative;
+  overflow: hidden;
+
+  background: linear-gradient(
+    145deg,
+    rgba(124, 58, 237, 0.16),
+    rgba(6, 182, 212, 0.08)
+  );
+
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 16px;
+
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 14px;
+
+  box-shadow:
+    0 0 25px rgba(124, 58, 237, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+
+/* Glow */
+
+.score-card::before {
+  content: "";
+  position: absolute;
+
+  width: 90px;
+  height: 90px;
+
+  background: #7c3aed;
+  filter: blur(55px);
+
+  opacity: 0.25;
+
+  top: -35px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  pointer-events: none;
+}
+
+
+/* ================================
+   SCORE
+================================ */
+
+.score-title {
+  position: relative;
+
+  font-size: 11px;
+  color: #a1a1aa;
+
+  margin-bottom: 5px;
+}
+
+.score-value {
+  position: relative;
+
+  font-size: 42px;
+  font-weight: 900;
+  font-family: monospace;
+
+  background: linear-gradient(
+    135deg,
+    #34d399,
+    #22d3ee
+  );
+
+  /* Standard CSS */
+  background-clip: text;
+  color: transparent;
+
+  /* Browser compatibility */
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.score-label {
+  position: relative;
+
+  font-size: 11px;
+  color: #c4b5fd;
+
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+
+/* ================================
+   METRICS
+================================ */
+
+.metrics-grid {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 9px;
+
+  margin-bottom: 15px;
+}
+
+.metric-item {
+  background: rgba(255, 255, 255, 0.045);
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+
+  padding: 10px;
+
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+
+  transition: all 0.2s ease;
+}
+
+.metric-item:hover {
+  transform: translateY(-2px);
+
+  background: rgba(124, 58, 237, 0.10);
+
+  border-color: rgba(139, 92, 246, 0.4);
+
+  box-shadow:
+    0 5px 20px rgba(124, 58, 237, 0.12);
+}
+
+.metric-label {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.metric-val {
+  font-size: 15px;
+
+  font-weight: 800;
+
+  color: #ffffff;
+
+  margin-top: 3px;
+}
+
+
+/* ================================
+   ACTIONS
+================================ */
+
+.actions {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.btn {
+  width: 100%;
+
+  padding: 9px;
+
+  border-radius: 11px;
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  border: none;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+
+  filter: brightness(1.1);
+}
+
+
+/* ================================
+   PRIMARY BUTTON
+================================ */
+
+.primary-btn {
+  background: linear-gradient(
+    135deg,
+    #7c3aed 0%,
+    #4f46e5 45%,
+    #06b6d4 100%
+  );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 0 18px rgba(124, 58, 237, 0.30),
+    0 5px 18px rgba(6, 182, 212, 0.12);
+}
+
+.primary-btn:hover {
+  box-shadow:
+    0 0 25px rgba(124, 58, 237, 0.50),
+    0 0 35px rgba(6, 182, 212, 0.20);
+}
+
+
+/* ================================
+   SECONDARY BUTTON
+================================ */
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.07);
+
+  color: #d1d5db;
+
+  border: 1px solid rgba(255, 255, 255, 0.10);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+
+  color: #ffffff;
+
+  border-color: rgba(34, 211, 238, 0.30);
+
+  box-shadow:
+    0 0 15px rgba(34, 211, 238, 0.10);
+}

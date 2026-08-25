@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FocusFlow AI Extension</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-box">
+        <span class="logo-text">FocusFlow <strong>AI</strong></span>
+      </div>
+      <span class="status-badge" id="statusBadge">Active</span>
+    </div>
+
+    <div class="score-card">
+      <div class="score-title">Current Focus Score</div>
+      <div class="score-value" id="scoreValue">87</div>
+      <div class="score-label" id="scoreLabel">Optimal Concentration</div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="metric-item">
+        <span class="metric-label">Tab Switches</span>
+        <span class="metric-val" id="tabSwitches">4</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">Idle Time</span>
+        <span class="metric-val" id="idleTime">0s</span>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="openDashboardBtn" class="btn primary-btn">Open App Dashboard</button>
+      <button id="resetSessionBtn" class="btn secondary-btn">Reset Metrics</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
