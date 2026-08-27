@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Mode Active — FocusFlow AI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background: #07080c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: #e2e8f0;
+      padding: 24px;
+    }
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 48px 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    .icon {
+      width: 72px; height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      margin: 0 auto 24px;
+    }
+    h1 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 24px; line-height: 1.6; }
+    .domain-chip {
+      display: inline-block;
+      background: rgba(244,63,94,0.15);
+      border: 1px solid rgba(244,63,94,0.3);
+      color: #f87171;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 28px;
+      font-family: monospace;
+    }
+    .warning-bar {
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #fcd34d;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, #7c3aed, #06b6d4);
+      color: #fff;
+      border: none; border-radius: 12px;
+      padding: 13px 28px;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: transform 0.2s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .footer { margin-top: 20px; font-size: 11px; color: #475569; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🔒</div>
+    <h1>Focus Mode Active</h1>
+    <p class="subtitle">
+      You reached your maximum distraction warnings during this focus session.
+      This site has been blocked to help you stay on track.
+    </p>
+    <div class="domain-chip" id="domain-display">Blocked site</div>
+    <div class="warning-bar">
+      ⚠️ You received <strong id="warning-count">3</strong> distraction warnings this session.
+      Browser blocking is active until your focus session ends.
+    </div>
+    <a href="http://localhost:3000/dashboard/sessions" class="btn">
+      ↩ Return to Focus Session
+    </a>
+    <p class="footer">FocusFlow AI — blocking is released when your session completes.</p>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const domain = params.get('domain');
+    if (domain) {
+      document.getElementById('domain-display').textContent = domain;
+    }
+    // Read warning count from storage
+    if (chrome && chrome.storage) {
+      chrome.storage.local.get(['warningCount'], (result) => {
+        const wc = result.warningCount || 3;
+        document.getElementById('warning-count').textContent = wc;
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,48 +1,82 @@
-const validator = require('validator');
+const EMAIL_REGEX =
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Validate email format
-const validateEmail = (email) => {
-  return validator.isEmail(email);
-};
 
-// Validate password strength
-const validatePassword = (password) => {
-  // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  return passwordRegex.test(password);
-};
+function validateEmail(email) {
+  if (
+    typeof email !== "string"
+  ) {
+    return false;
+  }
 
-// Get password validation errors
-const getPasswordErrors = (password) => {
+  return EMAIL_REGEX.test(
+    email.trim()
+  );
+}
+
+
+function validatePassword(password) {
+  return (
+    typeof password === "string" &&
+    password.length >= 8 &&
+    /[a-z]/.test(password) &&
+    /[A-Z]/.test(password) &&
+    /\d/.test(password) &&
+    /[@$!%*?&]/.test(password)
+  );
+}
+
+
+function getPasswordErrors(password) {
   const errors = [];
-  
-  if (password.length < 8) {
-    errors.push('Password must be at least 8 characters long');
+
+  if (
+    typeof password !== "string" ||
+    password.length < 8
+  ) {
+    errors.push(
+      "Password must be at least 8 characters long"
+    );
   }
+
   if (!/[a-z]/.test(password)) {
-    errors.push('Password must contain at least one lowercase letter');
+    errors.push(
+      "Password must contain at least one lowercase letter"
+    );
   }
+
   if (!/[A-Z]/.test(password)) {
-    errors.push('Password must contain at least one uppercase letter');
+    errors.push(
+      "Password must contain at least one uppercase letter"
+    );
   }
+
   if (!/\d/.test(password)) {
-    errors.push('Password must contain at least one number');
+    errors.push(
+      "Password must contain at least one number"
+    );
   }
+
   if (!/[@$!%*?&]/.test(password)) {
-    errors.push('Password must contain at least one special character (@$!%*?&)');
+    errors.push(
+      "Password must contain at least one special character (@$!%*?&)"
+    );
   }
 
   return errors;
-};
+}
 
-// Sanitize email
-const sanitizeEmail = (email) => {
-  return validator.trim(validator.normalizeEmail(email));
-};
+
+function sanitizeEmail(email) {
+  return String(email || "")
+    .trim()
+    .toLowerCase();
+}
+
 
 module.exports = {
   validateEmail,
   validatePassword,
   getPasswordErrors,
-  sanitizeEmail
+  sanitizeEmail,
 };

@@ -1,19 +1,21 @@
 {
   "manifest_version": 3,
   "name": "FocusFlow AI — Study Focus & Distraction Tracker",
-  "version": "2.0.0",
-  "description": "Monitors tab switching frequency, idle duration, and behavioral interaction rates to compute live Focus Scores.",
+  "version": "2.1.0",
+  "description": "Monitors tab switching, idle time, and browser activity to compute real-time Focus Scores and enforce focus sessions.",
   "permissions": [
     "tabs",
     "idle",
     "storage",
-    "activeTab"
+    "activeTab",
+    "webNavigation"
   ],
   "host_permissions": [
     "http://localhost:3000/*",
     "http://localhost:5005/*",
     "http://127.0.0.1:3000/*",
-    "http://127.0.0.1:5005/*"
+    "http://127.0.0.1:5005/*",
+    "<all_urls>"
   ],
   "background": {
     "service_worker": "background.js"
@@ -28,5 +30,11 @@
   "action": {
     "default_popup": "popup.html",
     "default_title": "FocusFlow AI Dashboard"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
