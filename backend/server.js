@@ -817,10 +817,10 @@ app.use(
       async (_req, res) => {
         let dbStatus = "connected";
         try {
-          // Bounded fast query with 2s timeout
+          // Bounded fast query with 5s timeout
           const dbPromise = pool.query("SELECT 1 AS alive");
           const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Database check timeout")), 2000)
+            setTimeout(() => reject(new Error("Database check timeout")), 5000)
           );
           await Promise.race([dbPromise, timeoutPromise]);
         } catch (_) {

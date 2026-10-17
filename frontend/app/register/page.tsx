@@ -43,10 +43,10 @@ export default function RegisterPage() {
 
   const passwordStrength = (p: string) => {
     if (p.length === 0) return null;
-    if (p.length < 6) return { label: "Too short", color: "bg-rose-500", text: "text-rose-400", width: "25%" };
-    if (p.length < 8) return { label: "Weak", color: "bg-amber-500", text: "text-amber-400", width: "50%" };
-    if (!/[A-Z]/.test(p) || !/[0-9]/.test(p)) return { label: "Moderate", color: "bg-orange-500", text: "text-orange-400", width: "70%" };
-    return { label: "Strong", color: "bg-[#FF4500]", text: "text-[#FF4500]", width: "100%" };
+    if (p.length < 8) return { label: "Too short (< 8 chars)", color: "bg-rose-500", text: "text-rose-400", width: "25%" };
+    if (!/[A-Z]/.test(p) || !/[a-z]/.test(p) || !/[0-9]/.test(p)) return { label: "Needs upper, lower & number", color: "bg-amber-500", text: "text-amber-400", width: "50%" };
+    if (!/[@$!%*?&]/.test(p)) return { label: "Needs special character (@$!%*?&)", color: "bg-orange-500", text: "text-orange-400", width: "75%" };
+    return { label: "Strong password", color: "bg-[#FF4500]", text: "text-[#FF4500]", width: "100%" };
   };
 
   const strength = passwordStrength(password);
@@ -61,8 +61,12 @@ export default function RegisterPage() {
       setError("Passwords do not match.");
       return;
     }
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (!/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password) || !/[@$!%*?&]/.test(password)) {
+      setError("Password must contain uppercase, lowercase, number, and special character (@$!%*?&).");
       return;
     }
     setError(null);
@@ -155,7 +159,7 @@ export default function RegisterPage() {
                 type={showPass ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Minimum 6 characters"
+                placeholder="Min 8 chars (upper, lower, num, symbol)"
                 required
                 disabled={loading}
                 autoComplete="new-password"

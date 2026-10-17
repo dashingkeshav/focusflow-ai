@@ -358,6 +358,7 @@ export function AuthProvider({
       let data: {
         success?: boolean;
         message?: string;
+        errors?: string[];
         token?: string;
         user?: User;
       } = {};
@@ -369,11 +370,12 @@ export function AuthProvider({
       }
 
       if (!response.ok) {
+        const errorDetail = Array.isArray(data.errors) && data.errors.length > 0
+          ? data.errors.join(". ")
+          : (data.message || 'Registration failed.');
         return {
           success: false,
-          error:
-            data.message ||
-            'Registration failed.',
+          error: errorDetail,
         };
       }
 

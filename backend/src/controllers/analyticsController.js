@@ -984,11 +984,13 @@ exports.getDateRangeReport = async (req, res) => {
       bucket.blocked += Number(r.blocked_attempts || 0);
     }
 
+    const sessionRows = sessions.rows || [];
+
     const stats = {
       dateRange: {
         start: startParam,
         end: endParam,
-        sessionCount: rows.length,
+        sessionCount: sessionRows.length,
       },
       totalStudySeconds: totalSeconds,
       totalTabSwitches,
@@ -1020,7 +1022,7 @@ exports.getDateRangeReport = async (req, res) => {
             idleTime: Math.round(b.idleSeconds / 60),
           };
         }),
-      sessions: rows.map((r) => ({
+      sessions: sessionRows.map((r) => ({
         id: r.id,
         title: r.title,
         startedAt: r.start_time,
