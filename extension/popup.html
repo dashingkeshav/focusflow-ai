@@ -2,40 +2,196 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>FocusFlow AI Extension</title>
-  <link rel="stylesheet" href="popup.css">
+  <title>FocusFlow AI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 330px;
+      background: #050508;
+      color: #e5e7eb;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 18px;
+    }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .logo { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: -0.01em; display: flex; align-items: center; gap: 6px; }
+    .logo-flame { width: 8px; height: 8px; border-radius: 50%; background: #FF4500; box-shadow: 0 0 10px #FF4500; }
+    .logo span { color: #FF4500; }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+      padding: 4px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,69,0,0.4); color: #FF4500; background: rgba(255,69,0,0.1);
+    }
+    .status-badge.off { border-color: rgba(255,255,255,0.14); color: #71717a; background: rgba(255,255,255,0.04); }
+    .status-badge.paused { border-color: rgba(245,158,11,0.4); color: #f59e0b; background: rgba(245,158,11,0.1); }
+    .status-badge.active { border-color: rgba(16,185,129,0.4); color: #10b981; background: rgba(16,185,129,0.1); }
+    .status-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+    .card {
+      background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 14px; margin-bottom: 10px;
+    }
+    .card-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #71717a; margin-bottom: 5px; }
+
+    /* Account card */
+    .account-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; background: rgba(255,69,0,0.03); border-color: rgba(255,69,0,0.18); }
+    .account-info { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .account-dot { width: 8px; height: 8px; border-radius: 50%; background: #71717a; shrink: 0; }
+    .account-dot.connected { background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.6); }
+    .account-text { display: flex; flex-direction: column; min-width: 0; }
+    .account-email { font-size: 11px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .account-sub { font-size: 9px; color: #71717a; }
+    .account-sub.connected { color: #10b981; }
+    .btn-xs {
+      padding: 5px 9px; border-radius: 8px; font-size: 10px; font-weight: 700; cursor: pointer;
+      border: 1px solid rgba(255,69,0,0.3); background: rgba(255,69,0,0.12); color: #FF4500;
+      white-space: nowrap; transition: background 0.15s;
+    }
+    .btn-xs:hover { background: rgba(255,69,0,0.25); }
+
+    .task-title { font-size: 13px; font-weight: 700; color: #fff; line-height: 1.4; }
+    .timer { font-size: 32px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; font-family: ui-monospace, SFMono-Regular, monospace; }
+
+    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+    .metric { background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 10px; text-align: center; }
+    .metric-val { font-size: 18px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; font-family: ui-monospace, monospace; }
+    .metric-val.good { color: #10b981; }
+    .metric-val.warn { color: #f59e0b; }
+    .metric-val.bad { color: #fda4af; }
+    .metric-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #71717a; margin-top: 3px; }
+
+    .current-site { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .site-domain { font-size: 12px; font-weight: 600; color: #e5e7eb; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, monospace; }
+    .site-category { font-size: 9px; font-weight: 800; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+    .site-category.productive { color: #10b981; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); }
+    .site-category.possibly_productive { color: #f59e0b; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); }
+    .site-category.distracting { color: #fda4af; background: rgba(253,164,175,0.12); border: 1px solid rgba(253,164,175,0.3); }
+    .site-category.none { color: #71717a; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); }
+
+    .protection { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; font-size: 11px; color: #9ca3af; }
+    .protection .val { font-weight: 800; font-size: 10px; padding: 2px 7px; border-radius: 6px; }
+    .protection .val.on { color: #FF4500; background: rgba(255,69,0,0.1); border: 1px solid rgba(255,69,0,0.3); }
+    .protection .val.off { color: #71717a; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); }
+
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+    .btn {
+      padding: 10px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;
+      cursor: pointer; border: 1px solid transparent; transition: all 0.15s ease;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.primary { background: linear-gradient(135deg, #FF4500, #ff6b35); color: #ffffff; box-shadow: 0 4px 14px rgba(255,69,0,0.3); grid-column: span 2; }
+    .btn.primary.compact { grid-column: span 1; }
+    .btn.ghost { background: rgba(255,255,255,0.05); color: #e5e7eb; border-color: rgba(255,255,255,0.12); }
+    .btn.danger { background: rgba(253,164,175,0.1); color: #fda4af; border-color: rgba(253,164,175,0.3); }
+
+    .connection { margin-top: 12px; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 11px; background: rgba(255,255,255,0.02); }
+    .connection summary { cursor: pointer; color: #a1a1aa; font-size: 11px; font-weight: 700; user-select: none; }
+    .connection summary:hover { color: #fff; }
+    .connection label { display: block; margin-top: 10px; color: #71717a; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .connection input { display: block; width: 100%; margin-top: 4px; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; background: #09090b; padding: 8px; color: #f4f4f5; font: inherit; font-size: 11px; outline: none; }
+    .connection input:focus { border-color: #FF4500; }
+    .connection .btn { width: 100%; margin-top: 10px; }
+    .connection-status { min-height: 14px; margin-top: 7px; color: #71717a; font-size: 10px; line-height: 1.4; }
+    .connection-status.error { color: #fda4af; }
+    .connection-status.success { color: #10b981; }
+
+    .footer { margin-top: 12px; text-align: center; font-size: 10px; color: #52525b; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="logo-box">
-        <span class="logo-text">FocusFlow <strong>AI</strong></span>
-      </div>
-      <span class="status-badge" id="statusBadge">Active</span>
+  <div class="header">
+    <div class="logo">
+      <img src="icons/icon48.png" width="22" height="22" style="border-radius:6px; box-shadow:0 0 10px rgba(255,69,0,0.4); object-fit:cover;" alt="Logo" />
+      <span>Focus<span style="color:#FF4500;">Flow</span></span>
+      <span style="font-size:9px; font-weight:700; font-family:ui-monospace, monospace; color:#FF4500; border:1px solid rgba(255,69,0,0.3); background:rgba(255,69,0,0.1); padding:2px 7px; border-radius:999px; text-transform:uppercase; letter-spacing:0.05em; margin-left:4px;">AI Agent</span>
     </div>
+    <span class="status-badge off" id="statusBadge"><span class="dot"></span><span id="statusText">NO SESSION</span></span>
+  </div>
 
-    <div class="score-card">
-      <div class="score-title">Current Focus Score</div>
-      <div class="score-value" id="scoreValue">87</div>
-      <div class="score-label" id="scoreLabel">Optimal Concentration</div>
-    </div>
-
-    <div class="metrics-grid">
-      <div class="metric-item">
-        <span class="metric-label">Tab Switches</span>
-        <span class="metric-val" id="tabSwitches">4</span>
-      </div>
-      <div class="metric-item">
-        <span class="metric-label">Idle Time</span>
-        <span class="metric-val" id="idleTime">0s</span>
+  <!-- Connected Account Card -->
+  <div class="card account-card" id="accountCard">
+    <div class="account-info">
+      <span class="account-dot" id="accountDot"></span>
+      <div class="account-text">
+        <span class="account-email" id="accountEmail">Not connected</span>
+        <span class="account-sub" id="accountSub">Open dashboard to sign in</span>
       </div>
     </div>
+    <button class="btn-xs" id="accountActionBtn">Connect</button>
+  </div>
 
-    <div class="actions">
-      <button id="openDashboardBtn" class="btn primary-btn">Open App Dashboard</button>
-      <button id="resetSessionBtn" class="btn secondary-btn">Reset Metrics</button>
+  <div class="card">
+    <div class="card-label">Current task</div>
+    <div class="task-title" id="taskTitle">No active focus session</div>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <div class="card-label">Remaining</div>
+    <div class="timer" id="remainingTime">--:--</div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="metric">
+      <div class="metric-val" id="focusScore">--</div>
+      <div class="metric-label">Focus Score</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" id="distractions">0</div>
+      <div class="metric-label">Distractions</div>
+    </div>
+    <div class="metric">
+      <div class="metric-val" id="blockedCount">0</div>
+      <div class="metric-label">Blocked</div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-label">Current site</div>
+    <div class="current-site">
+      <span class="site-domain" id="siteDomain">—</span>
+      <span class="site-category none" id="siteCategory">IDLE</span>
+    </div>
+    <div class="protection">
+      <span>Browser protection</span>
+      <span class="val off" id="protectionVal">OFF</span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn ghost" id="pauseBtn" style="display:none;">Pause</button>
+    <button class="btn ghost" id="resumeBtn" style="display:none;">Resume</button>
+    <button class="btn danger" id="endBtn" style="display:none;">End Session</button>
+    <button class="btn primary" id="dashboardBtn">Open Dashboard</button>
+  </div>
+
+  <details class="connection" id="collaborationDetails" style="margin-top: 10px;">
+    <summary style="cursor: pointer; color: #FF4500; font-size: 11px; font-weight: 700; user-select: none;">👥 Focus Rooms &amp; Collaboration</summary>
+    <div style="margin-top: 8px;">
+      <p style="font-size: 10px; color: #9ca3af; margin-bottom: 6px;">
+        Cowork alongside peers in real time with synchronized focus timers.
+      </p>
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <input id="roomCodeInput" type="text" placeholder="Invite code (e.g. rm-a1b2)" style="width:100%; border:1px solid rgba(255,255,255,0.12); border-radius:8px; background:#09090b; padding:6px 8px; color:#f4f4f5; font-size:11px; outline:none;">
+        <button class="btn-xs" id="joinRoomBtn" style="padding:6px 10px; shrink:0;">Join</button>
+      </div>
+      <button class="btn ghost" id="openRoomsBtn" style="width: 100%; font-size: 11px; padding: 7px;">Explore Focus Rooms</button>
+      <p class="connection-status" id="collabStatus" style="margin-top:4px; font-size:10px;"></p>
+    </div>
+  </details>
+
+  <details class="connection" id="connectionDetails">
+    <summary>Account &amp; Server Connection</summary>
+    <label for="appUrl">Dashboard URL</label>
+    <input id="appUrl" type="url" spellcheck="false" placeholder="http://localhost:3000">
+    <label for="backendUrl">API Server URL</label>
+    <input id="backendUrl" type="url" spellcheck="false" placeholder="http://localhost:5001">
+    <button class="btn ghost" id="saveConnection">Save &amp; Connect</button>
+    <p class="connection-status" id="connectionStatus" role="status">
+      Extension connects securely to your FocusFlow account via the dashboard.
+    </p>
+  </details>
+
+  <div class="footer">FocusFlow Smart Focus — real-time focus shielding.</div>
   <script src="popup.js"></script>
 </body>
 </html>

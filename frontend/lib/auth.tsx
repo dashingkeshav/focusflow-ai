@@ -8,8 +8,9 @@ import React, {
   type ReactNode,
 } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { getApiBaseUrl, verifySession, apiRequest, fetchWithFallback } from './api';
 
-interface User {
+export interface User {
   id: string;
   name: string;
   email: string;
@@ -17,16 +18,22 @@ interface User {
   dailyGoalHours?: number;
   streakDays?: number;
   emailVerified?: boolean;
+  onboardingCompleted?: boolean;
+  onboardingAnswers?: string[];
+  plan?: "free" | "pro";
+  isPro?: boolean;
 }
 
-interface AuthResult {
+export interface AuthResult {
   success: boolean;
   error?: string;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null;
   token: string | null;
+  plan: "free" | "pro";
+  isPro: boolean;
   login: (email: string, password: string) => Promise<AuthResult>;
   register: (
     name: string,
@@ -35,20 +42,20 @@ interface AuthContextType {
   ) => Promise<AuthResult>;
   logout: () => void;
   updateUser: (updates: Pick<User, 'name' | 'email'>) => void;
+  refreshUser: () => Promise<void>;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  'http://localhost:5001';
 
 const TOKEN_KEY = 'focusflow_token';
 const USER_KEY = 'focusflow_user';
+const NEW_USER_KEY = 'focusflow_new_user';
 
 function normalizeUser(user: User): User {
   const name = String(user.name || 'User').trim();
+  const plan: "free" | "pro" = user.plan === "pro" || Boolean(user.isPro) ? "pro" : "free";
 
   return {
     ...user,
@@ -63,7 +70,33 @@ function normalizeUser(user: User): User {
         .map((part) => part[0])
         .join('')
         .toUpperCase() || 'US',
+    plan,
+    isPro: plan === "pro",
   };
+}
+
+function syncExtensionAuth(token: string | null, user: User | null) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent('FOCUSFLOW_AUTH_SYNC', { detail: { token, user } }));
+}
+
+function isTokenExpired(token: string): boolean {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return true;
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    const payload = JSON.parse(jsonPayload);
+    if (!payload.exp) return false;
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
 }
 
 export function AuthProvider({
@@ -83,47 +116,79 @@ export function AuthProvider({
   // =====================================================
 
   useEffect(() => {
-    try {
-      const storedToken =
-        window.localStorage.getItem(TOKEN_KEY);
+    const restore = async () => {
+      try {
+        const storedToken =
+          window.localStorage.getItem(TOKEN_KEY);
 
-      const storedUser =
-        window.localStorage.getItem(USER_KEY);
+        const storedUser =
+          window.localStorage.getItem(USER_KEY);
 
-      if (storedToken && storedUser) {
-        const parsedUser = JSON.parse(
-          storedUser
-        ) as User;
+        if (storedToken && storedUser) {
+          // Reject expired tokens immediately without network latency
+          if (isTokenExpired(storedToken)) {
+            window.localStorage.removeItem(TOKEN_KEY);
+            window.localStorage.removeItem(USER_KEY);
+            setToken(null);
+            setUser(null);
+            setIsLoading(false);
+            return;
+          }
 
-        setToken(storedToken);
-        setUser(
-          normalizeUser(parsedUser)
-        );
+          const parsedUser = JSON.parse(storedUser) as User;
+          const normalized = normalizeUser(parsedUser);
+
+          // Fast optimistic hydration to prevent layout shift & navbar flicker
+          setToken(storedToken);
+          setUser(normalized);
+          setIsLoading(false);
+          syncExtensionAuth(storedToken, normalized);
+
+          // Validate against authoritative backend in background
+          verifySession()
+            .then((valid) => {
+              if (!valid) {
+                window.localStorage.removeItem(TOKEN_KEY);
+                window.localStorage.removeItem(USER_KEY);
+                setToken(null);
+                setUser(null);
+                syncExtensionAuth(null, null);
+              } else {
+                apiRequest<{ success: boolean; user: User }>('/api/analytics/me')
+                  .then((res) => {
+                    if (res?.success && res.user) {
+                      const fresh = normalizeUser(res.user);
+                      setUser(fresh);
+                      window.localStorage.setItem(USER_KEY, JSON.stringify(fresh));
+                      syncExtensionAuth(storedToken, fresh);
+                    }
+                  })
+                  .catch(() => {});
+              }
+            })
+            .catch(() => {});
+        } else {
+          setToken(null);
+          setUser(null);
+          setIsLoading(false);
+          syncExtensionAuth(null, null);
+        }
+      } catch (error) {
+        console.error('Failed to restore authentication:', error);
+        window.localStorage.removeItem(TOKEN_KEY);
+        window.localStorage.removeItem(USER_KEY);
+        setToken(null);
+        setUser(null);
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error(
-        'Failed to restore authentication:',
-        error
-      );
+    };
 
-      window.localStorage.removeItem(
-        TOKEN_KEY
-      );
-
-      window.localStorage.removeItem(
-        USER_KEY
-      );
-
-      setToken(null);
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
+    restore();
   }, []);
 
-  // =====================================================
-  // PROTECT DASHBOARD
-  // =====================================================
+    // =====================================================
+    // PROTECT DASHBOARD
+    // =====================================================
 
   useEffect(() => {
     if (
@@ -131,7 +196,7 @@ export function AuthProvider({
       !user &&
       pathname?.startsWith('/dashboard')
     ) {
-      router.replace('/login');
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
   }, [
     user,
@@ -159,8 +224,8 @@ export function AuthProvider({
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/auth/login`,
+      const response = await fetchWithFallback(
+        '/api/auth/login',
         {
           method: 'POST',
           headers: {
@@ -170,7 +235,8 @@ export function AuthProvider({
             email: email.trim(),
             password,
           }),
-        }
+        },
+        1
       );
 
       let data: {
@@ -221,8 +287,13 @@ export function AuthProvider({
 
       setToken(data.token);
       setUser(normalizedUser);
+      syncExtensionAuth(data.token, normalizedUser);
 
-      router.push('/dashboard');
+      const next = new URLSearchParams(window.location.search).get('next');
+      const safeNext = next && next.startsWith('/') && !next.startsWith('//') && !next.includes('\\')
+        ? next
+        : null;
+      router.push(safeNext || '/dashboard');
 
       return {
         success: true,
@@ -267,8 +338,8 @@ export function AuthProvider({
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        `${API_URL}/api/auth/register`,
+      const response = await fetchWithFallback(
+        '/api/auth/register',
         {
           method: 'POST',
           headers: {
@@ -280,7 +351,8 @@ export function AuthProvider({
             password,
             confirmPassword: password,
           }),
-        }
+        },
+        1
       );
 
       let data: {
@@ -329,8 +401,40 @@ export function AuthProvider({
         JSON.stringify(normalizedUser)
       );
 
+      // Mark as new user for onboarding
+      window.localStorage.setItem(NEW_USER_KEY, 'true');
+
+      const searchParams = new URLSearchParams(window.location.search);
+      const requestedPlan = searchParams.get('plan');
+      const requestedNext =
+        searchParams.get('next') ||
+        (requestedPlan === 'pro' || requestedPlan === 'student_pro'
+          ? '/billing/checkout?plan=pro'
+          : null);
+      if (
+        requestedNext &&
+        requestedNext.startsWith('/') &&
+        !requestedNext.startsWith('//') &&
+        !requestedNext.includes('\\')
+      ) {
+        try {
+          const destination = new URL(requestedNext, window.location.origin);
+          const requestedPlan = destination.searchParams.get('plan');
+          if (
+            destination.origin === window.location.origin &&
+            destination.pathname === '/billing/checkout' &&
+            (requestedPlan === 'pro' || requestedPlan === 'student_pro')
+          ) {
+            window.localStorage.setItem('focusflow_pending_plan', 'pro');
+          }
+        } catch {
+          // Invalid redirect input is ignored; registration still succeeds.
+        }
+      }
+
       setToken(data.token);
       setUser(normalizedUser);
+      syncExtensionAuth(data.token, normalizedUser);
 
       router.push('/dashboard');
 
@@ -358,17 +462,27 @@ export function AuthProvider({
   // =====================================================
 
   const logout = () => {
-    window.localStorage.removeItem(
-      TOKEN_KEY
-    );
-
-    window.localStorage.removeItem(
-      USER_KEY
-    );
+    // Remove all focusflow_* keys to ensure no stale data from
+    // the previous user can bleed into the next login session.
+    try {
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i);
+        if (key && key.startsWith('focusflow_')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((key) => window.localStorage.removeItem(key));
+    } catch {
+      // If localStorage is unavailable, just proceed
+    }
 
     setToken(null);
     setUser(null);
+    setIsLoading(false);
+    syncExtensionAuth(null, null);
 
+    // Hard replace to /login so React state is fully reset
     router.replace('/login');
   };
 
@@ -396,15 +510,36 @@ export function AuthProvider({
     setUser(nextUser);
   };
 
+  const refreshUser = async () => {
+    try {
+      const res = await apiRequest<{ success: boolean; user: User }>('/api/analytics/me');
+      if (res?.success && res.user) {
+        const fresh = normalizeUser(res.user);
+        setUser(fresh);
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem(USER_KEY, JSON.stringify(fresh));
+        }
+      }
+    } catch {
+      // offline-friendly fallback
+    }
+  };
+
+  const isPro = Boolean(user?.isPro || user?.plan === 'pro');
+  const plan: "free" | "pro" = isPro ? 'pro' : 'free';
+
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
+        plan,
+        isPro,
         login,
         register,
         logout,
         updateUser,
+        refreshUser,
         isLoading,
       }}
     >

@@ -1,0 +1,117 @@
+name: Windows desktop and Chrome extension release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Version to publish (for example v2.0.1)"
+        required: true
+        type: string
+      site_url:
+        description: "Public HTTPS origin of the deployed FocusFlow app"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Windows installer
+        env:
+          FOCUSFLOW_APP_URL: ${{ inputs.site_url || vars.FOCUSFLOW_APP_URL }}
+        run: npm run desktop:build:win
+
+      - name: Package Chrome extension
+        shell: pwsh
+        run: Compress-Archive -Path extension\* -DestinationPath release\FocusFlow-Chrome-Extension.zip -Force
+
+      - name: Validate release artifacts
+        shell: pwsh
+        run: |
+          $installerPath = "release\FocusFlow-Setup.exe"
+          $installer = Get-Item $installerPath
+          if ($installer.Length -le 65536) {
+            throw "The Windows installer is unexpectedly small."
+          }
+          $stream = [System.IO.File]::OpenRead($installer.FullName)
+          try {
+            $reader = [System.IO.BinaryReader]::new($stream)
+            if ([System.Text.Encoding]::ASCII.GetString($reader.ReadBytes(2)) -ne "MZ") {
+              throw "The Windows installer does not have a valid executable header."
+            }
+            $stream.Position = 0x3c
+            $peOffset = $reader.ReadInt32()
+            if ($peOffset -lt 0x40 -or $peOffset -gt ($stream.Length - 4)) {
+              throw "The Windows installer has an invalid PE header offset."
+            }
+            $stream.Position = $peOffset
+            if ([System.Text.Encoding]::ASCII.GetString($reader.ReadBytes(4)) -ne "PE`0`0") {
+              throw "The Windows installer does not contain a valid PE header."
+            }
+          } finally {
+            $stream.Dispose()
+          }
+
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [System.IO.Compression.ZipFile]::OpenRead("release\FocusFlow-Chrome-Extension.zip")
+          try {
+            $entries = @{}
+            foreach ($entry in $archive.Entries) {
+              $entries[$entry.FullName.Replace("\", "/")] = $entry
+            }
+            $requiredFiles = @(
+              "manifest.json", "background.js", "popup.html", "popup.js",
+              "popup.css", "content.js", "classifier.js", "blocked.html",
+              "overlay.js", "icons/icon16.png", "icons/icon48.png",
+              "icons/icon128.png"
+            )
+            foreach ($file in $requiredFiles) {
+              if (-not $entries.ContainsKey($file)) {
+                throw "Chrome extension archive is missing $file."
+              }
+            }
+            $manifestReader = [System.IO.StreamReader]::new($entries["manifest.json"].Open())
+            try {
+              $manifest = $manifestReader.ReadToEnd() | ConvertFrom-Json
+            } finally {
+              $manifestReader.Dispose()
+            }
+            if ($manifest.manifest_version -ne 3 -or $manifest.background.service_worker -ne "background.js") {
+              throw "Chrome extension archive does not contain a valid Manifest V3 service worker."
+            }
+          } finally {
+            $archive.Dispose()
+          }
+
+      - name: Publish release downloads
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        shell: pwsh
+        run: |
+          $releaseTag = $env:RELEASE_TAG
+          if (-not $releaseTag) {
+            $releaseTag = $env:GITHUB_REF_NAME
+          }
+          if ($releaseTag -notmatch '^v\d+\.\d+\.\d+$') {
+            throw "Release version must use vMAJOR.MINOR.PATCH format, for example v2.0.1."
+          }
+          gh release create $releaseTag release\FocusFlow-Setup.exe release\FocusFlow-Chrome-Extension.zip --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --title "FocusFlow AI $releaseTag" --generate-notes

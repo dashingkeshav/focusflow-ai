@@ -1,0 +1,8 @@
+{
+  "name": "focusflow-desktop",
+  "version": "2.0.0",
+  "private": true,
+  "description": "FocusFlow AI desktop companion for Windows",
+  "author": "FocusFlow AI",
+  "main": "main.cjs"
+}

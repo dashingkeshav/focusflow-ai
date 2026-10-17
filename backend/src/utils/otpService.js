@@ -1,8 +1,10 @@
 // OTP (One-Time Password) Utility for password resets
 
-// Generate a random 6-digit OTP
+const crypto = require("crypto");
+
+// Generate a cryptographically random 6-digit OTP
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 };
 
 // Generate OTP with expiry time (15 minutes by default)

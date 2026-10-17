@@ -26,6 +26,8 @@ dist/
 build/
 **/dist/
 **/build/
+release/
+desktop/production-config.json
 
 # OS files
 .DS_Store

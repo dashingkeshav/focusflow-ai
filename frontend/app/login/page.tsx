@@ -1,36 +1,72 @@
 "use client";
 
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Cpu,
   ArrowRight,
   Lock,
   Mail,
   AlertCircle,
   Eye,
   EyeOff,
-  ShieldCheck,
 } from "lucide-react";
-
 import { useAuth } from "@/lib/auth";
+import { BrandWordmark } from "@/components/brand";
+
+export function AuthBackdrop() {
+  return (
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      {/* Radiant Focus & Space Atmosphere Auras */}
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-[#FF4500]/12 blur-[160px]" />
+      <div className="absolute -bottom-32 right-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/10 blur-[150px]" />
+    </div>
+  );
+}
+
+export function AuthShell({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="relative flex min-h-[calc(100vh-80px)] items-center justify-center overflow-hidden bg-transparent px-4 py-14 sm:py-20 text-white selection:bg-[#FF4500] selection:text-white">
+      <AuthBackdrop />
+      <div className="relative z-10 w-full max-w-md">{children}</div>
+    </div>
+  );
+}
+
+export function AuthBrand() {
+  return (
+    <div className="mb-8 flex items-center justify-center">
+      <BrandWordmark size="lg" href="/" />
+    </div>
+  );
+}
 
 export default function LoginPage() {
   const { login, isLoading: authLoading } = useAuth();
+  const [nextPath, setNextPath] = useState<string | null>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (
-    event: FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      const next = new URLSearchParams(window.location.search).get("next");
+      if (next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\")) {
+        setNextPath(next);
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     setError(null);
 
     const cleanEmail = email.trim();
@@ -44,27 +80,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const result = await login(
-        cleanEmail,
-        cleanPassword
-      );
-
+      const result = await login(cleanEmail, cleanPassword);
       if (!result.success) {
-        setError(
-          result.error ||
-            "Login failed. Please check your credentials."
-        );
+        setError(result.error || "Login failed. Please check your credentials.");
       }
-
-      // No router.push() here.
-      // auth.tsx already redirects to /dashboard
-      // after successful login.
     } catch (err) {
       console.error("Login error:", err);
-
-      setError(
-        "Something went wrong while signing in. Please try again."
-      );
+      setError("Something went wrong while signing in. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,384 +95,139 @@ export default function LoginPage() {
   const isBusy = loading || authLoading;
 
   return (
-    <main className="min-h-screen bg-[#07080c] text-white flex items-center justify-center px-4 py-10 relative overflow-hidden">
+    <AuthShell>
+      <AuthBrand />
 
-      {/* ================================
-          BACKGROUND GLOW
-      ================================= */}
+      <div className="rounded-3xl border border-white/10 bg-[#0d0d0d]/85 p-8 md:p-10 shadow-2xl shadow-black/80 backdrop-blur-2xl">
+        <h1 className="text-2xl font-bold tracking-tight text-white font-serif">
+          Welcome back
+        </h1>
+        <p className="mt-1.5 text-sm text-gray-400 font-light">
+          Sign in to your FocusFlow AI workspace.
+        </p>
 
-      <div
-        className="pointer-events-none absolute -top-32 -left-32
-        w-[520px] h-[520px]
-        rounded-full
-        bg-violet-600/15
-        blur-[150px]"
-      />
-
-      <div
-        className="pointer-events-none absolute -bottom-32 -right-32
-        w-[500px] h-[500px]
-        rounded-full
-        bg-cyan-500/10
-        blur-[150px]"
-      />
-
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.035]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
-          backgroundSize: "45px 45px",
-        }}
-      />
-
-      {/* ================================
-          LOGIN CONTAINER
-      ================================= */}
-
-      <div className="relative z-10 w-full max-w-md">
-
-        {/* Brand */}
-
-        <div className="text-center mb-6">
-
-          <Link
-            href="/"
-            className="inline-flex items-center gap-3 group"
+        {error && (
+          <div
+            role="alert"
+            className="mt-6 flex items-start gap-3 rounded-2xl border border-rose-500/30 bg-rose-950/40 px-4 py-3 text-sm text-rose-300"
           >
-            <div
-              className="w-12 h-12 rounded-2xl
-              bg-gradient-to-br
-              from-violet-600
-              via-purple-600
-              to-cyan-500
-              flex items-center justify-center
-              shadow-xl
-              shadow-violet-600/20
-              group-hover:scale-105
-              transition-transform duration-200"
+            <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" aria-hidden />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="mt-7 space-y-5">
+          {/* Email */}
+          <div>
+            <label
+              htmlFor="login-email"
+              className="mb-2 flex items-center gap-2 text-xs font-semibold text-gray-300"
             >
-              <Cpu className="w-6 h-6 text-white" />
-            </div>
-
-            <div className="text-left">
-
-              <div className="text-xl font-extrabold tracking-tight">
-                FocusFlow{" "}
-                <span className="text-cyan-400">
-                  AI
-                </span>
-              </div>
-
-              <div className="text-[11px] text-gray-500">
-                Distraction Intelligence Platform
-              </div>
-
-            </div>
-
-          </Link>
-
-        </div>
-
-
-        {/* ================================
-            CARD
-        ================================= */}
-
-        <div
-          className="rounded-3xl
-          border border-white/10
-          bg-white/[0.045]
-          backdrop-blur-xl
-          shadow-2xl
-          shadow-black/40
-          p-7 sm:p-8"
-        >
-
-          {/* Header */}
-
-          <div className="text-center mb-7">
-
-            <div
-              className="mx-auto mb-4
-              w-12 h-12
-              rounded-2xl
-              bg-violet-500/10
-              border border-violet-400/20
-              flex items-center justify-center"
-            >
-              <ShieldCheck className="w-6 h-6 text-violet-300" />
-            </div>
-
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-              Welcome Back
-            </h1>
-
-            <p className="mt-2 text-sm text-gray-400">
-              Sign in to access your FocusFlow AI workspace.
-            </p>
-
+              <Mail className="h-3.5 w-3.5 text-[#FF4500]" aria-hidden />
+              Email Address
+            </label>
+            <input
+              id="login-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="alex@company.com"
+              disabled={isBusy}
+              required
+              className="form-input"
+            />
           </div>
 
-
-          {/* Error */}
-
-          {error && (
-            <div
-              className="mb-5 flex items-start gap-3
-              rounded-xl
-              border border-rose-500/30
-              bg-rose-500/10
-              px-4 py-3
-              text-sm text-rose-300"
-            >
-              <AlertCircle
-                className="w-5 h-5 mt-0.5 shrink-0 text-rose-400"
-              />
-
-              <span>{error}</span>
-            </div>
-          )}
-
-
-          {/* FORM */}
-
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-5"
-          >
-
-            {/* Email */}
-
-            <div>
-
+          {/* Password */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
               <label
-                htmlFor="login-email"
-                className="mb-2 flex items-center gap-2
-                text-sm
-                font-semibold
-                text-gray-200"
+                htmlFor="login-password"
+                className="flex items-center gap-2 text-xs font-semibold text-gray-300"
               >
-                <Mail className="w-4 h-4 text-cyan-400" />
-                Email Address
+                <Lock className="h-3.5 w-3.5 text-[#FF4500]" aria-hidden />
+                Password
               </label>
 
+              <Link
+                href="/forgot-password"
+                className="text-xs font-mono text-[#FF4500] hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            <div className="relative">
               <input
-                id="login-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(event) =>
-                  setEmail(event.target.value)
-                }
-                placeholder="you@example.com"
+                id="login-password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter your password"
                 disabled={isBusy}
                 required
-                className="w-full
-                rounded-xl
-                border border-white/10
-                bg-black/20
-                px-4 py-3.5
-                text-sm text-white
-                placeholder:text-gray-600
-                outline-none
-                transition
-                focus:border-violet-500/60
-                focus:ring-4
-                focus:ring-violet-500/10
-                disabled:opacity-60"
+                className="form-input pr-11"
               />
 
-            </div>
-
-
-            {/* Password */}
-
-            <div>
-
-              <div className="mb-2 flex items-center justify-between">
-
-                <label
-                  htmlFor="login-password"
-                  className="flex items-center gap-2
-                  text-sm
-                  font-semibold
-                  text-gray-200"
-                >
-                  <Lock className="w-4 h-4 text-cyan-400" />
-                  Password
-                </label>
-
-                <Link
-                  href="/forgot-password"
-                  className="text-xs
-                  font-semibold
-                  text-cyan-400
-                  hover:text-cyan-300
-                  transition-colors"
-                >
-                  Forgot password?
-                </Link>
-
-              </div>
-
-              <div className="relative">
-
-                <input
-                  id="login-password"
-                  name="password"
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(event) =>
-                    setPassword(event.target.value)
-                  }
-                  placeholder="Enter your password"
-                  disabled={isBusy}
-                  required
-                  className="w-full
-                  rounded-xl
-                  border border-white/10
-                  bg-black/20
-                  px-4 py-3.5 pr-12
-                  text-sm text-white
-                  placeholder:text-gray-600
-                  outline-none
-                  transition
-                  focus:border-violet-500/60
-                  focus:ring-4
-                  focus:ring-violet-500/10
-                  disabled:opacity-60"
-                />
-
-                <button
-                  type="button"
-                  aria-label={
-                    showPassword
-                      ? "Hide password"
-                      : "Show password"
-                  }
-                  disabled={isBusy}
-                  onClick={() =>
-                    setShowPassword(
-                      (current) => !current
-                    )
-                  }
-                  className="absolute
-                  right-3
-                  top-1/2
-                  -translate-y-1/2
-                  rounded-lg
-                  p-2
-                  text-gray-500
-                  hover:text-gray-200
-                  transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-4 h-4" />
-                  ) : (
-                    <Eye className="w-4 h-4" />
-                  )}
-                </button>
-
-              </div>
-
-            </div>
-
-
-            {/* Submit */}
-
-            <button
-              id="login-submit"
-              type="submit"
-              disabled={isBusy}
-              className="w-full
-              h-12
-              rounded-xl
-              bg-gradient-to-r
-              from-violet-600
-              via-purple-600
-              to-cyan-500
-              text-white
-              font-bold
-              text-sm
-              shadow-lg
-              shadow-violet-600/20
-              transition-all
-              hover:-translate-y-0.5
-              hover:shadow-violet-600/30
-              active:translate-y-0
-              disabled:cursor-not-allowed
-              disabled:opacity-60
-              flex
-              items-center
-              justify-center
-              gap-2"
-            >
-
-              {isBusy ? (
-                <>
-                  <span
-                    className="w-4 h-4
-                    rounded-full
-                    border-2
-                    border-white/30
-                    border-t-white
-                    animate-spin"
-                  />
-
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  Sign In to Workspace
-                  <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-
-            </button>
-
-          </form>
-
-
-          {/* Register */}
-
-          <div className="mt-7 text-center">
-
-            <p className="text-sm text-gray-500">
-              Don't have an account?{" "}
-              <Link
-                href="/register"
-                className="font-semibold text-cyan-400 hover:text-cyan-300 transition-colors"
+              <button
+                type="button"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                disabled={isBusy}
+                onClick={() => setShowPassword((current) => !current)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-400 transition-colors hover:text-white"
               >
-                Create a free account
-              </Link>
-            </p>
-
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" aria-hidden />
+                ) : (
+                  <Eye className="h-4 w-4" aria-hidden />
+                )}
+              </button>
+            </div>
           </div>
 
-        </div>
-
-
-        {/* Back home */}
-
-        <div className="mt-5 text-center">
-
-          <Link
-            href="/"
-            className="text-xs text-gray-600 hover:text-gray-300 transition-colors"
+          {/* Submit */}
+          <button
+            id="login-submit"
+            type="submit"
+            disabled={isBusy}
+            className="form-submit flex items-center justify-center gap-2 w-full mt-2"
           >
-            ← Back to FocusFlow AI
-          </Link>
+            {isBusy ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                Signing in…
+              </>
+            ) : (
+              <>
+                <span>Sign In</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </button>
+        </form>
 
+        <div className="mt-8 border-t border-white/10 pt-6 text-center">
+          <p className="text-sm text-gray-400 font-light">
+            Don&apos;t have an account?{" "}
+            <Link
+              href={nextPath ? `/register?next=${encodeURIComponent(nextPath)}` : "/register"}
+              className="font-bold text-[#FF4500] hover:underline"
+            >
+              Create account
+            </Link>
+          </p>
         </div>
-
       </div>
-    </main>
+
+      <p className="mt-6 text-center text-xs text-gray-500">
+        <Link href="/" className="hover:text-gray-300 transition-colors">
+          ← Back to FocusFlow AI
+        </Link>
+      </p>
+    </AuthShell>
   );
 }

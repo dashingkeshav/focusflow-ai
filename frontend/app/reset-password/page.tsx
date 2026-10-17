@@ -1,59 +1,56 @@
-'use client';
+"use client";
 
-import React, { Suspense, useState } from 'react';
-import Link from 'next/link';
-import { useSearchParams, useRouter } from 'next/navigation';
-import { Cpu, ArrowLeft, Lock, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import React, { Suspense, useState } from "react";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { ArrowLeft, Lock, AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { AuthBrand, AuthShell } from "@/app/login/page";
+import { resetPassword } from "@/lib/api";
 
-/* -------------------------------------------------------
-   Inner component — uses useSearchParams safely inside
-   a Suspense boundary (required by Next.js App Router).
-------------------------------------------------------- */
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const email = searchParams.get('email');
-  const otp = searchParams.get('otp');
+  const email = searchParams.get("email");
+  const otp = searchParams.get("otp");
 
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(
     !email || !otp
-      ? 'Invalid or missing OTP. Please request a new password reset from the forgot password page.'
+      ? "Invalid or missing OTP. Please request a new password reset from the forgot password page."
       : null
   );
   const [success, setSuccess] = useState(false);
 
-  // Validate password in real-time — derived, no useEffect needed
   const passwordErrors: string[] = [];
   if (newPassword) {
-    if (newPassword.length < 8) passwordErrors.push('At least 8 characters');
-    if (!/[a-z]/.test(newPassword)) passwordErrors.push('1 lowercase letter');
-    if (!/[A-Z]/.test(newPassword)) passwordErrors.push('1 uppercase letter');
-    if (!/\d/.test(newPassword)) passwordErrors.push('1 number');
-    if (!/[@$!%*?&]/.test(newPassword)) passwordErrors.push('1 special character (@$!%*?&)');
+    if (newPassword.length < 8) passwordErrors.push("At least 8 characters");
+    if (!/[a-z]/.test(newPassword)) passwordErrors.push("1 lowercase letter");
+    if (!/[A-Z]/.test(newPassword)) passwordErrors.push("1 uppercase letter");
+    if (!/\d/.test(newPassword)) passwordErrors.push("1 number");
+    if (!/[@$!%*?&]/.test(newPassword)) passwordErrors.push("1 special character (@$!%*?&)");
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!newPassword || !confirmPassword) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
     if (passwordErrors.length > 0) {
-      setError('Password does not meet the requirements');
+      setError("Password does not meet the requirements");
       return;
     }
     if (!email || !otp) {
-      setError('Invalid or missing OTP. Please start over.');
+      setError("Invalid or missing OTP. Please start over.");
       return;
     }
 
@@ -61,27 +58,20 @@ function ResetPasswordForm() {
     setLoading(true);
 
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005/api';
-      const response = await fetch(`${API_BASE}/auth/reset-password`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp, newPassword, confirmPassword }),
-      });
-
-      const data = await response.json();
+      const data = await resetPassword(email, otp, newPassword, confirmPassword);
 
       if (data.success) {
         setSuccess(true);
-        setNewPassword('');
-        setConfirmPassword('');
+        setNewPassword("");
+        setConfirmPassword("");
         setTimeout(() => {
-          router.push('/login');
+          router.push("/login");
         }, 2000);
       } else {
-        setError(data.message || 'Failed to reset password');
+        setError(data.message || "Failed to reset password");
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError(err instanceof Error ? err.message : "An error occurred. Please try again.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -89,142 +79,134 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="glass-card rounded-2xl p-8 border border-white/10 shadow-2xl space-y-6">
-      {/* Brand */}
-      <div className="text-center space-y-2">
-        <Link href="/" className="inline-flex items-center gap-2.5 mb-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-violet-600/30 group-hover:scale-105 transition-transform">
-            <Cpu className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold text-white tracking-wide">
-            FocusFlow <span className="text-cyan-400">AI</span>
-          </span>
-        </Link>
-        <h1 className="text-2xl font-extrabold text-white">Create New Password</h1>
-        <p className="text-xs text-gray-400">
-          Enter a strong password to regain access to your account
+    <div className="rounded-3xl border border-white/10 bg-card p-8 md:p-10 shadow-2xl backdrop-blur-2xl">
+      <div className="space-y-1.5">
+        <h1 className="text-2xl font-bold tracking-tight text-white font-serif">
+          Create new password
+        </h1>
+        <p className="text-sm text-gray-400 font-light">
+          Enter a secure password to regain access to your workspace
         </p>
       </div>
 
-      {/* Success Banner */}
       {success && (
-        <div className="flex items-start gap-2.5 p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs space-y-2">
-          <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-950/40 px-4 py-3 text-sm text-emerald-300">
+          <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
           <div>
             <p className="font-semibold">Password reset successfully!</p>
-            <p className="text-emerald-200/70 mt-1">
-              You can now login with your new password. Redirecting...
+            <p className="mt-0.5 text-xs text-emerald-400 font-light">
+              Redirecting you to sign in...
             </p>
           </div>
         </div>
       )}
 
-      {/* Error Banner */}
       {error && (
-        <div className="flex items-center gap-2.5 p-3 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-rose-500/30 bg-rose-950/40 px-4 py-3 text-sm text-rose-300">
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
           <span>{error}</span>
         </div>
       )}
 
-      {/* Form */}
-      {!success && (
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
-          {/* New Password */}
-          <div className="space-y-1.5">
-            <label className="text-gray-300 font-medium flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-cyan-400" /> New Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPass ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 pr-10 text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/40 transition-all"
-              />
-              <button
-                type="button"
-                aria-label={showPass ? 'Hide password' : 'Show password'}
-                onClick={() => setShowPass((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-              >
-                {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-
-            {/* Password Requirements */}
-            {newPassword && (
-              <div className="space-y-1 mt-2 p-2 bg-white/5 rounded-lg border border-white/5">
-                <p className="text-gray-400 font-medium">Password requirements:</p>
-                {passwordErrors.length > 0 ? (
-                  <ul className="space-y-1 text-rose-300/70">
-                    {passwordErrors.map((err, idx) => (
-                      <li key={idx} className="flex items-center gap-1.5">
-                        <span className="w-1 h-1 bg-rose-400 rounded-full" />
-                        {err}
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-emerald-300/70 flex items-center gap-1.5">
-                    <span className="w-1 h-1 bg-emerald-400 rounded-full" />
-                    Password meets all requirements ✓
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Confirm Password */}
-          <div className="space-y-1.5">
-            <label className="text-gray-300 font-medium flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-cyan-400" /> Confirm Password
-            </label>
-            <div className="relative">
-              <input
-                type={showConfirmPass ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 pr-10 text-white placeholder-gray-500 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/40 transition-all"
-              />
-              <button
-                type="button"
-                aria-label={showConfirmPass ? 'Hide password' : 'Show password'}
-                onClick={() => setShowConfirmPass((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-              >
-                {showConfirmPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            disabled={
-              loading ||
-              passwordErrors.length > 0 ||
-              !newPassword ||
-              !confirmPassword
-            }
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-violet-600 via-purple-600 to-cyan-500 text-white font-bold text-xs shadow-lg shadow-violet-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+      <form onSubmit={handleSubmit} className="mt-7 space-y-4">
+        {/* New Password */}
+        <div>
+          <label
+            htmlFor="new-password"
+            className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-gray-300"
           >
-            {loading ? 'Resetting Password...' : 'Reset Password'}
-          </button>
-        </form>
-      )}
+            <Lock className="h-3.5 w-3.5 text-[#FF4500]" /> New Password
+          </label>
+          <div className="relative">
+            <input
+              type={showPass ? "text" : "password"}
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              id="new-password"
+              placeholder="Enter new password"
+              required
+              disabled={loading || !email || !otp}
+              className="form-input pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPass(!showPass)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            >
+              {showPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label
+            htmlFor="confirm-password"
+            className="mb-1.5 flex items-center gap-2 text-xs font-semibold text-gray-300"
+          >
+            <Lock className="h-3.5 w-3.5 text-[#FF4500]" /> Confirm New Password
+          </label>
+          <div className="relative">
+            <input
+              type={showConfirmPass ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              id="confirm-password"
+              placeholder="Confirm new password"
+              required
+              disabled={loading || !email || !otp}
+              className="form-input pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPass(!showConfirmPass)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            >
+              {showConfirmPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Password Requirements Checklist */}
+        {newPassword && (
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3.5 text-xs text-gray-400">
+            <p className="font-semibold text-gray-300 mb-2">Password Requirements:</p>
+            <ul className="space-y-1">
+              {[
+                { label: "At least 8 characters", valid: newPassword.length >= 8 },
+                { label: "1 lowercase letter", valid: /[a-z]/.test(newPassword) },
+                { label: "1 uppercase letter", valid: /[A-Z]/.test(newPassword) },
+                { label: "1 number", valid: /\d/.test(newPassword) },
+                { label: "1 special character (@$!%*?&)", valid: /[@$!%*?&]/.test(newPassword) },
+              ].map((req, idx) => (
+                <li
+                  key={idx}
+                  className={`flex items-center gap-2 ${req.valid ? "text-[#FF4500]" : "text-gray-500"}`}
+                >
+                  <span className="text-xs">{req.valid ? "✓" : "○"}</span>
+                  {req.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading || !email || !otp || passwordErrors.length > 0}
+          className="form-submit w-full mt-2"
+        >
+          {loading ? "Resetting Password..." : "Reset Password"}
+        </button>
+      </form>
 
       {/* Back to Login */}
-      <div className="text-center">
+      <div className="mt-8 border-t border-white/10 pt-6 text-center">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 text-cyan-400 text-xs font-semibold hover:underline group"
+          className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#FF4500] hover:underline"
         >
-          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+          <ArrowLeft className="h-3.5 w-3.5" />
           Back to Login
         </Link>
       </div>
@@ -232,28 +214,13 @@ function ResetPasswordForm() {
   );
 }
 
-/* -------------------------------------------------------
-   Page export — wraps the form in Suspense so Next.js
-   can statically pre-render this route.
-------------------------------------------------------- */
 export default function ResetPasswordPage() {
   return (
-    <div className="min-h-screen bg-[#07080c] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Glow blobs */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-violet-600/12 rounded-full blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-cyan-600/10 rounded-full blur-[140px] pointer-events-none" />
-
-      <div className="w-full max-w-md relative z-10 space-y-4">
-        <Suspense
-          fallback={
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-xs text-gray-400">
-              Loading...
-            </div>
-          }
-        >
-          <ResetPasswordForm />
-        </Suspense>
-      </div>
-    </div>
+    <AuthShell>
+      <AuthBrand />
+      <Suspense fallback={<div className="text-center text-gray-400">Loading...</div>}>
+        <ResetPasswordForm />
+      </Suspense>
+    </AuthShell>
   );
 }

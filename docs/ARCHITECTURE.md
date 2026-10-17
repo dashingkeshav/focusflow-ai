@@ -3,7 +3,7 @@
 ## Overview
 FocusFlow AI is an intelligent study focus and distraction intelligence platform built across three primary subsystems:
 1. **Frontend App (`frontend/`)**: Next.js App Router + TypeScript + Tailwind CSS + Recharts.
-2. **Backend Server (`backend/`)**: Node.js + Express.js + Socket.io + MongoDB Atlas + JWT.
+2. **Backend Server (`backend/`)**: Node.js + Express.js + Socket.io + Supabase PostgreSQL + JWT.
 3. **Chrome Extension (`extension/`)**: Chrome Manifest V3 extension monitoring tab switching and idle signals.
 
 ```

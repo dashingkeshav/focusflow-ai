@@ -1,449 +1,153 @@
-import Link from "next/link";
+import type { Metadata } from "next";
+import {
+  AppWindow,
+  Server,
+  BrainCircuit,
+  Database,
+  Blocks,
+  Sparkles,
+} from "lucide-react";
+import Reveal from "@/components/ui/Reveal";
+import Badge from "@/components/ui/Badge";
+import MagneticButton from "@/components/ui/MagneticButton";
+
+export const metadata: Metadata = {
+  title: "About & Architecture — FocusFlow AI",
+  description:
+    "Explore our production architecture: Next.js frontend, Node.js WebSocket engine, Supabase PostgreSQL, and Manifest V3 extension.",
+};
+
+const LAYERS = [
+  {
+    icon: AppWindow,
+    title: "Dimensional Frontend",
+    desc: "Next.js App Router with React, Three.js / WebGL 3D intelligence core, and Framer Motion spring physics. Delivers responsive glass surfaces and live telemetry controls.",
+    chips: ["Next.js", "React", "TypeScript", "Three.js", "Framer Motion"],
+  },
+  {
+    icon: Server,
+    title: "Real-Time Telemetry Engine",
+    desc: "Node.js and Express services operating WebSocket channels via Socket.io. Pushes live focus scores, tab switch warnings, and camera attention updates instantly.",
+    chips: ["Node.js", "Express", "Socket.io", "JWT Auth"],
+  },
+  {
+    icon: BrainCircuit,
+    title: "Multimodal AI Intelligence",
+    desc: "Gemini AI multimodal planner parsing natural text, speech recognition audio, and syllabus documents (PDF/TXT) into structured milestones and realistic focus sessions.",
+    chips: ["Google Gemini AI", "Speech Recognition", "Multimodal Parser"],
+  },
+  {
+    icon: Database,
+    title: "PostgreSQL Database Layer",
+    desc: "Supabase PostgreSQL with strict foreign keys, user isolation, and indexed event logs storing sessions, goals, tasks, and distraction telemetry securely.",
+    chips: ["PostgreSQL", "Supabase", "Row-Level Security"],
+  },
+  {
+    icon: Blocks,
+    title: "Native Browser Extension & Billing",
+    desc: "Manifest V3 Chrome extension actively shielding distracting domains without recording page text. Razorpay handles subscriptions with automated server webhooks.",
+    chips: ["Chrome MV3 Extension", "Razorpay Subscriptions", "Resend Email"],
+  },
+];
 
 export default function AboutPage() {
   return (
-    <div className="public-page">
+    <div className="relative min-h-screen bg-transparent text-white selection:bg-[#FF4500] selection:text-white">
+      {/* Background Dot Matrix Pattern */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-15"
+        style={{
+          backgroundImage: "radial-gradient(circle, #444 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
 
-      {/* =====================
-          HERO
-      ====================== */}
-      <section className="page-hero">
-        <div className="page-hero-badge">
-          ✦ Phase-II Production Release
-        </div>
-
-        <h1 className="page-hero-title">
-          Built for{" "}
-          <span className="gradient-text">Better Focus</span>
-        </h1>
-
-        <p className="page-hero-subtitle">
-          FocusFlow AI is a full-stack distraction intelligence platform that
-          transforms raw browser activity into actionable focus insights for
-          students and knowledge workers.
-        </p>
-
-        <div className="page-hero-actions">
-          <Link href="/login" className="hero-primary">
-            ▦ Launch Dashboard →
-          </Link>
-          <Link href="/how-it-works" className="hero-secondary">
-            See How It Works
-          </Link>
-        </div>
+      {/* HERO */}
+      <section className="relative z-10 pt-36 pb-20">
+        <Reveal>
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto px-6">
+            <Badge accent>Engineering Excellence</Badge>
+            <h1 className="mt-6 font-serif text-4xl sm:text-6xl font-bold tracking-tight text-white leading-[1.1]">
+              Engineered as an authentic{" "}
+              <span className="serif-italic text-gradient-teal">living workspace.</span>
+            </h1>
+            <p className="mt-5 max-w-2xl text-base text-gray-400 sm:text-lg font-light leading-relaxed">
+              FocusFlow AI forms an end-to-end intelligent platform — connecting a real browser extension, multimodal Gemini AI planning, and PostgreSQL telemetry into one unified obsidian experience.
+            </p>
+          </div>
+        </Reveal>
       </section>
 
-
-      {/* =====================
-          MISSION
-      ====================== */}
-      <section
-        className="page-section"
-        style={{ background: "white", maxWidth: "100%", padding: "70px 0" }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "auto", padding: "0 28px" }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "48px",
-              alignItems: "center",
-            }}
-          >
-            <div>
-              <div className="section-label">Our Mission</div>
-              <h2 className="section-title" style={{ fontSize: "clamp(28px, 4vw, 44px)" }}>
-                Turning Digital Activity Into
-                <br />Real Productivity
+      {/* ARCHITECTURE LAYERS */}
+      <section className="relative z-10 py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <Reveal>
+            <div className="mb-16 text-center">
+              <span className="section-label">System Architecture</span>
+              <h2 className="section-title mt-3">
+                Five architectural pillars, zero mocked telemetry
               </h2>
-              <p style={{ color: "#64748b", lineHeight: 1.8 }}>
-                Modern study environments are full of digital distractions —
-                tab switching, social media, idle drifting. FocusFlow AI was
-                built to give students and professionals a clear, objective view
-                of how they actually spend their attention.
-              </p>
-              <p style={{ color: "#64748b", lineHeight: 1.8, marginTop: "16px" }}>
-                Rather than relying on self-reported time tracking or simple
-                Pomodoro timers, FocusFlow AI captures micro-behavioural
-                signals and calculates a dynamic Focus Score that reflects the
-                quality — not just the quantity — of your study time.
-              </p>
             </div>
+          </Reveal>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              {[
-                {
-                  icon: "🎯",
-                  title: "Objective Focus Measurement",
-                  desc: "Focus Score is derived from real behavioural signals, not self-assessment.",
-                },
-                {
-                  icon: "🔍",
-                  title: "Distraction Awareness",
-                  desc: "Understand exactly when and why your focus breaks down each session.",
-                },
-                {
-                  icon: "📈",
-                  title: "Long-Term Improvement",
-                  desc: "Track your focus trends week over week and build better study habits.",
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="pub-card"
-                  style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
-                >
-                  <div style={{ fontSize: "24px", lineHeight: 1, flexShrink: 0 }}>
-                    {item.icon}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {LAYERS.map((layer, i) => {
+              const Icon = layer.icon;
+              return (
+                <Reveal key={layer.title} delay={(i % 3) * 0.1} className="h-full">
+                  <div className="glass-card flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-card p-8 shadow-2xl transition-all duration-300 hover:border-[#FF4500]/50 hover:-translate-y-1">
+                    <div>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-[#FF4500] mb-5">
+                        <Icon className="h-6 w-6" aria-hidden />
+                      </div>
+                      <h3 className="text-xl font-bold font-serif text-white">{layer.title}</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">{layer.desc}</p>
+                    </div>
+                    <div className="mt-8 flex flex-wrap gap-2 pt-5 border-t border-white/10">
+                      {layer.chips.map((chip) => (
+                        <span
+                          key={chip}
+                          className="rounded-full border border-white/10 bg-white/5 px-3 py-0.5 text-[10px] font-mono text-gray-300"
+                        >
+                          {chip}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <h3 style={{ margin: "0 0 4px" }}>{item.title}</h3>
-                    <p style={{ margin: 0 }}>{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
 
-
-      {/* =====================
-          SYSTEM ARCHITECTURE
-      ====================== */}
-      <section className="page-section">
-        <div className="page-section-center" style={{ marginBottom: "48px" }}>
-          <div className="section-label">System Architecture</div>
-          <h2 className="section-title">How FocusFlow AI Is Built</h2>
-          <p className="section-description" style={{ margin: "0 auto" }}>
-            A four-layer stack that takes raw browser signals and delivers
-            focus insights to your dashboard.
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "28px",
-            marginBottom: "48px",
-          }}
-        >
-          {[
-            {
-              num: "01",
-              title: "Chrome Extension — Manifest V3",
-              color: "#7c3aed",
-              bg: "#ede9fe",
-              desc: "Runs unobtrusively in the browser. Uses chrome.tabs and chrome.idle APIs to capture tab activation switches, window focus changes, and idle periods. No page content or URLs are read.",
-              items: [
-                "Tab switch timestamp logging",
-                "Window focus/defocus events",
-                "Configurable idle detection (15s – 120s)",
-                "Client-side interaction rate aggregation",
-              ],
-            },
-            {
-              num: "02",
-              title: "Node.js + Express.js Backend",
-              color: "#4f46e5",
-              bg: "#eef2ff",
-              desc: "Receives activity events from the extension, handles user authentication with bcrypt and JWT, calculates Focus Scores, and persists session data to MongoDB Atlas.",
-              items: [
-                "JWT-based authentication",
-                "Focus Score calculation engine",
-                "RESTful session management API",
-                "MongoDB Atlas persistence",
-              ],
-            },
-            {
-              num: "03",
-              title: "Socket.io Real-Time Layer",
-              color: "#0891b2",
-              bg: "#ecfeff",
-              desc: "Maintains a bi-directional WebSocket connection between backend and frontend. Streams live Focus Score updates and triggers distraction alert toasts when focus drops below threshold.",
-              items: [
-                "Low-latency event streaming",
-                "Live Focus Score updates",
-                "Real-time distraction alerts",
-                "Automatic reconnection handling",
-              ],
-            },
-            {
-              num: "04",
-              title: "Next.js Dashboard Frontend",
-              color: "#059669",
-              bg: "#ecfdf5",
-              desc: "A responsive Next.js App Router application with interactive Recharts dashboards, session management, analytics exports, and a fully responsive design.",
-              items: [
-                "Next.js 16 App Router",
-                "Recharts analytics visualizations",
-                "PDF & CSV report export",
-                "Responsive Tailwind CSS design",
-              ],
-            },
-          ].map((layer) => (
-            <div key={layer.num} className="pub-card">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  marginBottom: "14px",
-                }}
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "10px",
-                    background: layer.bg,
-                    color: layer.color,
-                    display: "grid",
-                    placeItems: "center",
-                    fontSize: "12px",
-                    fontWeight: 900,
-                    flexShrink: 0,
-                  }}
-                >
-                  {layer.num}
-                </div>
-                <h3 style={{ margin: 0, fontSize: "16px" }}>{layer.title}</h3>
-              </div>
-              <p style={{ marginBottom: "14px" }}>{layer.desc}</p>
-              <ul className="check-list">
-                {layer.items.map((item) => (
-                  <li key={item}>
-                    <svg
-                      className="check-icon"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2.5}
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Architecture Flow */}
-        <div className="page-section-center" style={{ marginBottom: "32px" }}>
-          <div className="section-label">Data Flow</div>
-          <h3 className="section-title" style={{ fontSize: "clamp(22px, 3vw, 32px)" }}>
-            End-to-End Signal Pipeline
-          </h3>
-        </div>
-
-        <div className="arch-flow">
-          {[
-            { title: "Chrome Extension", desc: "Captures tab events, idle state, interaction signals" },
-            { title: "Activity Collection", desc: "Events batched and sent to the backend API" },
-            { title: "Backend / API", desc: "Node.js + Express processes and scores events" },
-            { title: "Focus Analysis", desc: "Weighted algorithm produces real-time Focus Score" },
-            { title: "Dashboard", desc: "Next.js frontend displays score, alerts, and analytics" },
-            { title: "User Insights", desc: "Session history, trends, and export reports" },
-          ].map((node, index, arr) => (
-            <div key={node.title} style={{ width: "100%" }}>
-              <div className={`arch-node ${index % 2 === 0 ? "arch-node-highlight" : ""}`}>
-                <h4>{node.title}</h4>
-                <p>{node.desc}</p>
-              </div>
-              {index < arr.length - 1 && <div className="arch-arrow" />}
-            </div>
-          ))}
-        </div>
-      </section>
-
-
-      {/* =====================
-          TECHNOLOGY STACK
-      ====================== */}
-      <section
-        className="page-section"
-        style={{ background: "white", maxWidth: "100%", padding: "70px 0" }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "auto", padding: "0 28px" }}>
-          <div className="page-section-center" style={{ marginBottom: "40px" }}>
-            <div className="section-label">Technology Stack</div>
-            <h2 className="section-title">Built With Production-Grade Tools</h2>
-            <p className="section-description" style={{ margin: "0 auto" }}>
-              Every technology listed here is actually present in the
-              repository.
-            </p>
-          </div>
-
-          <div className="tech-grid">
-            {[
-              { icon: "▲", name: "Next.js 16", role: "Frontend framework" },
-              { icon: "⚛", name: "React 19", role: "UI component model" },
-              { icon: "🔷", name: "TypeScript", role: "Type safety" },
-              { icon: "🎨", name: "Tailwind CSS", role: "Utility styling" },
-              { icon: "🟢", name: "Node.js", role: "Backend runtime" },
-              { icon: "⚡", name: "Express.js", role: "REST API server" },
-              { icon: "🍃", name: "MongoDB Atlas", role: "Database" },
-              { icon: "🔌", name: "Socket.io", role: "Real-time events" },
-              { icon: "🧩", name: "Chrome MV3", role: "Browser extension" },
-              { icon: "📊", name: "Recharts", role: "Analytics charts" },
-              { icon: "🔑", name: "JWT + bcrypt", role: "Authentication" },
-              { icon: "✉", name: "Resend", role: "Contact email" },
-            ].map((tech) => (
-              <div className="tech-chip" key={tech.name}>
-                <div className="tech-chip-icon">{tech.icon}</div>
-                <h4>{tech.name}</h4>
-                <p>{tech.role}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* =====================
-          PRIVACY & SECURITY
-      ====================== */}
-      <section className="page-section">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "48px",
-            alignItems: "start",
-          }}
-        >
-          <div>
-            <div className="section-label">Privacy & Security</div>
-            <h2 className="section-title" style={{ fontSize: "clamp(28px, 4vw, 42px)" }}>
-              Minimal Data,
-              <br />Maximum Trust
-            </h2>
-            <p style={{ color: "#64748b", lineHeight: 1.8 }}>
-              FocusFlow AI was designed with a minimal data footprint. The
-              system collects only the behavioural signals necessary to
-              compute your Focus Score — nothing more.
-            </p>
-            <p style={{ color: "#64748b", lineHeight: 1.8, marginTop: "16px" }}>
-              Authentication uses industry-standard bcrypt password hashing
-              and JWT tokens with expiry. All API routes on the backend are
-              protected by the auth middleware, and session data is scoped
-              per user.
-            </p>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-            {[
-              { label: "No page content or URL recording", ok: true },
-              { label: "No screenshots or screen recording", ok: true },
-              { label: "No audio or video capture", ok: true },
-              { label: "bcrypt + JWT authentication", ok: true },
-              { label: "Per-user data isolation", ok: true },
-              { label: "HTTPS encrypted API communication", ok: true },
-            ].map((row) => (
-              <div
-                key={row.label}
-                className="pub-card"
-                style={{ display: "flex", alignItems: "center", gap: "14px", padding: "16px 20px" }}
-              >
-                <span style={{ fontSize: "18px" }}>{row.ok ? "✅" : "❌"}</span>
-                <span style={{ color: "#172033", fontWeight: 700, fontSize: "14px" }}>
-                  {row.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* =====================
-          DEVELOPMENT PHASES
-      ====================== */}
-      <section
-        className="page-section"
-        style={{ background: "white", maxWidth: "100%", padding: "70px 0" }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "auto", padding: "0 28px" }}>
-          <div className="page-section-center" style={{ marginBottom: "40px" }}>
-            <div className="section-label">Development Roadmap</div>
-            <h2 className="section-title">Project Phases</h2>
-          </div>
-
-          <div className="phase-grid">
-            <div className="phase-card">
-              <div className="phase-tag phase-tag-complete">✓ Complete</div>
-              <h3>Phase I — Foundation</h3>
-              <p>
-                Core authentication system (register, login, JWT), basic
-                session tracking, MongoDB data models, and the initial
-                Next.js dashboard UI with Tailwind styling.
+      {/* CTA */}
+      <section className="relative z-10 py-24 px-6">
+        <Reveal>
+          <div className="glass-card relative overflow-hidden rounded-3xl border border-white/10 bg-card px-8 py-16 text-center shadow-2xl max-w-4xl mx-auto">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-24 left-1/2 h-56 w-96 -translate-x-1/2 rounded-full bg-[#FF4500]/15 blur-3xl"
+            />
+            <div className="relative mx-auto flex max-w-xl flex-col items-center">
+              <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
+                <Sparkles className="h-6 w-6" aria-hidden />
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-serif">
+                Experience verifiable architecture.
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-gray-400 font-light">
+                Launch your workspace and see every component synchronize seamlessly.
               </p>
-            </div>
-
-            <div className="phase-card">
-              <div className="phase-tag phase-tag-active">⚡ Active</div>
-              <h3>Phase II — Intelligence Layer</h3>
-              <p>
-                Chrome Extension Manifest V3 integration, real-time
-                Socket.io Focus Score streaming, weighted distraction
-                algorithm, AI-powered insights dashboard, and PDF/CSV
-                export capabilities.
-              </p>
-            </div>
-
-            <div className="phase-card" style={{ borderStyle: "dashed", background: "#fafafa" }}>
-              <div
-                className="phase-tag"
-                style={{ background: "#f1f5f9", color: "#94a3b8" }}
-              >
-                Planned
+              <div className="mt-8">
+                <MagneticButton href="/register" ariaLabel="Create account">
+                  Start for free
+                </MagneticButton>
               </div>
-              <h3>Phase III — Team Features</h3>
-              <p>
-                Multi-user workspaces, team focus leaderboards, group
-                session analytics, shared goals, and institution-level
-                admin dashboards.
-              </p>
-            </div>
-
-            <div className="phase-card" style={{ borderStyle: "dashed", background: "#fafafa" }}>
-              <div
-                className="phase-tag"
-                style={{ background: "#f1f5f9", color: "#94a3b8" }}
-              >
-                Planned
-              </div>
-              <h3>Phase IV — Mobile & API</h3>
-              <p>
-                Public REST API for third-party integrations, mobile
-                companion app, advanced ML distraction prediction, and
-                calendar/LMS integrations.
-              </p>
             </div>
           </div>
-        </div>
+        </Reveal>
       </section>
-
-
-      {/* =====================
-          CTA
-      ====================== */}
-      <div className="cta-banner">
-        <div className="cta-banner-inner">
-          <h2>Ready to Understand Your Focus?</h2>
-          <p>
-            Join FocusFlow AI and start measuring what actually matters —
-            the quality of your attention.
-          </p>
-          <Link href="/login" className="cta-banner-btn">
-            ▦ Launch FocusFlow AI →
-          </Link>
-        </div>
-      </div>
-
     </div>
   );
 }
