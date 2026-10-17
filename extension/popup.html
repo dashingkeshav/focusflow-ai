@@ -36,7 +36,7 @@
     /* Account card */
     .account-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; background: rgba(255,69,0,0.03); border-color: rgba(255,69,0,0.18); }
     .account-info { display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .account-dot { width: 8px; height: 8px; border-radius: 50%; background: #71717a; shrink: 0; }
+    .account-dot { width: 8px; height: 8px; border-radius: 50%; background: #71717a; flex-shrink: 0; }
     .account-dot.connected { background: #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.6); }
     .account-text { display: flex; flex-direction: column; min-width: 0; }
     .account-email { font-size: 11px; font-weight: 700; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -172,7 +172,7 @@
       </p>
       <div style="display:flex; gap:6px; margin-bottom:8px;">
         <input id="roomCodeInput" type="text" placeholder="Invite code (e.g. rm-a1b2)" style="width:100%; border:1px solid rgba(255,255,255,0.12); border-radius:8px; background:#09090b; padding:6px 8px; color:#f4f4f5; font-size:11px; outline:none;">
-        <button class="btn-xs" id="joinRoomBtn" style="padding:6px 10px; shrink:0;">Join</button>
+        <button class="btn-xs" id="joinRoomBtn" style="padding:6px 10px; flex-shrink: 0;">Join</button>
       </div>
       <button class="btn ghost" id="openRoomsBtn" style="width: 100%; font-size: 11px; padding: 7px;">Explore Focus Rooms</button>
       <p class="connection-status" id="collabStatus" style="margin-top:4px; font-size:10px;"></p>
