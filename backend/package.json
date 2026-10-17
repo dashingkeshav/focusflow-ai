@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node --test test_billing_signatures.js test_billing_regression.js test_planner_validation.js test_collaboration_suite.js test_analytics_regression.js"
+    "test": "node --test test_billing_signatures.js test_billing_regression.js test_planner_validation.js test_collaboration_suite.js test_analytics_regression.js test_jwt_security.js test_cors_security.js test_migrations_isolated.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

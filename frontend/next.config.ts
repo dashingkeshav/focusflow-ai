@@ -9,13 +9,27 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5001';
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
-      },
-    ];
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
+    if (backendUrl) {
+      return [
+        {
+          source: '/api/:path*',
+          destination: `${backendUrl.replace(/\/+$/, '')}/api/:path*`,
+        },
+      ];
+    }
+
+    // In local development without NEXT_PUBLIC_API_URL, fallback to local backend port
+    if (process.env.NODE_ENV !== 'production') {
+      return [
+        {
+          source: '/api/:path*',
+          destination: 'http://127.0.0.1:5001/api/:path*',
+        },
+      ];
+    }
+
+    return [];
   },
 };
 

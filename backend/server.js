@@ -47,9 +47,8 @@ const PORT = Number(process.env.PORT) || 5001;
 const FRONTEND_URL =
   process.env.FRONTEND_URL || "http://localhost:3000";
 
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  "change_this_secret_in_environment";
+const { getValidatedJwtSecret } = require("./src/utils/jwtSecurity");
+const JWT_SECRET = getValidatedJwtSecret();
 
 /*
 =====================================================
@@ -59,23 +58,56 @@ CORS
 
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
-  if (origin === FRONTEND_URL) return true;
-  if (process.env.APP_URL && origin === process.env.APP_URL) return true;
-  if (origin.startsWith("chrome-extension://")) return true;
 
-  try {
-    const url = new URL(origin);
-    if (
-      url.hostname === "localhost" ||
-      url.hostname === "127.0.0.1" ||
-      url.hostname === "::1" ||
-      url.hostname.startsWith("192.168.") ||
-      url.hostname.startsWith("10.")
-    ) {
-      return true;
+  const isProduction = process.env.NODE_ENV === "production";
+
+  // Configured production frontend domains
+  const allowedOrigins = new Set(
+    [
+      FRONTEND_URL,
+      process.env.APP_URL,
+      ...(process.env.ALLOWED_ORIGINS
+        ? process.env.ALLOWED_ORIGINS.split(",").map((s) => s.trim())
+        : []),
+    ].filter(Boolean)
+  );
+
+  if (allowedOrigins.has(origin)) return true;
+
+  // Chrome extension handling
+  if (origin.startsWith("chrome-extension://")) {
+    const extId = origin.replace("chrome-extension://", "").split("/")[0];
+    const allowedExtIds = [
+      process.env.CHROME_EXTENSION_ID,
+      ...(process.env.ALLOWED_EXTENSION_IDS
+        ? process.env.ALLOWED_EXTENSION_IDS.split(",").map((s) => s.trim())
+        : []),
+    ].filter(Boolean);
+
+    // If specific extension IDs are configured, restrict to only those IDs
+    if (allowedExtIds.length > 0) {
+      return allowedExtIds.includes(extId);
     }
-  } catch (_) {
-    // Ignore invalid URL
+
+    return true;
+  }
+
+  // Development origins are strictly forbidden in production
+  if (!isProduction) {
+    try {
+      const url = new URL(origin);
+      if (
+        url.hostname === "localhost" ||
+        url.hostname === "127.0.0.1" ||
+        url.hostname === "::1" ||
+        url.hostname.startsWith("192.168.") ||
+        url.hostname.startsWith("10.")
+      ) {
+        return true;
+      }
+    } catch (_) {
+      // Ignore invalid URL
+    }
   }
 
   return false;

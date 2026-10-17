@@ -34,7 +34,9 @@ const isLocalHost =
   dbHostname === "127.0.0.1" ||
   dbHostname === "::1";
 
-// Provider-supported CA certificate loading via standard environment variables
+const path = require("path");
+
+// Provider-supported CA certificate loading via standard environment variables or built-in bundle
 let caCert;
 if (process.env.DATABASE_SSL_CA) {
   try {
@@ -54,12 +56,23 @@ if (process.env.DATABASE_SSL_CA) {
   } catch (_) {}
 }
 
-// Managed PostgreSQL services (e.g., Supabase, Neon, AWS RDS) often use intermediate or custom certificate chains.
-// If DATABASE_SSL_REJECT_UNAUTHORIZED is explicitly defined, respect it; otherwise default to false.
+// Fallback to built-in Supabase trusted root and intermediate CA bundle if connecting to Supabase
+if (!caCert) {
+  const builtinCaPath = path.resolve(__dirname, "supabase-ca.pem");
+  if (fs.existsSync(builtinCaPath)) {
+    try {
+      caCert = fs.readFileSync(builtinCaPath, "utf8");
+    } catch (_) {}
+  }
+}
+
+// In production, rejectUnauthorized defaults to true to strictly validate TLS certificates.
+// Can be overridden in non-production environments if explicitly specified.
+const isProduction = process.env.NODE_ENV === "production";
 const rejectUnauthorized =
   process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== undefined
     ? process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "true"
-    : false;
+    : true;
 
 const sslConfig = isLocalHost
   ? false

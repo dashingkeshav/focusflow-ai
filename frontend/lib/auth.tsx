@@ -304,10 +304,16 @@ export function AuthProvider({
         error
       );
 
+      const isProductionClient =
+        typeof window !== 'undefined' &&
+        window.location.hostname !== 'localhost' &&
+        window.location.hostname !== '127.0.0.1';
+
       return {
         success: false,
-        error:
-          'Unable to connect to the server. Please make sure the backend is running on port 5001.',
+        error: isProductionClient
+          ? 'Unable to connect to the authentication service. Please check your connection or try again.'
+          : 'Unable to connect to the server. Please make sure the backend is running on port 5001.',
       };
     } finally {
       setIsLoading(false);

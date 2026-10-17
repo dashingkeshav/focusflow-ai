@@ -1,23 +1,53 @@
+function isLoopbackHostname(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '0.0.0.0';
+}
+
 export function getApiBaseUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001';
+  const envUrl = (process.env.NEXT_PUBLIC_API_URL || '').trim();
+
   if (typeof window !== 'undefined') {
-    try {
-      const parsed = new URL(envUrl);
-      if (
-        parsed.hostname === 'localhost' ||
-        parsed.hostname === '127.0.0.1' ||
-        parsed.hostname === '::1'
-      ) {
-        if (window.location.hostname) {
-          parsed.hostname = window.location.hostname;
-          return parsed.origin;
+    const isClientLocal = isLoopbackHostname(window.location.hostname);
+
+    if (envUrl) {
+      try {
+        const parsed = new URL(envUrl);
+        // If deployed to production (non-localhost) but NEXT_PUBLIC_API_URL was set to localhost,
+        // prevent production browser from attempting to reach the user's localhost!
+        if (!isClientLocal && isLoopbackHostname(parsed.hostname)) {
+          return window.location.origin;
         }
+        return envUrl.replace(/\/+$/, '');
+      } catch {
+        // invalid URL string, fallback to same origin in production
+        return !isClientLocal ? window.location.origin : 'http://localhost:5001';
       }
-    } catch {
-      // fallback to envUrl
     }
+
+    // No NEXT_PUBLIC_API_URL provided:
+    // In production browser, strictly use current origin (Next.js rewrites/proxy) - NEVER localhost!
+    if (!isClientLocal) {
+      return window.location.origin;
+    }
+
+    return 'http://localhost:5001';
   }
-  return envUrl;
+
+  // Server-side (Node.js / SSR)
+  if (envUrl) {
+    return envUrl.replace(/\/+$/, '');
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    const serverUrl = process.env.API_URL || '';
+    if (serverUrl) {
+      return serverUrl.replace(/\/+$/, '');
+    }
+    // Never silently return localhost in production
+    return '';
+  }
+
+  // Development SSR fallback
+  return 'http://127.0.0.1:5001';
 }
 
 
@@ -209,14 +239,25 @@ export async function fetchWithFallback(
 ): Promise<Response> {
   const cleanPath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
   const isAbsolute = pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://');
-  const primaryUrl = isAbsolute ? pathOrUrl : `${getApiBaseUrl()}${cleanPath}`;
+  const baseUrl = getApiBaseUrl();
+  const primaryUrl = isAbsolute ? pathOrUrl : `${baseUrl}${cleanPath}`;
 
-  const candidates: string[] = [primaryUrl];
+  const candidates: string[] = [];
+  if (primaryUrl) {
+    candidates.push(primaryUrl);
+  }
 
-  if (primaryUrl.includes('localhost:5001')) {
-    candidates.push(primaryUrl.replace('localhost:5001', '127.0.0.1:5001'));
-  } else if (primaryUrl.includes('127.0.0.1:5001')) {
-    candidates.push(primaryUrl.replace('127.0.0.1:5001', 'localhost:5001'));
+  const isLocalDev = typeof window !== 'undefined'
+    ? isLoopbackHostname(window.location.hostname)
+    : process.env.NODE_ENV !== 'production';
+
+  // Only allow localhost alternate port swaps in local development
+  if (isLocalDev && primaryUrl) {
+    if (primaryUrl.includes('localhost:5001')) {
+      candidates.push(primaryUrl.replace('localhost:5001', '127.0.0.1:5001'));
+    } else if (primaryUrl.includes('127.0.0.1:5001')) {
+      candidates.push(primaryUrl.replace('127.0.0.1:5001', 'localhost:5001'));
+    }
   }
 
   // Also include relative path for Next.js proxy / same-origin handling
