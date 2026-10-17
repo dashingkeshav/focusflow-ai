@@ -480,7 +480,7 @@ export default function FocusRoomLivePage({
             {/* Progress bar line */}
             <div className="w-64 h-1.5 bg-white/10 rounded-full overflow-hidden mt-4">
               <div
-                className="h-full bg-gradient-to-r from-[#FF4500] to-[#ff7a45] transition-all duration-500"
+                className="h-full bg-linear-to-r from-[#FF4500] to-[#ff7a45] transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -534,7 +534,7 @@ export default function FocusRoomLivePage({
           )}
 
           {/* Personal Focus Integration Section */}
-          <div className="mt-8 pt-6 border-t border-white/10 w-full flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/[0.02] p-4 rounded-2xl">
+          <div className="mt-8 pt-6 border-t border-white/10 w-full flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/2 p-4 rounded-2xl">
             <div className="text-left space-y-0.5">
               <div className="flex items-center gap-1.5 text-xs font-bold text-white">
                 <ShieldCheck className="w-4 h-4 text-[#FF4500]" />
@@ -586,7 +586,7 @@ export default function FocusRoomLivePage({
               </span>
             </div>
 
-            <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
+            <div className="space-y-2.5 max-h-90 overflow-y-auto pr-1">
               {participants.map((p) => {
                 const isUserHost = p.role === 'host' || p.user_id === room.host_user_id;
                 const isOnline = p.presence_status === 'online';
@@ -595,11 +595,11 @@ export default function FocusRoomLivePage({
                 return (
                   <div
                     key={p.id || p.user_id}
-                    className="flex items-center justify-between p-2.5 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-2xl bg-white/2 border border-white/5 hover:border-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FF4500]/30 to-purple-500/30 flex items-center justify-center font-bold text-xs text-white uppercase border border-white/10">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-[#FF4500]/30 to-purple-500/30 flex items-center justify-center font-bold text-xs text-white uppercase border border-white/10">
                           {p.name ? p.name.slice(0, 2) : 'FF'}
                         </div>
                         <span
@@ -611,7 +611,7 @@ export default function FocusRoomLivePage({
 
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-white truncate max-w-[110px]">
+                          <span className="text-xs font-bold text-white truncate max-w-27.5">
                             {p.name || 'Member'}
                           </span>
                           {isMe && <span className="text-[9px] text-gray-500 font-mono">(You)</span>}
@@ -726,7 +726,7 @@ export default function FocusRoomLivePage({
           </div>
 
           {/* Social Coworking Tip */}
-          <div className="p-3.5 rounded-2xl border border-white/5 bg-white/[0.02] text-[11px] text-gray-400 space-y-1">
+          <div className="p-3.5 rounded-2xl border border-white/5 bg-white/2 text-[11px] text-gray-400 space-y-1">
             <span className="font-bold text-gray-300 flex items-center gap-1">
               <Sparkles className="w-3.5 h-3.5 text-[#FF4500]" />
               Quiet Coworking Rule
@@ -753,7 +753,7 @@ export default function FocusRoomLivePage({
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 text-left space-y-2">
+            <div className="p-4 rounded-2xl bg-white/3 border border-white/10 text-left space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Session Duration:</span>
                 <span className="font-bold text-white">{Math.round(timerDuration / 60)} minutes</span>

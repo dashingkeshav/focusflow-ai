@@ -151,7 +151,7 @@ export default function FocusRoomsPage() {
   return (
     <div className="space-y-8 font-inter text-white pb-12">
       {/* Header Banner */}
-      <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-3xl border border-white/10 bg-linear-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
             <Radio className="w-4 h-4 animate-pulse" />

@@ -349,7 +349,7 @@ export default function FocusCirclesPage() {
   return (
     <div className="space-y-8 font-inter text-white pb-16">
       {/* Top Banner */}
-      <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-3xl border border-white/10 bg-linear-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
             <CircleDot className="w-4 h-4" />
@@ -598,8 +598,8 @@ export default function FocusCirclesPage() {
                             key={h.id}
                             className={`p-4 rounded-2xl border transition-all ${
                               h.is_completed
-                                ? 'border-emerald-500/20 bg-emerald-500/[0.03]'
-                                : 'border-white/10 bg-white/[0.02]'
+                                ? 'border-emerald-500/20 bg-emerald-500/3'
+                                : 'border-white/10 bg-white/2'
                             }`}
                           >
                             <div className="flex items-start justify-between gap-3">
@@ -692,8 +692,8 @@ export default function FocusCirclesPage() {
                               key={c.id}
                               className={`p-4 rounded-2xl border transition-all ${
                                 c.is_completed
-                                  ? 'border-emerald-500/20 bg-emerald-500/[0.03]'
-                                  : 'border-white/10 bg-white/[0.02]'
+                                  ? 'border-emerald-500/20 bg-emerald-500/3'
+                                  : 'border-white/10 bg-white/2'
                               }`}
                             >
                               <div className="flex items-start justify-between gap-3">
@@ -731,7 +731,7 @@ export default function FocusCirclesPage() {
                     )}
 
                     {/* Missing Check-In Summary (Honest Accountability) */}
-                    <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/5 text-[11px] text-gray-400 flex items-center justify-between">
+                    <div className="p-3.5 rounded-2xl bg-white/2 border border-white/5 text-[11px] text-gray-400 flex items-center justify-between">
                       <span>
                         Check-in rate: <strong className="text-white">{commitments.filter((c) => c.is_completed).length}</strong> of{' '}
                         <strong className="text-white">{members.length}</strong> members checked in this week.
@@ -904,7 +904,7 @@ export default function FocusCirclesPage() {
                 </select>
               </div>
 
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-[10px] text-gray-400">
+              <div className="p-3 rounded-xl bg-white/2 border border-white/5 text-[10px] text-gray-400">
                 {isPro ? (
                   <span>Pro plan: Own up to 10 Circles with up to 12 members each.</span>
                 ) : (

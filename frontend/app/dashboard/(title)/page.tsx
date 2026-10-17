@@ -258,7 +258,7 @@ export default function DashboardOverviewPage() {
           {/* 1. Focus Rooms */}
           <Link
             href="/dashboard/focus-rooms"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/[0.08] transition-all"
+            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -285,7 +285,7 @@ export default function DashboardOverviewPage() {
           {/* 2. Focus Circles */}
           <Link
             href="/dashboard/focus-circles"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/[0.08] transition-all"
+            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -312,7 +312,7 @@ export default function DashboardOverviewPage() {
           {/* 3. Project Pods */}
           <Link
             href="/dashboard/project-pods"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/[0.08] transition-all"
+            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
@@ -339,7 +339,7 @@ export default function DashboardOverviewPage() {
           {/* 4. Unblock Exchange */}
           <Link
             href="/dashboard/unblock-exchange"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/[0.08] transition-all"
+            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-3">

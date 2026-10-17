@@ -419,7 +419,7 @@ export default function ProjectPodsPage() {
   return (
     <div className="space-y-8 font-inter text-white pb-16">
       {/* Top Banner */}
-      <div className="rounded-3xl border border-white/10 bg-gradient-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-3xl border border-white/10 bg-linear-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
             <FolderKanban className="w-4 h-4" />
@@ -614,7 +614,7 @@ export default function ProjectPodsPage() {
                     </div>
                     <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-[#FF4500] to-emerald-400 transition-all duration-500"
+                        className="h-full bg-linear-to-r from-[#FF4500] to-emerald-400 transition-all duration-500"
                         style={{ width: `${progressPercent}%` }}
                       />
                     </div>
@@ -688,8 +688,8 @@ export default function ProjectPodsPage() {
                             key={m.id}
                             className={`p-3.5 rounded-2xl border transition-all flex items-center justify-between gap-3 ${
                               isDone
-                                ? 'bg-emerald-500/[0.03] border-emerald-500/20'
-                                : 'bg-white/[0.02] border border-white/5'
+                                ? 'bg-emerald-500/3 border-emerald-500/20'
+                                : 'bg-white/2 border border-white/5'
                             }`}
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
@@ -788,10 +788,10 @@ export default function ProjectPodsPage() {
                             key={t.id}
                             className={`p-4 rounded-2xl border transition-all flex items-start justify-between gap-3 ${
                               isDone
-                                ? 'border-emerald-500/20 bg-emerald-500/[0.02] opacity-75'
+                                ? 'border-emerald-500/20 bg-emerald-500/2 opacity-75'
                                 : isBlocked
-                                ? 'border-red-500/30 bg-red-500/[0.03]'
-                                : 'border-white/10 bg-white/[0.02]'
+                                ? 'border-red-500/30 bg-red-500/3'
+                                : 'border-white/10 bg-white/2'
                             }`}
                           >
                             <div className="flex items-start gap-3 min-w-0">
@@ -1114,7 +1114,7 @@ export default function ProjectPodsPage() {
                 />
               </div>
 
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-[10px] text-gray-400">
+              <div className="p-3 rounded-xl bg-white/2 border border-white/5 text-[10px] text-gray-400">
                 {isPro ? (
                   <span>Pro plan: Own up to 10 active Pods with up to 10 members each.</span>
                 ) : (
