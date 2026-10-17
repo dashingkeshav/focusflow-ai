@@ -9,7 +9,7 @@
     "dev:backend": "npm run dev --prefix backend",
     "build": "npm run build --prefix frontend",
     "desktop:dev": "electron desktop",
-    "desktop:build:win": "node desktop/build-config.cjs && electron-builder --win nsis --x64 && node -e \"require('fs').copyFileSync('release/FocusFlow-Setup.exe', 'frontend/public/downloads/FocusFlow-Setup.exe')\"",
+    "desktop:build:win": "node desktop/build-config.cjs && electron-builder --win nsis --x64 --publish never && node -e \"require('fs').copyFileSync('release/FocusFlow-Setup.exe', 'frontend/public/downloads/FocusFlow-Setup.exe')\"",
     "package:extension": "node scripts/package-extension.js",
     "start": "npm run start --prefix frontend",
     "lint": "npm run lint --prefix frontend"
