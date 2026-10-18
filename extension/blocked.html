@@ -8,7 +8,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       min-height: 100vh;
-      background: #07080c;
+      background: #050508;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -21,85 +21,186 @@
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 24px;
       padding: 48px 40px;
-      max-width: 500px;
+      max-width: 520px;
       width: 100%;
       text-align: center;
+      backdrop-filter: blur(14px);
     }
-    .icon {
-      width: 72px; height: 72px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #7c3aed, #06b6d4);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 32px;
-      margin: 0 auto 24px;
+    .status {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+      color: #FF4500; margin-bottom: 22px;
+    }
+    .status .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #FF4500; animation: pulse 2s infinite; box-shadow: 0 0 8px #FF4500;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
     }
     h1 { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 8px; }
-    .subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 24px; line-height: 1.6; }
+    .task-line { font-size: 14px; color: #94a3b8; margin-bottom: 22px; line-height: 1.6; }
+    .task-line strong { color: #e2e8f0; }
     .domain-chip {
       display: inline-block;
-      background: rgba(244,63,94,0.15);
+      background: rgba(244,63,94,0.14);
       border: 1px solid rgba(244,63,94,0.3);
-      color: #f87171;
+      color: #fda4af;
       border-radius: 8px;
       padding: 6px 14px;
       font-size: 13px;
       font-weight: 700;
-      margin-bottom: 28px;
-      font-family: monospace;
+      margin-bottom: 18px;
+      font-family: ui-monospace, monospace;
     }
-    .warning-bar {
-      background: rgba(245,158,11,0.12);
-      border: 1px solid rgba(245,158,11,0.3);
-      border-radius: 12px;
-      padding: 14px 18px;
-      font-size: 13px;
-      color: #fcd34d;
-      margin-bottom: 28px;
-      line-height: 1.5;
+    .reason {
+      font-size: 12px; color: #71717a; line-height: 1.6; margin-bottom: 24px;
     }
+    .info-bar {
+      display: flex; justify-content: center; gap: 22px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 14px 0; margin-bottom: 26px; font-size: 12px; color: #94a3b8;
+    }
+    .info-bar b { color: #fff; font-variant-numeric: tabular-nums; }
     .btn {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: linear-gradient(135deg, #7c3aed, #06b6d4);
-      color: #fff;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      background: linear-gradient(135deg, #FF4500, #ff6b35);
+      color: #ffffff;
       border: none; border-radius: 12px;
       padding: 13px 28px;
       font-size: 14px; font-weight: 700;
       cursor: pointer; text-decoration: none;
+      box-shadow: 0 4px 18px rgba(255,69,0,0.3);
       transition: transform 0.2s;
     }
     .btn:hover { transform: translateY(-2px); }
-    .footer { margin-top: 20px; font-size: 11px; color: #475569; }
+    .btn.secondary {
+      background: rgba(255,255,255,0.05); color: #e2e8f0;
+      border: 1px solid rgba(255,255,255,0.14); margin-top: 10px;
+      box-shadow: none;
+    }
+    .footer { margin-top: 22px; font-size: 11px; color: #52525b; line-height: 1.6; }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="icon">🔒</div>
-    <h1>Focus Mode Active</h1>
-    <p class="subtitle">
-      You reached your maximum distraction warnings during this focus session.
-      This site has been blocked to help you stay on track.
-    </p>
-    <div class="domain-chip" id="domain-display">Blocked site</div>
-    <div class="warning-bar">
-      ⚠️ You received <strong id="warning-count">3</strong> distraction warnings this session.
-      Browser blocking is active until your focus session ends.
+    <div style="display:flex; align-items:center; justify-content:center; gap:9px; margin-bottom:18px;">
+      <img src="icons/icon48.png" width="30" height="30" style="border-radius:8px; box-shadow:0 0 14px rgba(255,69,0,0.45); object-fit:cover;" alt="Logo" />
+      <span style="font-size:16px; font-weight:800; color:#fff; letter-spacing:-0.01em;">Focus<span style="color:#FF4500;">Flow</span></span>
+      <span style="font-size:9px; font-weight:700; font-family:ui-monospace, monospace; color:#FF4500; border:1px solid rgba(255,69,0,0.3); background:rgba(255,69,0,0.1); padding:2px 7px; border-radius:999px; text-transform:uppercase; letter-spacing:0.05em;">AI Agent</span>
     </div>
-    <a href="http://localhost:3000/dashboard/sessions" class="btn">
-      ↩ Return to Focus Session
-    </a>
-    <p class="footer">FocusFlow AI — blocking is released when your session completes.</p>
+    <div class="status"><span class="dot"></span> FOCUS MODE ACTIVE</div>
+    <h1>Site blocked during your focus session</h1>
+    <p class="task-line">
+      You're currently working on:<br /><strong id="task-display">your focus task</strong>
+    </p>
+    <div class="domain-chip" id="domain-display">blocked site</div>
+    <p class="reason" id="reason-display">
+      This site was classified as a distraction for your current task.
+    </p>
+    <div class="info-bar">
+      <span>Time remaining<br /><b id="remaining-display">—</b></span>
+      <span>Distraction attempts<br /><b id="attempts-display">1</b></span>
+      <span>Protection<br /><b>ON</b></span>
+    </div>
+    <button class="btn" id="return-to-task-btn">↩ Return to Task</button>
+    <button class="btn secondary" id="end-session-btn">End Focus Session</button>
+    <p class="footer">
+      FocusFlow AI — blocking is temporary and released the moment your session ends.<br />
+      Classification is an assistive productivity estimate, not a judgment.
+    </p>
   </div>
+
   <script>
     const params = new URLSearchParams(window.location.search);
     const domain = params.get('domain');
-    if (domain) {
-      document.getElementById('domain-display').textContent = domain;
+    const task = params.get('task');
+    const reason = params.get('reason');
+    const mode = params.get('mode');
+    const primary = params.get('primary');
+    const remaining = Number(params.get('remaining') || 0);
+    const attempts = Number(params.get('attempts') || 1);
+    const blockedAt = Number(params.get('blockedAt') || Date.now());
+
+    if (mode === 'single_site') {
+      document.querySelector('h1').textContent = 'Single-Site Focus Lock Active';
+      document.getElementById('reason-display').textContent = primary
+        ? `Browsing is restricted to ${primary} and approved resources during this session.`
+        : 'Browsing outside your selected learning platform is blocked during this session.';
+      document.getElementById('domain-display').textContent = domain || 'Unapproved website';
+    } else {
+      if (domain) document.getElementById('domain-display').textContent = domain;
+      if (reason) document.getElementById('reason-display').textContent = reason;
     }
-    // Read warning count from storage
-    if (chrome && chrome.storage) {
-      chrome.storage.local.get(['warningCount'], (result) => {
-        const wc = result.warningCount || 3;
-        document.getElementById('warning-count').textContent = wc;
+    if (task) document.getElementById('task-display').textContent = task;
+    document.getElementById('attempts-display').textContent = String(attempts);
+
+    const remainingEl = document.getElementById('remaining-display');
+    if (remaining > 0) {
+      const format = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+      remainingEl.textContent = format(remaining);
+      setInterval(() => {
+        const next = Math.max(0, Number(remainingEl.dataset.sec || remaining) - 1);
+        remainingEl.dataset.sec = String(next);
+        remainingEl.textContent = format(next);
+      }, 1000);
+    }
+
+    const returnBtn = document.getElementById('return-to-task-btn');
+    returnBtn.addEventListener('click', () => {
+      try {
+        chrome.runtime.sendMessage({
+          type: 'FOCUSFLOW_RETURN_TO_TASK',
+          domain: domain || null,
+          blockedTimestamp: blockedAt,
+        }, () => {
+          if (primary) {
+            window.location.href = primary.startsWith('http') ? primary : `https://${primary}`;
+          } else if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            chrome.storage.local.get(['appUrl'], (result) => {
+              window.location.href = `${result.appUrl || 'http://localhost:3000'}/dashboard/sessions`;
+            });
+          }
+        });
+      } catch {
+        if (primary) {
+          window.location.href = primary.startsWith('http') ? primary : `https://${primary}`;
+        } else if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = 'http://localhost:3000/dashboard/sessions';
+        }
+      }
+    });
+
+    document.getElementById('end-session-btn').addEventListener('click', () => {
+      try {
+        chrome.runtime.sendMessage({ type: 'FOCUSFLOW_END_SESSION' }, () => {
+          chrome.storage.local.get(['appUrl'], (result) => {
+            window.location.href = `${result.appUrl || 'http://localhost:3000'}/dashboard`;
+          });
+        });
+      } catch {
+        window.location.href = 'http://localhost:3000/dashboard';
+      }
+    });
+
+    // Live task + remaining time from storage (covers restarts and refreshes).
+    if (typeof chrome !== 'undefined' && chrome.storage?.local) {
+      chrome.storage.local.get(['taskTitle', 'endsAt', 'primarySite'], (result) => {
+        if (result.taskTitle) document.getElementById('task-display').textContent = result.taskTitle;
+        if (result.endsAt) {
+          const update = () => {
+            const sec = Math.max(0, Math.floor((result.endsAt - Date.now()) / 1000));
+            remainingEl.textContent = `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`;
+          };
+          update();
+          setInterval(update, 1000);
+        }
       });
     }
   </script>

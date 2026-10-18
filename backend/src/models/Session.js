@@ -25,9 +25,10 @@ function mapSession(row) {
       row.duration_seconds ?? 0
     ),
 
-    avgFocusScore: Number(
-      row.avg_focus_score ?? 100
-    ),
+    avgFocusScore:
+      row.avg_focus_score == null
+        ? null
+        : Number(row.avg_focus_score),
 
     finalFocusScore:
       row.final_focus_score == null
@@ -58,7 +59,41 @@ function mapSession(row) {
       row.distraction_events ?? 0
     ),
 
+    lastTelemetryAt: row.last_telemetry_at
+      ? new Date(row.last_telemetry_at)
+      : null,
+
+    keyboardEvents: Number(
+      row.keyboard_events ?? 0
+    ),
+
+    mouseEvents: Number(
+      row.mouse_events ?? 0
+    ),
+
+    focusScoreSamples: Number(
+      row.focus_score_samples ?? 0
+    ),
+
     status: row.status,
+
+    // ── Smart Focus Mode fields ──
+    taskId: row.task_id || null,
+    subject: row.subject || "",
+    strictness: row.strictness || "balanced",
+    mode: row.mode || row.strictness || "balanced",
+    plannedDurationSeconds: Number(row.planned_duration_seconds ?? 0),
+    pausedAt: row.paused_at ? new Date(row.paused_at) : null,
+    pausedSeconds: Number(row.paused_seconds ?? 0),
+    browserProtection: row.browser_protection !== false,
+    allowedSites: Array.isArray(row.allowed_sites) ? row.allowed_sites : [],
+    blockedSites: Array.isArray(row.blocked_sites) ? row.blocked_sites : [],
+    warningSites: Array.isArray(row.warning_sites) ? row.warning_sites : [],
+    escalatedDomains: row.escalated_domains && typeof row.escalated_domains === "object" ? row.escalated_domains : {},
+    productiveSeconds: Number(row.productive_seconds ?? 0),
+    distractionDomainCount: Number(row.distraction_domain_count ?? 0),
+    notes: row.notes || null,
+    taskOutcome: row.task_outcome || null,
 
     createdAt: row.created_at
       ? new Date(row.created_at)
@@ -71,17 +106,43 @@ function mapSession(row) {
 }
 
 
-async function create(data = {}) {
+async function create(data = {}, queryable = pool) {
   if (!data.userId) {
     throw new Error(
       "Session userId is required."
     );
   }
 
-  const result = await pool.query(
+  const taskId = data.taskId || data.task_id || null;
+  const plannedDurationSeconds = Number(data.plannedDurationSeconds ?? 0);
+
+  if (!Number.isInteger(plannedDurationSeconds) || plannedDurationSeconds < 0 || plannedDurationSeconds > 28800) {
+    throw new Error("Session planned duration must be an integer from 0 to 28800 seconds.");
+  }
+
+  if (taskId) {
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(taskId)) {
+      const error = new Error("Task not found or does not belong to you.");
+      error.code = "TASK_NOT_OWNED";
+      throw error;
+    }
+
+    const ownedTask = await queryable.query(
+      "SELECT id FROM tasks WHERE id = $1 AND user_id = $2 FOR UPDATE",
+      [taskId, data.userId]
+    );
+    if (!ownedTask.rows.length) {
+      const error = new Error("Task not found or does not belong to you.");
+      error.code = "TASK_NOT_OWNED";
+      throw error;
+    }
+  }
+
+  const result = await queryable.query(
     `
     INSERT INTO sessions (
       user_id,
+      task_id,
       title,
       start_time,
       end_time,
@@ -94,21 +155,31 @@ async function create(data = {}) {
       warning_count,
       blocked_attempts,
       distraction_events,
-      status
+      status,
+      subject,
+      strictness,
+      mode,
+      planned_duration_seconds,
+      browser_protection,
+      allowed_sites,
+      blocked_sites,
+      warning_sites
     )
     VALUES (
       $1, $2, $3, $4, $5, $6, $7,
-      $8, $9, $10, $11, $12, $13, $14
+      $8, $9, $10, $11, $12, $13, $14,
+      $15, $16, $17, $18, $19, $20, $21, $22, $23
     )
     RETURNING *
     `,
     [
       data.userId,
+      taskId,
       data.title || "Study Focus Session",
       data.startTime || new Date(),
       data.endTime || null,
       data.durationSeconds ?? 0,
-      data.avgFocusScore ?? 100,
+      data.avgFocusScore ?? null,
       data.finalFocusScore ?? null,
       data.tabSwitches ?? 0,
       data.idleTimeSeconds ?? 0,
@@ -117,12 +188,37 @@ async function create(data = {}) {
       data.blockedAttempts ?? 0,
       data.distractionEvents ?? 0,
       data.status || "active",
+      data.subject || null,
+      data.strictness || "balanced",
+      data.mode || data.strictness || "balanced",
+      plannedDurationSeconds,
+      data.browserProtection ?? true,
+      JSON.stringify(data.allowedSites || []),
+      JSON.stringify(data.blockedSites || []),
+      JSON.stringify(data.warningSites || []),
     ]
   );
 
   return mapSession(
     result.rows[0]
   );
+}
+
+async function findOwnedTask(taskId, userId) {
+  if (!taskId || !userId) {
+    return null;
+  }
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(taskId)) {
+    return null;
+  }
+
+  const result = await pool.query(
+    `SELECT id, title, estimated_duration
+     FROM tasks
+     WHERE id = $1 AND user_id = $2`,
+    [taskId, userId]
+  );
+  return result.rows[0] || null;
 }
 
 
@@ -214,12 +310,21 @@ async function find(filter = {}) {
       ? `WHERE ${conditions.join(" AND ")}`
       : "";
 
+  const limit =
+    Number.isInteger(filter.limit) && filter.limit > 0
+      ? filter.limit
+      : null;
+  if (limit != null) {
+    values.push(limit);
+  }
+
   const result = await pool.query(
     `
     SELECT *
     FROM sessions
     ${where}
     ORDER BY start_time DESC
+    ${limit != null ? `LIMIT $${values.length}` : ""}
     `,
     values
   );
@@ -276,7 +381,33 @@ async function findOneAndUpdate(
     blockedAttempts: "blocked_attempts",
     distractionEvents: "distraction_events",
     status: "status",
+    subject: "subject",
+    strictness: "strictness",
+    mode: "mode",
+    plannedDurationSeconds: "planned_duration_seconds",
+    pausedAt: "paused_at",
+    pausedSeconds: "paused_seconds",
+    browserProtection: "browser_protection",
+    allowedSites: "allowed_sites",
+    blockedSites: "blocked_sites",
+    warningSites: "warning_sites",
+    escalatedDomains: "escalated_domains",
+    productiveSeconds: "productive_seconds",
+    distractionDomainCount: "distraction_domain_count",
+    lastTelemetryAt: "last_telemetry_at",
+    keyboardEvents: "keyboard_events",
+    mouseEvents: "mouse_events",
+    focusScoreSamples: "focus_score_samples",
+    notes: "notes",
+    taskOutcome: "task_outcome",
   };
+
+  const encode = (key, value) =>
+    ["allowedSites", "blockedSites", "warningSites"].includes(key)
+      ? JSON.stringify(value || [])
+      : ["escalatedDomains"].includes(key)
+        ? JSON.stringify(value || {})
+        : value;
 
   const sets = [];
   const values = [];
@@ -289,7 +420,7 @@ async function findOneAndUpdate(
       sets.push(
         `${mapping[key]} = $${index++}`
       );
-      values.push(value);
+      values.push(encode(key, value));
     }
   }
 
@@ -300,12 +431,18 @@ async function findOneAndUpdate(
   sets.push("updated_at = NOW()");
 
   values.push(current.id);
+  const idParameter = index++;
+  let ownershipCondition = "";
+  if (filter.userId) {
+    values.push(filter.userId);
+    ownershipCondition = ` AND user_id = $${index}`;
+  }
 
   const result = await pool.query(
     `
     UPDATE sessions
     SET ${sets.join(", ")}
-    WHERE id = $${index}
+    WHERE id = $${idParameter}${ownershipCondition}
     RETURNING *
     `,
     values
@@ -368,7 +505,31 @@ async function updateMany(
     blockedAttempts: "blocked_attempts",
     distractionEvents: "distraction_events",
     status: "status",
+    subject: "subject",
+    strictness: "strictness",
+    mode: "mode",
+    plannedDurationSeconds: "planned_duration_seconds",
+    pausedAt: "paused_at",
+    pausedSeconds: "paused_seconds",
+    browserProtection: "browser_protection",
+    allowedSites: "allowed_sites",
+    blockedSites: "blocked_sites",
+    warningSites: "warning_sites",
+    escalatedDomains: "escalated_domains",
+    productiveSeconds: "productive_seconds",
+    distractionDomainCount: "distraction_domain_count",
+    lastTelemetryAt: "last_telemetry_at",
+    keyboardEvents: "keyboard_events",
+    mouseEvents: "mouse_events",
+    focusScoreSamples: "focus_score_samples",
   };
+
+  const encode = (key, value) =>
+    ["allowedSites", "blockedSites", "warningSites"].includes(key)
+      ? JSON.stringify(value || [])
+      : ["escalatedDomains"].includes(key)
+        ? JSON.stringify(value || {})
+        : value;
 
   const sets = [];
   const values = [...filterValues];
@@ -382,7 +543,7 @@ async function updateMany(
         `${mapping[key]} = $${index++}`
       );
 
-      values.push(value);
+      values.push(encode(key, value));
     }
   }
 
@@ -413,6 +574,7 @@ async function updateMany(
 
 module.exports = {
   create,
+  findOwnedTask,
   findOne,
   find,
   findById,

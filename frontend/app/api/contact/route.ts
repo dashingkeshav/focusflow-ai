@@ -1,9 +1,18 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(
-  process.env.RESEND_API_KEY
-);
+/*
+ * Resend client is created lazily inside the handler so that
+ * a missing RESEND_API_KEY never crashes the build / route
+ * collection — it only fails gracefully at request time.
+ */
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    return null;
+  }
+
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function POST(
   request: Request
@@ -44,7 +53,15 @@ export async function POST(
     }
 
 
-    if (!process.env.RESEND_API_KEY) {
+    const recipient =
+      process.env.CONTACT_EMAIL ||
+      process.env.CONTACT_RECEIVER_EMAIL ||
+      "keerav2007@gmail.com";
+
+
+    const resend = getResendClient();
+
+    if (!resend) {
 
       return NextResponse.json(
         {
@@ -57,12 +74,6 @@ export async function POST(
       );
 
     }
-
-
-    const recipient =
-      process.env.CONTACT_RECEIVER_EMAIL ||
-      "marutijogdankar233@gmail.com";
-
 
     const { data, error } =
       await resend.emails.send({

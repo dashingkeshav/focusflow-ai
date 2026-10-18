@@ -5,7 +5,9 @@ const User = require("../models/User");
 
 const {
   sendLoginEmail,
+  sendWelcomeEmail,
   sendPasswordResetOTPEmail,
+  sendPasswordChangedEmail,
 } = require("../utils/emailService");
 
 const {
@@ -24,9 +26,41 @@ const {
 // CONFIG
 // =====================================================
 
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  "focusflow_ai_phase2_secret_key_2026";
+const { getValidatedJwtSecret } = require("../utils/jwtSecurity");
+const JWT_SECRET = getValidatedJwtSecret();
+
+
+// =====================================================
+// BRUTE-FORCE / EMAIL-BOMB GUARDS (in-memory, single instance)
+// =====================================================
+
+const OTP_MAX_ATTEMPTS = 5;
+const OTP_REQUEST_WINDOW_MS = 10 * 60 * 1000;
+const OTP_MAX_REQUESTS_PER_WINDOW = 3;
+
+const otpFailedAttempts = new Map();
+const otpRequestTimestamps = new Map();
+
+function getRecentOtpRequests(email) {
+  const now = Date.now();
+  const stamps = (otpRequestTimestamps.get(email) || []).filter(
+    (t) => now - t < OTP_REQUEST_WINDOW_MS
+  );
+  otpRequestTimestamps.set(email, stamps);
+  return stamps;
+}
+
+function isOtpLocked(email) {
+  return (otpFailedAttempts.get(email) || 0) >= OTP_MAX_ATTEMPTS;
+}
+
+function recordOtpFailure(email) {
+  otpFailedAttempts.set(email, (otpFailedAttempts.get(email) || 0) + 1);
+}
+
+function clearOtpFailures(email) {
+  otpFailedAttempts.delete(email);
+}
 
 
 // =====================================================
@@ -46,7 +80,7 @@ function createToken(user) {
   );
 }
 
-function safeUserResponse(user) {
+function safeUserResponse(user, planInfo = { plan: "free", isPro: false }) {
   return {
     id: user.id || user._id,
     name: user.name,
@@ -54,6 +88,10 @@ function safeUserResponse(user) {
     dailyGoalHours: user.dailyGoalHours ?? 4,
     streakDays: user.streakDays ?? 0,
     emailVerified: Boolean(user.emailVerified),
+    onboardingCompleted: Boolean(user.onboardingCompleted),
+    onboardingAnswers: user.onboardingAnswers || null,
+    plan: planInfo.plan || "free",
+    isPro: Boolean(planInfo.isPro),
   };
 }
 
@@ -202,24 +240,23 @@ exports.register = async (req, res) => {
 
 
     // -------------------------------------------------
-    // WELCOME EMAIL
+    // WELCOME EMAIL (awaited so failures are reported honestly)
     // -------------------------------------------------
 
-    try {
+    let welcomeEmailSent = false;
 
-      await sendLoginEmail(
+    try {
+      const emailRes = await sendWelcomeEmail(
         sanitizedEmail,
         cleanName
       );
-
+      welcomeEmailSent = Boolean(emailRes?.success);
     } catch (emailError) {
-
-      console.warn(
+      console.error(
         "Registration welcome email failed:",
         emailError?.message ||
           emailError
       );
-
     }
 
 
@@ -232,7 +269,11 @@ exports.register = async (req, res) => {
       success: true,
 
       message:
-        "Registration successful",
+        welcomeEmailSent
+          ? "Registration successful. A welcome email has been sent to your inbox."
+          : "Registration successful. (Welcome email could not be sent right now.)",
+
+      emailSent: welcomeEmailSent,
 
       token,
 
@@ -378,30 +419,41 @@ exports.login = async (req, res) => {
 
 
     // -------------------------------------------------
-    // LOGIN EMAIL
+    // LOGIN EMAIL (async, non-blocking)
     // -------------------------------------------------
 
-    try {
+    // Send login notification email asynchronously without blocking the response
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip;
+    const userAgent = req.headers['user-agent'] || 'Unknown Browser';
 
-      await sendLoginEmail(
-        sanitizedEmail,
-        user.name
+    sendLoginEmail(
+      sanitizedEmail,
+      user.name,
+      {
+        ip: clientIp,
+        userAgent: userAgent,
+        timestamp: new Date().toUTCString(),
+      }
+    ).then(() => {
+      console.log(
+        "Login confirmation email sent to:",
+        sanitizedEmail
       );
-
-    } catch (emailError) {
-
+    }).catch((emailError) => {
       console.warn(
         "Login confirmation email failed:",
         emailError?.message ||
           emailError
       );
-
-    }
+    });
 
 
     // -------------------------------------------------
     // RESPONSE
     // -------------------------------------------------
+
+    const { getUserPlan } = require("../utils/entitlements");
+    const planInfo = await getUserPlan(user.id || user._id);
 
     return res.status(200).json({
 
@@ -413,7 +465,7 @@ exports.login = async (req, res) => {
       token,
 
       user:
-        safeUserResponse(user),
+        safeUserResponse(user, planInfo),
     });
 
 
@@ -503,6 +555,30 @@ exports.forgotPassword = async (req, res) => {
 
 
     // -------------------------------------------------
+    // REQUEST THROTTLE (prevents email bombing)
+    // -------------------------------------------------
+
+    const recentRequests =
+      getRecentOtpRequests(sanitizedEmail);
+
+    if (recentRequests.length >= OTP_MAX_REQUESTS_PER_WINDOW) {
+
+      return res.status(429).json({
+        success: false,
+        message:
+          "Too many password reset requests. Please try again in a few minutes.",
+      });
+    }
+
+    recentRequests.push(Date.now());
+
+    otpRequestTimestamps.set(
+      sanitizedEmail,
+      recentRequests
+    );
+
+
+    // -------------------------------------------------
     // GENERATE OTP
     // -------------------------------------------------
 
@@ -527,43 +603,49 @@ exports.forgotPassword = async (req, res) => {
 
 
     // -------------------------------------------------
-    // SEND RESET EMAIL
+    // SEND RESET EMAIL (awaited — supports SMTP and Resend)
     // -------------------------------------------------
 
+    let emailRes = null;
     try {
-
-      await sendPasswordResetOTPEmail(
+      emailRes = await sendPasswordResetOTPEmail(
         sanitizedEmail,
         otp,
         user.name
       );
-
-      console.log(
-        "Password reset OTP sent to:",
-        sanitizedEmail
-      );
-
     } catch (emailError) {
-
       console.error(
         "Password reset email failed:",
         emailError?.message ||
           emailError
       );
 
-      /*
-       * Do not expose internal email errors.
-       * Return the generic response.
-       */
+      user.resetOTP = null;
+      user.resetOTPExpire = null;
+
+      await user.save().catch(() => {});
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Failed to send the password reset email. Please try again in a moment.",
+      });
     }
 
+    console.log(
+      `Password reset OTP generated for: ${sanitizedEmail} (Provider: ${emailRes?.provider || "default"})`
+    );
+
+    const isDev = process.env.NODE_ENV !== "production";
+    const isSimulated = emailRes?.simulated;
 
     return res.status(200).json({
-
       success: true,
-
-      message:
-        "If an account exists with this email, you will receive a password reset code shortly.",
+      message: isSimulated
+        ? "Password reset code generated. (Check server logs or configure Gmail SMTP to receive direct emails)."
+        : "If an account exists with this email, you will receive a password reset code shortly.",
+      emailSent: Boolean(emailRes?.success),
+      ...(isDev && isSimulated ? { debugOtp: otp } : {}),
     });
 
 
@@ -654,6 +736,20 @@ exports.verifyOTP = async (req, res) => {
 
 
     // -------------------------------------------------
+    // BRUTE-FORCE LOCKOUT
+    // -------------------------------------------------
+
+    if (isOtpLocked(sanitizedEmail)) {
+
+      return res.status(429).json({
+        success: false,
+        message:
+          "Too many invalid attempts. Please request a new code.",
+      });
+    }
+
+
+    // -------------------------------------------------
     // VERIFY
     // -------------------------------------------------
 
@@ -667,6 +763,8 @@ exports.verifyOTP = async (req, res) => {
 
     if (!verification.valid) {
 
+      recordOtpFailure(sanitizedEmail);
+
       return res.status(400).json({
         success: false,
         message:
@@ -674,6 +772,9 @@ exports.verifyOTP = async (req, res) => {
           "Invalid or expired OTP",
       });
     }
+
+
+    clearOtpFailures(sanitizedEmail);
 
 
     return res.status(200).json({
@@ -820,6 +921,20 @@ exports.resetPassword = async (req, res) => {
 
 
     // -------------------------------------------------
+    // BRUTE-FORCE LOCKOUT
+    // -------------------------------------------------
+
+    if (isOtpLocked(sanitizedEmail)) {
+
+      return res.status(429).json({
+        success: false,
+        message:
+          "Too many invalid attempts. Please request a new code.",
+      });
+    }
+
+
+    // -------------------------------------------------
     // VERIFY OTP AGAIN
     // -------------------------------------------------
 
@@ -833,6 +948,8 @@ exports.resetPassword = async (req, res) => {
 
     if (!verification.valid) {
 
+      recordOtpFailure(sanitizedEmail);
+
       return res.status(400).json({
         success: false,
         message:
@@ -840,6 +957,9 @@ exports.resetPassword = async (req, res) => {
           "Invalid or expired OTP",
       });
     }
+
+
+    clearOtpFailures(sanitizedEmail);
 
 
     // -------------------------------------------------
@@ -880,12 +1000,34 @@ exports.resetPassword = async (req, res) => {
 
 
     // -------------------------------------------------
+    // SEND PASSWORD CHANGED CONFIRMATION EMAIL (awaited, non-fatal)
+    // -------------------------------------------------
+
+    let changeEmailSent = false;
+
+    try {
+      await sendPasswordChangedEmail(
+        sanitizedEmail,
+        user.name
+      );
+      changeEmailSent = true;
+    } catch (emailError) {
+      console.error(
+        "Password changed email failed:",
+        emailError?.message || emailError
+      );
+    }
+
+
+    // -------------------------------------------------
     // SUCCESS
     // -------------------------------------------------
 
     return res.status(200).json({
 
       success: true,
+
+      emailSent: changeEmailSent,
 
       message:
         "Password has been reset successfully. You can now login with your new password.",
@@ -906,6 +1048,136 @@ exports.resetPassword = async (req, res) => {
 
       message:
         "Failed to reset password. Please try again.",
+    });
+  }
+};
+
+
+// =====================================================
+// COMPLETE ONBOARDING
+// =====================================================
+
+exports.completeOnboarding = async (req, res) => {
+  try {
+    const { answers } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Update user with onboarding data using direct SQL to avoid model issues
+    const { pool } = require("../config/db");
+    await pool.query(
+      `
+      UPDATE users
+      SET onboarding_completed = true,
+          onboarding_answers = $1
+      WHERE id = $2
+      `,
+      [
+        Array.isArray(answers) ? JSON.stringify(answers) : null,
+        userId
+      ]
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Onboarding completed successfully",
+    });
+  } catch (error) {
+    console.error("Complete onboarding error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to complete onboarding. Please try again.",
+    });
+  }
+};
+
+
+// =====================================================
+// GET ONBOARDING STATUS
+// =====================================================
+
+exports.getOnboardingStatus = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      onboardingCompleted: Boolean(user.onboardingCompleted),
+      onboardingAnswers: user.onboardingAnswers || null,
+    });
+  } catch (error) {
+    console.error("Get onboarding status error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to get onboarding status. Please try again.",
+    });
+  }
+};
+
+// =====================================================
+// GET CURRENT USER (session verification)
+// =====================================================
+
+exports.getMe = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required",
+      });
+    }
+
+    const user = await User.findOne({ id: userId });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Account no longer exists.",
+      });
+    }
+
+    const { getUserPlan } = require("../utils/entitlements");
+    const planInfo = await getUserPlan(user.id || user._id);
+
+    return res.status(200).json({
+      success: true,
+      user: safeUserResponse(user, planInfo),
+    });
+  } catch (error) {
+    console.error("Get current user error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to verify session.",
     });
   }
 };

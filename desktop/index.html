@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https: http://localhost:5001 http://127.0.0.1:5001 ws: wss:; img-src 'self' data: https:; font-src 'self' data:; media-src 'self' blob: mediastream:;"
+    >
+    <title>FocusFlow AI</title>
+    <link rel="stylesheet" href="desktop.css">
+  </head>
+  <body>
+    <!-- Background Starfield Particle Canvas -->
+    <canvas id="starfield-canvas"></canvas>
+
+    <div id="app-root">
+      <!-- Custom Windows Frameless Titlebar -->
+      <header class="titlebar">
+        <div class="titlebar-left">
+          <div class="titlebar-brand" id="brand-home-btn" title="FocusFlow AI Workspace">
+            <img src="focusflow-icon.png" class="brand-logo-img" alt="FocusFlow AI Logo" />
+            FocusFlow <span>AI</span>
+          </div>
+          <div id="connectivity-badge" class="connectivity-badge connecting" title="Backend & Cloud Synchronization State">
+            <span class="dot"></span>
+            <span id="connectivity-text">Initializing…</span>
+          </div>
+        </div>
+
+        <div class="titlebar-center">
+          <button id="titlebar-search-btn" class="titlebar-palette-btn" title="Open Command Palette (Ctrl+K)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span>Command Palette</span>
+            <kbd>Ctrl+K</kbd>
+          </button>
+        </div>
+
+        <div class="titlebar-right">
+          <button id="btn-mini-mode" class="mini-toggle-btn" title="Switch to Floating Mini-Timer Widget">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="4"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+            Mini Mode
+          </button>
+          <button id="btn-win-min" class="window-ctrl-btn" title="Minimize">
+            <svg width="10" height="1" viewBox="0 0 10 1"><rect width="10" height="1" fill="currentColor"/></svg>
+          </button>
+          <button id="btn-win-max" class="window-ctrl-btn" title="Maximize / Restore">
+            <svg width="10" height="10" viewBox="0 0 10 10"><rect width="9" height="9" x="0.5" y="0.5" fill="none" stroke="currentColor"/></svg>
+          </button>
+          <button id="btn-win-close" class="window-ctrl-btn close-btn" title="Close (Minimizes to Tray)">
+            <svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1L9 9M9 1L1 9" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- App Body (Sidebar + Content Workspace) -->
+      <div class="app-body">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+          <div class="sidebar-nav">
+            <div>
+              <p class="nav-group-title">Command & Focus</p>
+              <ul class="nav-list">
+                <li class="nav-item active" data-view="dashboard" id="nav-dashboard">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  <span>Command Center</span>
+                </li>
+                <li class="nav-item" data-view="focus" id="nav-focus">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span>Focus Mode</span>
+                  <span id="sidebar-focus-active-pill" class="nav-badge-pill green" style="display:none;">LIVE</span>
+                </li>
+                <li class="nav-item" data-view="tasks" id="nav-tasks">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <span>Tasks & Goals</span>
+                  <span id="sidebar-tasks-count" class="nav-badge">0</span>
+                </li>
+                <li class="nav-item" data-view="planner" id="nav-planner">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"/><path d="M12 2a10 10 0 0 1 10 10"/><polygon points="12 12 19 8 15 15"/></svg>
+                  <span>AI Daily Planner</span>
+                  <span class="nav-badge">AI</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="nav-group-title">Insights & Protection</p>
+              <ul class="nav-list">
+                <li class="nav-item" data-view="analytics" id="nav-analytics">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                  <span>Analytics & Trends</span>
+                </li>
+                <li class="nav-item" data-view="distractions" id="nav-distractions">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span>Distraction Shield</span>
+                  <span class="nav-badge-pill green">ACTIVE</span>
+                </li>
+                <li class="nav-item" data-view="insights" id="nav-insights">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                  <span>AI Insights</span>
+                  <span class="nav-badge">AI</span>
+                </li>
+                <li class="nav-item" data-view="reports" id="nav-reports">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                  <span>Reports & Export</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="nav-group-title">Collaboration</p>
+              <ul class="nav-list">
+                <li class="nav-item" data-view="focus-rooms" id="nav-rooms">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  <span>Focus Rooms</span>
+                  <span class="nav-badge-pill pulse">LIVE</span>
+                </li>
+                <li class="nav-item" data-view="focus-circles" id="nav-circles">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
+                  <span>Focus Circles</span>
+                </li>
+                <li class="nav-item" data-view="project-pods" id="nav-pods">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+                  <span>Project Pods</span>
+                </li>
+                <li class="nav-item" data-view="unblock-exchange" id="nav-unblock">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
+                  <span>Unblock Exchange</span>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <p class="nav-group-title">Hardware & Workspace</p>
+              <ul class="nav-list">
+                <li class="nav-item" data-view="settings" id="nav-settings">
+                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <span>Settings & Cloud</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Bottom Footer Group: Shield status + User card -->
+          <div class="sidebar-footer-group">
+            <div class="sidebar-shield-card">
+              <div class="shield-row">
+                <span class="shield-title">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Distraction Shield
+                </span>
+                <span class="shield-dot"></span>
+              </div>
+              <p id="sidebar-shield-status-text" class="shield-sub">Monitoring browser & background interruptions.</p>
+            </div>
+
+            <div class="sidebar-user-card">
+              <div id="sidebar-user-avatar" class="user-avatar">W</div>
+              <div class="user-info">
+                <span id="sidebar-user-name" class="user-name">Local Workspace</span>
+                <span class="user-status">
+                  <span id="sidebar-pro-pill" class="pro-pill" style="display:none;">PRO</span>
+                  <span id="sidebar-account-badge">Standalone Mode</span>
+                </span>
+              </div>
+              <button id="btn-auth-action" class="signout-btn" title="Sign In or Manage Account">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Workspace Viewport -->
+        <main class="main-workspace">
+          <!-- Workspace Header -->
+          <div class="workspace-header">
+            <div class="workspace-title-box">
+              <h1 id="workspace-title">Command Center</h1>
+              <p id="workspace-subtitle">Today's priority agenda, intelligent suggestions, and focus controls.</p>
+            </div>
+
+            <div class="workspace-header-actions">
+              <!-- Active Timer Pill -->
+              <div id="header-timer-pill" class="header-timer-pill" style="display:none;" title="Click to view Focus Mode">
+                <span class="pulsing-dot"></span>
+                <span id="header-timer-digits">25:00</span>
+              </div>
+
+              <!-- Quick Start Focus -->
+              <button id="btn-quick-focus" class="btn btn-primary btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Start Focus</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Views Viewport Container -->
+          <div class="workspace-views-viewport">
+            <!-- ================= VIEW 1: AUTHENTICATION ================= -->
+            <section id="view-auth" class="view-section">
+              <div class="auth-container">
+                <div class="auth-card">
+                  <div class="auth-header">
+                    <img src="focusflow-icon.png" class="brand-logo-img" style="width:48px; height:48px; margin:0 auto 12px;" alt="FocusFlow AI" />
+                    <h2>FocusFlow AI Cloud Sync</h2>
+                    <p id="auth-header-desc" style="color:#9494a3; font-size:12.5px; margin-top:4px;">Sign in to synchronize tasks, goals, Gemini AI planning, and team collaboration.</p>
+                  </div>
+
+                  <div id="auth-unconfigured-notice" class="auth-notice-box" style="display:none;">
+                    <div class="auth-notice-header">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      <strong>Standalone Local Mode Active</strong>
+                    </div>
+                    <p>No remote production backend is currently configured for this installation. You can use the local focus timer, tasks, distraction shield, and settings completely offline without signing in.</p>
+                    <button id="btn-auth-skip" class="btn btn-secondary btn-sm" style="margin-top:10px;">Continue in Local Desktop Mode</button>
+                  </div>
+
+                  <div id="auth-form-container">
+                    <div class="auth-tabs">
+                      <button id="auth-tab-signin" class="auth-tab-btn active">Sign In</button>
+                      <button id="auth-tab-signup" class="auth-tab-btn">Create Account</button>
+                    </div>
+
+                    <!-- Sign In Form -->
+                    <form id="auth-form-signin">
+                      <div class="form-group">
+                        <label class="form-label">Email address</label>
+                        <input id="signin-email" class="form-input" type="email" placeholder="you@company.com" required autocomplete="email">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input id="signin-password" class="form-input" type="password" placeholder="••••••••" required autocomplete="current-password">
+                      </div>
+                      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Sign In to Workspace</button>
+                    </form>
+
+                    <!-- Sign Up Form -->
+                    <form id="auth-form-signup" style="display:none;">
+                      <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input id="signup-name" class="form-input" type="text" placeholder="Your Name" required autocomplete="name">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Email address</label>
+                        <input id="signup-email" class="form-input" type="email" placeholder="you@company.com" required autocomplete="email">
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input id="signup-password" class="form-input" type="password" placeholder="••••••••" required autocomplete="new-password">
+                      </div>
+                      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:8px;">Create FocusFlow Account</button>
+                    </form>
+
+                    <p id="auth-status" style="margin-top:14px; text-align:center; font-size:12px; min-height:18px;"></p>
+                    <div style="text-align:center; margin-top:12px;">
+                      <a href="#" id="auth-continue-local-link" style="color:#9494a3; font-size:12px; text-decoration:none;">Work offline in local mode &rarr;</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 2: COMMAND CENTER ================= -->
+            <section id="view-dashboard" class="view-section active">
+              <!-- Personalized Actionable Banner -->
+              <div id="command-center-banner" class="command-banner glass-card">
+                <div class="command-banner-content">
+                  <div class="command-banner-greeting">
+                    <span id="banner-greeting-prefix">Good morning,</span>
+                    <h2 id="banner-user-name">Welcome to FocusFlow</h2>
+                  </div>
+                  <p id="banner-recommendation-text" class="command-banner-desc">Analyzing your agenda and focus history…</p>
+                  <div id="banner-action-row" class="command-banner-actions">
+                    <button id="banner-action-btn" class="btn btn-primary btn-sm">Start Priority Focus</button>
+                    <button id="banner-plan-btn" class="btn btn-secondary btn-sm">Plan Day with AI</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stats Row (Derived from REAL session records) -->
+              <div class="stats-grid">
+                <div class="stat-card accent">
+                  <span class="stat-title">Today's Focus Time</span>
+                  <span id="stat-focus-time" class="stat-value">0h 00m</span>
+                  <span id="stat-focus-sub" class="stat-subtitle">From recorded sessions</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-title">Sessions Completed</span>
+                  <span id="stat-sessions-count" class="stat-value">0</span>
+                  <span id="stat-sessions-sub" class="stat-subtitle">Finished deep blocks</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-title">Tasks Completed</span>
+                  <span id="stat-tasks-done" class="stat-value">0 / 0</span>
+                  <span id="stat-tasks-sub" class="stat-subtitle">Today's agenda</span>
+                </div>
+                <div class="stat-card">
+                  <span class="stat-title">Average Flow Rating</span>
+                  <span id="stat-focus-score" class="stat-value">—</span>
+                  <span id="stat-score-sub" class="stat-subtitle">Quality telemetry</span>
+                </div>
+              </div>
+
+              <!-- Two Column Dashboard Grid -->
+              <div class="dashboard-grid">
+                <div class="dashboard-column">
+                  <!-- Quick Session Start Card -->
+                  <div class="glass-card">
+                    <div class="glass-card-header">
+                      <h3>Focus Presets</h3>
+                      <span style="font-size:11px; color:#ff6422; font-weight:700;">PROVEN WORKFLOWS</span>
+                    </div>
+                    <p style="color:#9494a3; font-size:12.5px;">Launch a dedicated focus block immediately with drift-free tracking:</p>
+                    <div class="preset-chips">
+                      <div class="preset-chip" data-duration="25">
+                        <strong>25 mins</strong>
+                        <span>Pomodoro Sprint</span>
+                      </div>
+                      <div class="preset-chip" data-duration="50">
+                        <strong>50 mins</strong>
+                        <span>Deep Work Block</span>
+                      </div>
+                      <div class="preset-chip" data-duration="90">
+                        <strong>90 mins</strong>
+                        <span>Ultradian Flow</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Today's Priority Tasks -->
+                  <div class="glass-card">
+                    <div class="glass-card-header">
+                      <h3>Priority Queue</h3>
+                      <div style="display:flex; gap:8px;">
+                        <button class="btn btn-secondary btn-sm" data-action="switch-view" data-view="tasks">+ All Tasks</button>
+                      </div>
+                    </div>
+                    <div id="dashboard-tasks-list" class="task-items-list">
+                      <!-- Rendered dynamically from real tasks -->
+                    </div>
+                  </div>
+                </div>
+
+                <div class="dashboard-column">
+                  <!-- Active Goals Progress -->
+                  <div class="glass-card">
+                    <div class="glass-card-header">
+                      <h3>Target Goals</h3>
+                      <button class="btn btn-secondary btn-sm" data-action="switch-view" data-view="tasks">+ New Goal</button>
+                    </div>
+                    <div id="dashboard-goals-list">
+                      <!-- Rendered dynamically from real goals -->
+                    </div>
+                  </div>
+
+                  <!-- Recent Sessions Audit -->
+                  <div class="glass-card">
+                    <div class="glass-card-header">
+                      <h3>Recent Focus Sessions</h3>
+                      <button class="btn btn-secondary btn-sm" data-action="switch-view" data-view="reports">View Ledger</button>
+                    </div>
+                    <div id="dashboard-recent-sessions">
+                      <!-- Rendered dynamically from real session records -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 3: TASKS & GOALS ================= -->
+            <section id="view-tasks" class="view-section">
+              <div class="glass-card" style="margin-bottom:20px;">
+                <div class="glass-card-header">
+                  <h3>Task Queue & Priorities</h3>
+                  <span style="font-size:11.5px; color:#ff6422; font-weight:700;">LINKED TO FOCUS ENGINE</span>
+                </div>
+                
+                <!-- Quick Task Creation Bar -->
+                <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+                  <input id="new-task-input" class="form-input" style="flex:1; min-width:240px;" type="text" placeholder="Add a new task (e.g. Implement security auth bridge, refactor timer)...">
+                  <select id="new-task-priority" style="background:#13131c; color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:8px; padding:0 12px; font-size:12px; outline:none; height:38px;">
+                    <option value="high">High Priority</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                  <button id="btn-add-task" class="btn btn-primary btn-sm">+ Add Task</button>
+                </div>
+
+                <!-- Filter Subtabs -->
+                <div class="subtabs-bar">
+                  <button class="subtab-btn active" data-task-filter="all">All Tasks</button>
+                  <button class="subtab-btn" data-task-filter="pending">Pending</button>
+                  <button class="subtab-btn" data-task-filter="high">High Priority</button>
+                  <button class="subtab-btn" data-task-filter="completed">Completed</button>
+                </div>
+
+                <div id="tasks-screen-list" class="task-items-list">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- Goals Section -->
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <h3>Active Milestone Goals</h3>
+                  <div style="display:flex; gap:8px;">
+                    <input id="new-goal-name" class="form-input" style="width:220px;" type="text" placeholder="Goal title (e.g. 20h Deep Work)">
+                    <button id="btn-add-goal" class="btn btn-secondary btn-sm">+ Add Goal</button>
+                  </div>
+                </div>
+                <div id="goals-screen-list">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 4: AI PLANNER ================= -->
+            <section id="view-planner" class="view-section">
+              <div class="ai-planner-grid">
+                <div class="glass-card">
+                  <div class="glass-card-header">
+                    <h3>Adaptive AI Planning</h3>
+                    <span class="nav-badge">GEMINI POWERED</span>
+                  </div>
+                  <p style="color:#9494a3; font-size:12.5px; margin-bottom:12px;">Generate a time-blocked chronological plan using your actual pending tasks and priorities.</p>
+                  
+                  <div class="form-group">
+                    <label class="form-label">Today's Focus Intent & Constraints</label>
+                    <textarea id="planner-prompt-input" class="prompt-textarea" placeholder="E.g. I need to focus on architecture review, complete high priority tickets, and take a midday break."></textarea>
+                  </div>
+
+                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
+                    <div>
+                      <label class="form-label" style="font-size:11px;">Planning Mode</label>
+                      <select id="planner-mode-select" class="form-input" style="height:36px; font-size:12px;">
+                        <option value="balanced" selected>Balanced Focus</option>
+                        <option value="deep_work">Deep Work Sprint</option>
+                        <option value="deadline_first">Deadline Driven</option>
+                        <option value="recovery">Restorative & Light</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="form-label" style="font-size:11px;">Preferred Work Window</label>
+                      <select id="planner-window-select" class="form-input" style="height:36px; font-size:12px;">
+                        <option value="Morning" selected>Morning</option>
+                        <option value="Afternoon">Afternoon</option>
+                        <option value="Evening">Evening</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <button id="planner-generate-btn" class="btn btn-primary" style="width:100%; margin-top:16px;">
+                    Generate Chronological Plan
+                  </button>
+                  <p id="planner-status-msg" style="font-size:11.5px; color:#9494a3; margin-top:8px; text-align:center; min-height:16px;"></p>
+                </div>
+
+                <div class="glass-card">
+                  <div class="glass-card-header">
+                    <h3>Structured Chronological Schedule</h3>
+                    <button id="planner-apply-btn" class="btn btn-secondary btn-sm" style="display:none;">
+                      ✓ Apply to Tasks & Calendar
+                    </button>
+                  </div>
+                  <div id="planner-schedule-timeline" class="plan-schedule-timeline">
+                    <div style="padding:32px 16px; text-align:center; color:#646473; font-size:13px;">
+                      Enter your day's objectives on the left and click "Generate Chronological Plan" to create an optimized schedule grounded in your real tasks.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 5: DEDICATED FOCUS MODE ================= -->
+            <!-- ================= VIEW 5: DEDICATED FOCUS MODE WITH INTEGRATED CAMERA ATTENTION AI ================= -->
+            <section id="view-focus" class="view-section">
+              <div class="focus-workspace-container">
+                <div class="focus-grid-layout">
+                  <!-- Left Column: Primary Focus Timer & Controls -->
+                  <div class="focus-timer-column">
+                    <!-- Session Context Banner -->
+                    <div class="focus-task-selector-wrapper">
+                      <span class="focus-task-label">CURRENT OBJECTIVE</span>
+                      <div class="focus-task-input-row">
+                        <input id="focus-task-input" class="focus-task-input" type="text" placeholder="What are you focusing on?" value="Deep Work Session">
+                        <select id="focus-task-dropdown" class="focus-task-dropdown" title="Link to existing task">
+                          <option value="">Link to Task...</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Circular Drift-Resistant Timer Display -->
+                    <div class="timer-circle-wrapper">
+                      <svg class="timer-svg" viewBox="0 0 300 300">
+                        <defs>
+                          <linearGradient id="orange-glow-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ff7538"/>
+                            <stop offset="100%" stop-color="#ff4500"/>
+                          </linearGradient>
+                        </defs>
+                        <circle class="timer-bg-track" cx="150" cy="150" r="135"/>
+                        <circle id="timer-circle-progress" class="timer-progress-ring" cx="150" cy="150" r="135" stroke-dasharray="848.23" stroke-dashoffset="0"/>
+                      </svg>
+                      <div class="timer-center-content">
+                        <span id="timer-status-badge" class="timer-status-badge">READY</span>
+                        <span id="timer-digits" class="timer-time-display">25:00</span>
+                        <span id="timer-sub-info" class="timer-sub-info">25 min interval</span>
+                      </div>
+                    </div>
+
+                    <!-- Primary Controls -->
+                    <div class="timer-controls-row">
+                      <button id="btn-timer-reset" class="btn btn-secondary btn-icon" title="Reset Session">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/></svg>
+                      </button>
+                      <button id="btn-timer-play-pause" class="btn-timer-primary" title="Start or Pause Focus Session">
+                        <svg id="timer-play-pause-icon" width="24" height="24" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+                      </button>
+                      <button id="btn-timer-finish" class="btn btn-secondary btn-icon" title="Complete Session & Save History">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                    </div>
+
+                    <!-- Interval Mode Selector -->
+                    <div class="focus-modes-bar">
+                      <button class="focus-mode-chip active" data-interval="25">25m Work</button>
+                      <button class="focus-mode-chip" data-interval="50">50m Flow</button>
+                      <button class="focus-mode-chip" data-interval="90">90m Ultra</button>
+                      <button class="focus-mode-chip break-chip" data-interval="5" data-break="short">5m Break</button>
+                      <button class="focus-mode-chip break-chip" data-interval="15" data-break="long">15m Break</button>
+                    </div>
+
+                    <!-- Ambient Soundscape Selector -->
+                    <div class="timer-options-bar">
+                      <span style="font-size:12px; color:#9494a3; font-weight:600;">Soundscape:</span>
+                      <select id="ambient-sound-select" style="background:#13131c; color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:6px; padding:4px 10px; font-size:12px; outline:none;">
+                        <option value="mute">Mute (Silent)</option>
+                        <option value="rain">Gentle Rain (Audio Synthesizer)</option>
+                        <option value="binaural">40Hz Gamma Focus (Binaural)</option>
+                        <option value="whitenoise">Pure White Noise</option>
+                      </select>
+                    </div>
+
+                    <!-- Session Telemetry Counter & Protection Status -->
+                    <div id="session-telemetry-badge" class="session-telemetry-badge">
+                      <span id="session-protection-status">Local Focus Mode Active</span>
+                      <span class="telemetry-sep">•</span>
+                      <span id="session-tab-switches-text">0 tab interruptions</span>
+                    </div>
+                  </div>
+
+                  <!-- Right Column: Camera Attention AI Monitor (Integrated beside Timer) -->
+                  <div class="focus-camera-column glass-card">
+                    <div class="glass-card-header" style="margin-bottom:10px;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <h3 style="font-size:13.5px; margin:0;">Camera Attention AI</h3>
+                        <span class="nav-badge" style="font-size:10px; padding:2px 6px;">100% ON-DEVICE</span>
+                      </div>
+                      <span id="camera-status-pill" class="attention-status-pill off">CAMERA OFF</span>
+                    </div>
+
+                    <div class="camera-feed-box">
+                      <video id="camera-video-elem" autoplay playsinline muted></video>
+                      <canvas id="camera-overlay-canvas"></canvas>
+                      <div id="camera-offline-placeholder" class="camera-placeholder">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        <p id="camera-placeholder-title" style="font-size:12px; font-weight:700; margin-top:6px;">Camera monitoring is offline</p>
+                        <p id="camera-placeholder-desc" style="font-size:11px; color:#9494a3; margin-top:2px;">Click below to launch genuine on-device face & gaze tracking during your sprint.</p>
+                      </div>
+                    </div>
+
+                    <div style="margin-top:12px;">
+                      <button id="btn-toggle-camera" class="btn btn-primary btn-sm" style="width:100%;">
+                        Start Camera Monitor
+                      </button>
+                    </div>
+
+                    <!-- Real Model Detection Telemetry Meters -->
+                    <div class="camera-telemetry-panel" style="margin-top:12px;">
+                      <div class="telemetry-meter-row">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11.5px; color:#9494a3;">Attention Status</span>
+                          <span id="camera-metric-state" style="font-size:11.5px; font-weight:700; color:#9494a3;">Offline</span>
+                        </div>
+                      </div>
+                      <div class="telemetry-meter-row">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11.5px; color:#9494a3;">Face & Gaze Alignment</span>
+                          <span id="camera-metric-position" style="font-size:11.5px; font-weight:700; color:#9494a3;">—</span>
+                        </div>
+                        <div class="telemetry-meter-bar">
+                          <div id="telemetry-gaze-bar" class="telemetry-meter-fill" style="width:0%;"></div>
+                        </div>
+                      </div>
+                      <div class="telemetry-meter-row">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11.5px; color:#9494a3;">Session Attentive Ratio</span>
+                          <span id="camera-metric-ratio" style="font-size:11.5px; font-weight:700; color:#ff6422;">—</span>
+                        </div>
+                        <div class="telemetry-meter-bar">
+                          <div id="telemetry-attentive-bar" class="telemetry-meter-fill" style="width:0%;"></div>
+                        </div>
+                      </div>
+                      <div class="telemetry-meter-row" style="margin-bottom:0;">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11px; color:#646473;">Detection Rate</span>
+                          <span id="camera-metric-fps" style="font-size:11px; color:#646473; font-family:var(--font-mono);">0 FPS</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style="margin-top:10px; padding:8px 10px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.18); border-radius:6px; font-size:10.5px; color:#10b981; line-height:1.4;">
+                      🔒 <strong>100% On-Device Privacy:</strong> Video frames are analyzed locally in Windows memory. No camera imagery is ever uploaded or recorded.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 6: ANALYTICS & TRENDS ================= -->
+            <section id="view-analytics" class="view-section">
+              <div class="glass-card" style="margin-bottom:20px;">
+                <div class="glass-card-header">
+                  <h3>Focus Metrics & Endurance Telemetry</h3>
+                  <span style="font-size:11px; color:#ff6422; font-weight:700;">AUTHENTIC RECORDS</span>
+                </div>
+                <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom:14px;">
+                  <div class="stat-card">
+                    <span class="stat-title">Recorded Deep Work</span>
+                    <span id="analytics-total-hours" class="stat-value">0.0h</span>
+                    <span class="stat-subtitle">Total time</span>
+                  </div>
+                  <div class="stat-card">
+                    <span class="stat-title">Finished Sessions</span>
+                    <span id="analytics-total-sessions" class="stat-value">0</span>
+                    <span class="stat-subtitle">Logged blocks</span>
+                  </div>
+                  <div class="stat-card">
+                    <span class="stat-title">Completion Rate</span>
+                    <span id="analytics-completion-rate" class="stat-value">0%</span>
+                    <span class="stat-subtitle">Tasks resolved</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Session Ledger -->
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <h3>Session History</h3>
+                </div>
+                <div id="analytics-sessions-table-container">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 7: DISTRACTION SHIELD ================= -->
+            <section id="view-distractions" class="view-section">
+              <div class="glass-card" style="margin-bottom:20px;">
+                <div class="glass-card-header">
+                  <div>
+                    <h3>Distraction Shield & Extension Rules</h3>
+                    <p style="color:#9494a3; font-size:12px; margin-top:2px;">Configures restricted domains and coordinates with the FocusFlow Chrome extension during active focus sessions.</p>
+                  </div>
+                  <span class="nav-badge-pill green">SHIELD READY</span>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-bottom:16px;">
+                  <input id="new-block-domain-input" class="form-input" style="flex:1;" type="text" placeholder="Add domain to restrict (e.g. reddit.com, twitter.com, youtube.com)...">
+                  <button id="btn-add-block-domain" class="btn btn-primary btn-sm">+ Add Rule</button>
+                </div>
+
+                <div class="subtabs-bar">
+                  <button class="subtab-btn active" data-distract-filter="all">All Blocked Sites</button>
+                  <button class="subtab-btn" data-distract-filter="social">Social Media</button>
+                  <button class="subtab-btn" data-distract-filter="video">Video & Streaming</button>
+                </div>
+
+                <div id="distractions-domain-chips" class="domain-chips-list">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <h3>Distraction Telemetry Events</h3>
+                </div>
+                <div id="distraction-events-log">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 8: AI INSIGHTS ================= -->
+            <section id="view-insights" class="view-section">
+              <div class="glass-card" style="margin-bottom:20px;">
+                <div class="glass-card-header">
+                  <div>
+                    <h3>Cognitive Diagnostics & Recommendations</h3>
+                    <p style="color:#9494a3; font-size:12px; margin-top:2px;">Context-aware insights derived from your actual focus duration, task completion, and break cadence.</p>
+                  </div>
+                  <button id="btn-regenerate-insights" class="btn btn-secondary btn-sm">Refresh Insights</button>
+                </div>
+                <div id="ai-recommendations-container" class="recommendations-list">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 9: REPORTS & EXPORT ================= -->
+            <section id="view-reports" class="view-section">
+              <div class="reports-toolbar">
+                <div class="range-pills">
+                  <button class="range-pill active" data-report-range="7d">Last 7 Days</button>
+                  <button class="range-pill" data-report-range="30d">Last 30 Days</button>
+                  <button class="range-pill" data-report-range="all">All-Time History</button>
+                </div>
+
+                <div class="export-actions">
+                  <button id="btn-export-csv" class="btn btn-primary btn-sm">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download CSV
+                  </button>
+                  <button id="btn-export-json" class="btn btn-secondary btn-sm">
+                    Export JSON
+                  </button>
+                </div>
+              </div>
+
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <h3>Session Audit Ledger</h3>
+                </div>
+                <div style="overflow-x:auto;">
+                  <table class="event-table">
+                    <thead>
+                      <tr>
+                        <th>Date & Time</th>
+                        <th>Objective / Task</th>
+                        <th>Duration</th>
+                        <th>Flow Score</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="reports-ledger-tbody">
+                      <!-- Populated dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 10: COLLABORATION (ROOMS, CIRCLES, PODS, UNBLOCK) ================= -->
+            <section id="view-focus-rooms" class="view-section">
+              <div class="glass-card" style="margin-bottom:20px;">
+                <div class="glass-card-header">
+                  <div>
+                    <h3>Live Focus Rooms</h3>
+                    <p style="color:#9494a3; font-size:12px;">Virtual silent study rooms with synchronized Pomodoro timers.</p>
+                  </div>
+                  <button id="btn-create-room-modal" class="btn btn-primary btn-sm">+ Create Room</button>
+                </div>
+                <div id="focus-rooms-container" class="rooms-grid"></div>
+              </div>
+            </section>
+
+            <section id="view-focus-circles" class="view-section">
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <div>
+                    <h3>Focus Circles</h3>
+                    <p style="color:#9494a3; font-size:12px;">Accountability cohorts with weekly commitment streaks.</p>
+                  </div>
+                  <button id="btn-checkin-circle" class="btn btn-primary btn-sm">Record Daily Milestone</button>
+                </div>
+                <div id="focus-circles-container"></div>
+              </div>
+            </section>
+
+            <section id="view-project-pods" class="view-section">
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <div>
+                    <h3>Project Pods</h3>
+                    <p style="color:#9494a3; font-size:12px;">Collaborative task sprints and deliverable tracking.</p>
+                  </div>
+                </div>
+                <div id="project-pods-container"></div>
+              </div>
+            </section>
+
+            <section id="view-unblock-exchange" class="view-section">
+              <div class="glass-card">
+                <div class="glass-card-header">
+                  <div>
+                    <h3>Unblock Exchange</h3>
+                    <p style="color:#9494a3; font-size:12px;">Ask peer teammates for assistance when stuck on difficult technical hurdles.</p>
+                  </div>
+                  <button id="btn-request-unblock" class="btn btn-primary btn-sm">+ Request Assistance</button>
+                </div>
+                <div id="unblock-feed-container"></div>
+              </div>
+            </section>
+
+
+
+            <!-- ================= VIEW 12: SETTINGS & CLOUD CONNECTIVITY ================= -->
+            <section id="view-settings" class="view-section">
+              <!-- Cloud & Backend Connectivity Status Panel -->
+              <div class="glass-card settings-section-card">
+                <div class="glass-card-header">
+                  <h3>Backend & Cloud Connectivity</h3>
+                  <span id="settings-conn-badge" class="connectivity-badge connecting">
+                    <span class="dot"></span>
+                    <span id="settings-conn-text">Checking…</span>
+                  </span>
+                </div>
+                
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Operational Mode</h4>
+                    <p id="settings-mode-desc">The application operates independently as a local Windows productivity workspace, synchronizing with the cloud when connected.</p>
+                  </div>
+                  <span id="settings-mode-pill" class="badge-pill">Standalone Local Mode</span>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Connected Endpoint</h4>
+                    <p id="settings-endpoint-desc">Backend API for Supabase PostgreSQL data, Gemini AI planner, and online collaboration.</p>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="settings-endpoint-display" style="font-family:var(--font-mono); font-size:12px; color:#9494a3;">Local Standalone (No remote backend required)</span>
+                    <button id="btn-test-backend" class="btn btn-secondary btn-sm">Check Connection</button>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>FocusFlow Website</h4>
+                    <p id="settings-website-desc">Public website for account management, the Chrome extension, and downloads. This is separate from the API endpoint above.</p>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="settings-website-display" style="font-family:var(--font-mono); font-size:12px; color:#9494a3;">Not configured</span>
+                    <button id="btn-open-website" class="btn btn-secondary btn-sm">Open Website</button>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Diagnostic Connection Status</h4>
+                    <p id="backend-status-message" style="font-size:12px; margin-top:4px; color:#9494a3;">Checking backend connectivity…</p>
+                  </div>
+                </div>
+
+                <!-- Collapsible Developer Override Section -->
+                <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border-subtle);">
+                  <details style="cursor:pointer;">
+                    <summary style="font-size:12px; color:#9494a3; font-weight:600; outline:none; user-select:none;">
+                      Advanced: Developer Endpoint Override (Optional)
+                    </summary>
+                    <div style="margin-top:10px; padding:10px; background:rgba(0,0,0,0.3); border-radius:8px;">
+                      <p style="font-size:11.5px; color:#646473; margin-bottom:8px;">
+                        For development or custom staging servers only. Leave blank for default packaging settings.
+                      </p>
+                      <div style="display:flex; gap:8px;">
+                        <input id="setting-backend-override-input" class="form-input" style="flex:1;" type="url" placeholder="https://api.yourdomain.com or http://localhost:5001">
+                        <button id="btn-save-override" class="btn btn-secondary btn-sm">Apply Override</button>
+                        <button id="btn-reset-override" class="btn btn-secondary btn-sm">Reset</button>
+                      </div>
+                    </div>
+                  </details>
+                </div>
+              </div>
+
+              <!-- Focus Engine Preferences -->
+              <div class="glass-card settings-section-card">
+                <div class="glass-card-header">
+                  <h3>Focus Engine Intervals</h3>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Default Focus Duration</h4>
+                    <p>Standard work interval duration when launching sessions.</p>
+                  </div>
+                  <select id="setting-work-duration" style="background:#13131c; color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:6px; padding:4px 10px; font-size:12px; outline:none;">
+                    <option value="15">15 minutes (Sprint)</option>
+                    <option value="25" selected>25 minutes (Pomodoro)</option>
+                    <option value="50">50 minutes (Deep Work)</option>
+                    <option value="90">90 minutes (Ultradian)</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Short Break Duration</h4>
+                    <p>Restorative break interval following a completed focus session.</p>
+                  </div>
+                  <select id="setting-short-break" style="background:#13131c; color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:6px; padding:4px 10px; font-size:12px; outline:none;">
+                    <option value="3">3 minutes</option>
+                    <option value="5" selected>5 minutes</option>
+                    <option value="10">10 minutes</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Windows Desktop Integration Settings -->
+              <div class="glass-card settings-section-card">
+                <div class="glass-card-header">
+                  <h3>Windows Desktop Experience</h3>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Always On Top</h4>
+                    <p>Keep the FocusFlow window visible above other running Windows applications.</p>
+                  </div>
+                  <label class="switch">
+                    <input id="setting-always-on-top" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Minimize to System Tray</h4>
+                    <p>Closing or minimizing the window keeps FocusFlow AI active in the Windows notification area.</p>
+                  </div>
+                  <label class="switch">
+                    <input id="setting-tray-minimize" type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Audio Alert Chimes</h4>
+                    <p>Play gentle acoustic chime upon focus session or break completion.</p>
+                  </div>
+                  <label class="switch">
+                    <input id="setting-sound-chimes" type="checkbox" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Launch at Windows Startup</h4>
+                    <p>Automatically launch FocusFlow AI companion when you sign in to Windows.</p>
+                  </div>
+                  <label class="switch">
+                    <input id="setting-auto-start" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Application Version</h4>
+                    <p>FocusFlow AI for Windows — Standalone Desktop Productivity Workspace</p>
+                  </div>
+                  <span id="settings-app-version-text" style="font-family:var(--font-mono); font-size:12px; color:#ff6422; font-weight:700;">v3.0.4 (x64)</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <!-- Mini-Widget Layout (active only when .mini-mode is on body) -->
+        <div class="mini-widget-container">
+          <div class="mini-header-row">
+            <span class="mini-brand-tag">FocusFlow AI</span>
+            <button id="btn-mini-close" class="mini-close-x-btn" title="Expand to Workspace">×</button>
+          </div>
+          <div id="mini-timer-digits" class="mini-timer-digits">25:00</div>
+          <div id="mini-task-title" class="mini-task-title">Deep Work Session</div>
+          <div class="mini-controls-row">
+            <button id="mini-play-pause-btn" class="btn btn-primary btn-sm">Start</button>
+            <button id="mini-finish-btn" class="btn btn-secondary btn-sm">Finish</button>
+            <button id="btn-expand-full" class="btn btn-secondary btn-sm" title="Expand to Full Workspace">Expand</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= COMMAND PALETTE MODAL (Ctrl+K) ================= -->
+    <div id="command-palette-backdrop" class="palette-backdrop" style="display:none;">
+      <div class="palette-modal">
+        <div class="palette-input-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="palette-search-input" type="text" placeholder="Type a command or jump to screen..." autocomplete="off">
+          <kbd>ESC</kbd>
+        </div>
+        <div id="palette-results-list" class="palette-results-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- On-Device Vision Runtime -->
+    <script src="vision/pico.js"></script>
+    <script src="vision/lploc.js"></script>
+    <script src="vision/attention-tracker.js"></script>
+    <!-- Application Script -->
+    <script src="desktop.js"></script>
+  </body>
+</html>

@@ -1,5 +1,18 @@
 const { pool } = require("../config/db");
 
+function safeParseJson(val) {
+  if (val === null || val === undefined) return null;
+  if (typeof val === "object") return val;
+  if (typeof val === "string") {
+    try {
+      return JSON.parse(val);
+    } catch (e) {
+      return val;
+    }
+  }
+  return val;
+}
+
 function mapUser(row) {
   if (!row) {
     return null;
@@ -38,6 +51,11 @@ function mapUser(row) {
     emailVerified:
       Boolean(row.email_verified),
 
+    onboardingCompleted:
+      Boolean(row.onboarding_completed),
+
+    onboardingAnswers: safeParseJson(row.onboarding_answers),
+
     createdAt: row.created_at
       ? new Date(row.created_at)
       : null,
@@ -61,8 +79,10 @@ function mapUser(row) {
           reset_otp = $8,
           reset_otp_expire = $9,
           last_login = $10,
-          email_verified = $11
-        WHERE id = $12
+          email_verified = $11,
+          onboarding_completed = $12,
+          onboarding_answers = $13
+        WHERE id = $14
         RETURNING *
         `,
         [
@@ -77,6 +97,12 @@ function mapUser(row) {
           this.resetOTPExpire,
           this.lastLogin,
           this.emailVerified,
+          this.onboardingCompleted,
+          this.onboardingAnswers
+            ? typeof this.onboardingAnswers === "string"
+              ? this.onboardingAnswers
+              : JSON.stringify(this.onboardingAnswers)
+            : null,
           this.id,
         ]
       );

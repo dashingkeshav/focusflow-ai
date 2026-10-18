@@ -26,6 +26,8 @@ dist/
 build/
 **/dist/
 **/build/
+release/
+desktop/production-config.json
 
 # OS files
 .DS_Store
@@ -45,3 +47,9 @@ venv/
 # Local databases
 *.sqlite
 *.sqlite3
+
+# Binaries and installers
+*.exe
+
+# Temp tool artifacts
+.freebuff/

@@ -1,320 +1,292 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import {
+  Activity,
+  Award,
+  BarChart3,
+  BrainCircuit,
+  Check,
+  AppWindow,
+  EyeOff,
+  FolderGit2,
+  Goal,
+  HelpCircle,
+  Lightbulb,
+  Radio,
+  ShieldCheck,
+  Timer,
+  Users,
+  Zap,
+} from "lucide-react";
+import Badge from "@/components/ui/Badge";
+import MagneticButton from "@/components/ui/MagneticButton";
+import Reveal from "@/components/ui/Reveal";
+
+export const metadata: Metadata = {
+  title: "Features — FocusFlow AI",
+  description:
+    "Explore FocusFlow AI's multimodal planner, real browser focus monitoring, objective tracking, analytics, and telemetry isolation.",
+};
+
+const FEATURES = [
+  {
+    title: "Multimodal AI Planner",
+    description:
+      "Voice your intent, type constraints, or upload syllabus documents. The unified composer synthesizes milestones and realistic daily blocks powered by Google Gemini 2.5.",
+    icon: BrainCircuit,
+    href: "/dashboard/planner",
+    link: "Open AI Planner",
+  },
+  {
+    title: "Smart Focus Sessions",
+    description:
+      "Immersive full-screen focus timers with custom durations, Pomodoro rhythms, ambient audio, and strict distraction policies tied directly to your tasks.",
+    icon: Timer,
+    href: "/dashboard/sessions",
+    link: "View focus sessions",
+  },
+  {
+    title: "Authentic Telemetry Monitoring",
+    description:
+      "Real-time focus scores derived from measured tab switches, active window focus shifts, and idle intervals during work sprints. No synthetic numbers.",
+    icon: Activity,
+    href: "/dashboard/sessions",
+    link: "Live score telemetry",
+  },
+  {
+    title: "Objectives & Linked Backlog",
+    description:
+      "Connect long-term milestones to immediate tasks. Completing tasks automatically updates progress gauges and unblocks dependent milestones.",
+    icon: Goal,
+    href: "/dashboard/goals",
+    link: "Organize objectives",
+  },
+  {
+    title: "Behavioral Analytics & Trends",
+    description:
+      "Inspect daily focus velocity, tab switch patterns, and peak cognitive performance windows with 7-day history in Free and all-time trends in Pro.",
+    icon: BarChart3,
+    href: "/dashboard/analytics",
+    link: "Explore analytics",
+  },
+  {
+    title: "Evidence-Based AI Insights",
+    description:
+      "Structured analysis following Observation → Evidence → Impact → Recommendation. Strictly derived from your verified PostgreSQL activity log.",
+    icon: Lightbulb,
+    href: "/dashboard/insights",
+    link: "Inspect AI insights",
+  },
+  {
+    title: "Verified Milestones & Badges",
+    description:
+      "Celebrate hard-earned focus streaks and task milestones with restrained, physical unlock cards backed strictly by real database queries.",
+    icon: Award,
+    href: "/dashboard/goals?view=achievements",
+    link: "View achievements",
+  },
+  {
+    title: "Chrome Extension Protection",
+    description:
+      "Enforces site rules, detects off-task tab switching, and logs incident timestamps directly to your personal PostgreSQL log.",
+    icon: AppWindow,
+    href: "/download",
+    link: "Get Chrome extension",
+  },
+  {
+    title: "Privacy by Design",
+    description:
+      "Only interaction counts and domain classifications are analyzed locally. No webpage text, search queries, or camera recordings are ever collected.",
+    icon: ShieldCheck,
+    href: "/privacy",
+    link: "Read privacy architecture",
+  },
+  {
+    title: "Focus Rooms (Real-Time Coworking)",
+    description:
+      "Live coworking spaces with synchronized timers (host up to 4 in Free, 12 in Pro). Keep personal tasks confidential while focusing alongside motivated peers.",
+    icon: Radio,
+    href: "/focus-rooms",
+    link: "Explore Focus Rooms",
+  },
+  {
+    title: "Focus Circles (Habit Accountability)",
+    description:
+      "Private weekly accountability groups (own 1 in Free, up to 10 in Pro). Track target commitments, transparent check-ins, and shared focus streaks.",
+    icon: Users,
+    href: "/dashboard/focus-circles",
+    link: "View Focus Circles",
+  },
+  {
+    title: "Project Pods (Shared Workspaces)",
+    description:
+      "Lightweight project spaces for client work, apps, or content (own 1 in Free, up to 10 in Pro). Coordinate milestones, assign tasks, and trigger focus sprints.",
+    icon: FolderGit2,
+    href: "/dashboard/project-pods",
+    link: "Open Project Pods",
+  },
+  {
+    title: "Unblock Exchange (Peer Problem Solving)",
+    description:
+      "Structured assistance requests (3/7d in Free, 20/7d in Pro). Tap trusted circles and pods for help, spin up pair focus rooms, and log outcome notes.",
+    icon: HelpCircle,
+    href: "/dashboard/unblock-exchange",
+    link: "Launch Unblock Exchange",
+  },
+];
+
+const SIGNALS = [
+  "Verified tab and active window focus shifts",
+  "Idle detection with configurable inactivity thresholds",
+  "Session elapsed duration and dynamic focus score algorithm",
+  "PostgreSQL-linked goal and task completions",
+];
 
 export default function FeaturesPage() {
   return (
-    <div className="public-page">
+    <div className="relative min-h-screen bg-transparent text-white selection:bg-[#FF4500] selection:text-white">
+      {/* Background Dot Matrix Pattern */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-15"
+        style={{
+          backgroundImage: "radial-gradient(circle, #444 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
 
-      {/* =====================
-          HERO
-      ====================== */}
-      <section className="page-hero">
-        <div className="page-hero-badge">
-          ✦ Distraction Intelligence Platform
-        </div>
+      <section className="relative z-10 pt-36 pb-20">
+        <Reveal>
+          <div className="flex flex-col items-center text-center max-w-4xl mx-auto px-6">
+            <Badge accent>Complete Intelligence Suite</Badge>
+            <h1 className="mt-6 font-serif text-4xl sm:text-6xl font-bold tracking-tight text-white leading-[1.1]">
+              Focus deeper with{" "}
+              <span className="serif-italic text-gradient-teal">complete clarity.</span>
+            </h1>
+            <p className="mt-5 max-w-2xl text-base text-gray-400 sm:text-lg font-light leading-relaxed">
+              Explore every capability implemented in FocusFlow AI: multimodal planning, task backlogs, protected focus sessions, real browser telemetry, and honest analytics.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <MagneticButton href="/register" ariaLabel="Create free account">
+                Start for Free
+              </MagneticButton>
+              <MagneticButton href="/how-it-works" variant="ghost" ariaLabel="See how it works">
+                See How It Works
+              </MagneticButton>
+            </div>
+          </div>
+        </Reveal>
+      </section>
 
-        <h1 className="page-hero-title">
-          Powerful Features for{" "}
-          <span className="gradient-text">Better Focus</span>
-        </h1>
+      <section className="relative z-10 py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <Reveal>
+            <div className="mb-16 text-center">
+              <span className="section-label">Unified Architecture</span>
+              <h2 className="section-title mt-3">
+                Every tool crafted to protect your concentration.
+              </h2>
+              <p className="section-description mt-3 mx-auto">
+                Every module feeds directly into your personal workspace, turning scattered intentions into measurable accomplishments.
+              </p>
+            </div>
+          </Reveal>
 
-        <p className="page-hero-subtitle">
-          FocusFlow AI combines real-time browser activity monitoring,
-          behavioral analytics, and AI-powered insights to help you
-          understand and improve how you work and study.
-        </p>
-
-        <div className="page-hero-actions">
-          <Link href="/login" className="hero-primary">
-            ▦ Start Your Focus Journey →
-          </Link>
-          <Link href="/how-it-works" className="hero-secondary">
-            See How It Works
-          </Link>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <Reveal key={feature.title} delay={(index % 3) * 0.08} className="h-full">
+                  <article className="glass-card flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-card p-8 shadow-2xl transition-all duration-300 hover:border-[#FF4500]/50 hover:-translate-y-1">
+                    <div>
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-[#FF4500] mb-5">
+                        <Icon className="h-6 w-6" aria-hidden />
+                      </div>
+                      <h3 className="text-xl font-bold font-serif text-white">{feature.title}</h3>
+                      <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">{feature.description}</p>
+                    </div>
+                    <Link
+                      href={feature.href}
+                      className="mt-6 inline-flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider uppercase text-[#FF4500] transition-colors hover:text-tide-400"
+                    >
+                      {feature.link}
+                      <span aria-hidden>→</span>
+                    </Link>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-
-      {/* =====================
-          FEATURE OVERVIEW CARDS
-      ====================== */}
-      <section className="page-section">
-        <div className="page-section-center" style={{ marginBottom: "48px" }}>
-          <div className="section-label">Core Capabilities</div>
-          <h2 className="section-title">Everything You Need to Stay Focused</h2>
-          <p className="section-description" style={{ margin: "0 auto" }}>
-            Eight purpose-built features that work together to give you a
-            complete picture of your focus patterns.
-          </p>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "20px",
-          }}
-        >
-
-          {/* Card 1 */}
-          <div className="pub-card">
-            <div className="pub-card-icon">◉</div>
-            <h3>Real-Time Focus Detection</h3>
-            <p>
-              Continuously monitors your digital activity to generate a dynamic
-              Focus Score while you work — updated in real time so you always
-              know where your attention stands.
-            </p>
-          </div>
-
-          {/* Card 2 */}
-          <div className="pub-card">
-            <div className="pub-card-icon pub-card-icon-cyan">⚡</div>
-            <h3>Distraction Intelligence</h3>
-            <p>
-              Detects tab switches, window defocus events, and idle periods.
-              Identifies patterns before they compound into lost productivity
-              sessions.
-            </p>
-          </div>
-
-          {/* Card 3 */}
-          <div className="pub-card">
-            <div className="pub-card-icon pub-card-icon-indigo">◈</div>
-            <h3>Focus Score Engine</h3>
-            <p>
-              A weighted scoring system that balances keyboard activity, mouse
-              interaction, tab switching frequency, and idle time into a single
-              0–100 score.
-            </p>
-          </div>
-
-          {/* Card 4 */}
-          <div className="pub-card">
-            <div className="pub-card-icon">⇄</div>
-            <h3>Tab Switch Detection</h3>
-            <p>
-              Logs every tab activation event with a timestamp using the Chrome
-              Extension API. Frequent switches trigger real-time distraction
-              alerts so you can refocus immediately.
-            </p>
-          </div>
-
-          {/* Card 5 */}
-          <div className="pub-card">
-            <div className="pub-card-icon pub-card-icon-cyan">⏱</div>
-            <h3>Idle Time Analysis</h3>
-            <p>
-              Tracks idle periods using configurable thresholds (15 s – 120 s).
-              Distinguishes intentional breaks from unplanned drift so your
-              score reflects actual work habits.
-            </p>
-          </div>
-
-          {/* Card 6 */}
-          <div className="pub-card">
-            <div className="pub-card-icon pub-card-icon-indigo">✦</div>
-            <h3>AI-Powered Insights</h3>
-            <p>
-              Converts raw activity data into actionable recommendations.
-              Identifies your peak focus windows and suggests changes to your
-              study environment and schedule.
-            </p>
-          </div>
-
-          {/* Card 7 */}
-          <div className="pub-card">
-            <div className="pub-card-icon pub-card-icon-green">▣</div>
-            <h3>Study Session Tracking</h3>
-            <p>
-              Records every session from start to finish — duration, average
-              Focus Score, distraction count, and productivity rating — stored
-              securely for historical review.
-            </p>
-          </div>
-
-          {/* Card 8 */}
-          <div className="pub-card">
-            <div className="pub-card-icon">◎</div>
-            <h3>Behavioral Analytics</h3>
-            <p>
-              Visual charts and heatmaps reveal your weekly rhythm, peak hours,
-              and long-term focus trends. Export as PDF or CSV for personal
-              review.
-            </p>
-          </div>
-
-        </div>
-      </section>
-
-
-      {/* =====================
-          HOW FEATURES WORK
-      ====================== */}
-      <section
-        className="page-section"
-        style={{ background: "white", maxWidth: "100%", padding: "70px 0" }}
-      >
-        <div style={{ maxWidth: "1200px", margin: "auto", padding: "0 28px" }}>
-
-          <div className="page-section-center" style={{ marginBottom: "48px" }}>
-            <div className="section-label">Under the Hood</div>
-            <h2 className="section-title">How the Features Work Together</h2>
-            <p className="section-description" style={{ margin: "0 auto" }}>
-              Four stages take raw browser signals and turn them into
-              meaningful focus intelligence.
-            </p>
-          </div>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "20px",
-            }}
-          >
-            <div className="step-card">
-              <div className="step-number">1</div>
-              <h3 style={{ margin: "0 0 8px", color: "#172033", fontSize: "16px", fontWeight: 800 }}>
-                Signal Collection
-              </h3>
-              <p style={{ margin: 0, color: "#64748b", fontSize: "14px", lineHeight: 1.7 }}>
-                The Chrome Extension captures tab events, window focus changes,
-                and idle signals using Manifest V3 APIs — without reading page
-                content or recording video.
-              </p>
-            </div>
-
-            <div className="step-card">
-              <div className="step-number">2</div>
-              <h3 style={{ margin: "0 0 8px", color: "#172033", fontSize: "16px", fontWeight: 800 }}>
-                Score Calculation
-              </h3>
-              <p style={{ margin: 0, color: "#64748b", fontSize: "14px", lineHeight: 1.7 }}>
-                The backend processes incoming events, applies the weighted
-                Focus Score formula, and pushes the updated score to the
-                frontend via Socket.io in real time.
-              </p>
-            </div>
-
-            <div className="step-card">
-              <div className="step-number">3</div>
-              <h3 style={{ margin: "0 0 8px", color: "#172033", fontSize: "16px", fontWeight: 800 }}>
-                Live Alerts
-              </h3>
-              <p style={{ margin: 0, color: "#64748b", fontSize: "14px", lineHeight: 1.7 }}>
-                When your score drops below the threshold, a toast notification
-                appears prompting you to refocus — turning passive monitoring
-                into active coaching.
-              </p>
-            </div>
-
-            <div className="step-card">
-              <div className="step-number">4</div>
-              <h3 style={{ margin: "0 0 8px", color: "#172033", fontSize: "16px", fontWeight: 800 }}>
-                Session Analytics
-              </h3>
-              <p style={{ margin: 0, color: "#64748b", fontSize: "14px", lineHeight: 1.7 }}>
-                After each session, results are stored in MongoDB. The dashboard
-                surfaces charts, trends, and export options so you can review
-                your progress over time.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-
-      {/* =====================
-          PRIVACY
-      ====================== */}
-      <section className="page-section">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "40px",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <div className="section-label">Privacy First</div>
-            <h2 className="section-title" style={{ fontSize: "clamp(28px, 4vw, 42px)" }}>
-              Built With Your
-              <br />Privacy in Mind
+      <section className="relative z-10 py-20 px-6 border-t border-white/5">
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 max-w-7xl mx-auto">
+          <Reveal>
+            <span className="section-label">Verifiable Telemetry</span>
+            <h2 className="section-title mt-3">
+              Feedback built on{" "}
+              <span className="serif-italic text-gradient-teal">authentic signals.</span>
             </h2>
-            <p style={{ color: "#64748b", lineHeight: 1.8, marginBottom: "24px" }}>
-              FocusFlow AI collects only the behavioral signals required to
-              calculate your Focus Score — tab events, idle state, and
-              interaction rates. It does not capture URLs, page content,
-              screenshots, or audio.
+            <p className="section-description mt-3">
+              FocusFlow computes session metrics from genuine activity recorded during your work intervals. When no sessions exist, honest empty states are presented instead of synthetic filler data.
             </p>
-            <ul className="check-list">
-              {[
-                "No page content or URL recording",
-                "No screenshots or screen recording",
-                "No audio or video capture",
-                "Activity data scoped to your account only",
-                "Session data stored securely in MongoDB Atlas",
-                "You can delete your data at any time",
-              ].map((item) => (
-                <li key={item}>
-                  <svg className="check-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                  </svg>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
+            <Link
+              href="/how-it-works"
+              className="mt-6 inline-flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-[#FF4500] transition-colors hover:text-tide-400"
+            >
+              Understand how signals are measured
+              <span aria-hidden>→</span>
+            </Link>
+          </Reveal>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {[
-              {
-                icon: "🔒",
-                title: "Minimal Data Collection",
-                desc: "Only behavioural signals needed for focus scoring are captured.",
-              },
-              {
-                icon: "🖥",
-                title: "Local-First Processing",
-                desc: "The Chrome Extension processes events client-side before sending lightweight summaries.",
-              },
-              {
-                icon: "🛡",
-                title: "Secure Storage",
-                desc: "All session data is encrypted in transit and stored in MongoDB Atlas with JWT-protected access.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="pub-card" style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
-                <div style={{ fontSize: "24px", lineHeight: 1, flexShrink: 0 }}>{item.icon}</div>
-                <div>
-                  <h3 style={{ margin: "0 0 4px" }}>{item.title}</h3>
-                  <p style={{ margin: 0 }}>{item.desc}</p>
+          <div className="space-y-3.5">
+            {SIGNALS.map((signal, index) => (
+              <Reveal key={signal} delay={index * 0.07}>
+                <div className="glass-card flex items-center gap-4 rounded-2xl border border-white/10 bg-card px-6 py-4 shadow-xl">
+                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                    {index === 0 ? (
+                      <EyeOff className="h-4 w-4 text-[#FF4500]" aria-hidden />
+                    ) : (
+                      <Check className="h-4 w-4 text-[#FF4500]" aria-hidden />
+                    )}
+                  </div>
+                  <p className="text-sm font-medium text-gray-200">{signal}</p>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-
-      {/* =====================
-          CTA
-      ====================== */}
-      <div className="cta-banner">
-        <div className="cta-banner-inner">
-          <h2>Start Your Focus Journey</h2>
-          <p>
-            Create a free account and see your Focus Score in your first
-            session. No credit card required.
-          </p>
-          <Link href="/login" className="cta-banner-btn">
-            ▦ Launch FocusFlow AI →
-          </Link>
-        </div>
-      </div>
-
+      <section className="relative z-10 py-24 px-6">
+        <Reveal>
+          <div className="glass-card relative overflow-hidden rounded-3xl border border-white/10 bg-card px-8 py-16 text-center shadow-2xl max-w-4xl mx-auto">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-24 left-1/2 h-56 w-96 -translate-x-1/2 rounded-full bg-[#FF4500]/15 blur-3xl"
+            />
+            <div className="relative mx-auto flex max-w-xl flex-col items-center">
+              <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
+                <Zap className="h-6 w-6" aria-hidden />
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-serif">
+                A calmer, focused workday begins with one choice.
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-gray-400 font-light">
+                Unite your goals, plans, and protected focus sessions under one intelligent roof.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <MagneticButton href="/download" variant="ghost" ariaLabel="Get the Chrome extension">
+                  Get Chrome Extension
+                </MagneticButton>
+                <MagneticButton href="/register" ariaLabel="Start free today">
+                  Start Free Today
+                </MagneticButton>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+      </section>
     </div>
   );
 }

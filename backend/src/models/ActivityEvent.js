@@ -24,6 +24,13 @@ function mapActivityEvent(row) {
         ? null
         : Number(row.warning_number),
 
+    classification: row.classification || null,
+    actionTaken: row.action_taken || null,
+    reason: row.reason || null,
+    fromDomain: row.from_domain || null,
+    confidence: row.confidence == null ? null : Number(row.confidence),
+    recoveryDurationSeconds: row.recovery_duration_seconds == null ? null : Number(row.recovery_duration_seconds),
+
     timestamp: row.timestamp
       ? new Date(row.timestamp)
       : null,
@@ -56,9 +63,7 @@ async function create(data = {}) {
     throw new Error(
       "ActivityEvent eventType is required."
     );
-  }
-
-  const result = await pool.query(
+  }    const result = await pool.query(
     `
     INSERT INTO activity_events (
       user_id,
@@ -67,10 +72,16 @@ async function create(data = {}) {
       details,
       domain,
       warning_number,
+      classification,
+      action_taken,
+      reason,
+      from_domain,
+      confidence,
+      recovery_duration_seconds,
       timestamp
     )
     VALUES (
-      $1, $2, $3, $4, $5, $6, $7
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
     )
     RETURNING *
     `,
@@ -81,6 +92,12 @@ async function create(data = {}) {
       data.details || null,
       data.domain || null,
       data.warningNumber ?? null,
+      data.classification || null,
+      data.actionTaken || null,
+      data.reason || null,
+      data.fromDomain || null,
+      data.confidence ?? null,
+      data.recoveryDurationSeconds ?? null,
       data.timestamp || new Date(),
     ]
   );

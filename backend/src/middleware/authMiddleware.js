@@ -1,9 +1,8 @@
 const jwt = require("jsonwebtoken");
 
+const { getValidatedJwtSecret } = require("../utils/jwtSecurity");
+const JWT_SECRET = getValidatedJwtSecret();
 
-const JWT_SECRET =
-  process.env.JWT_SECRET ||
-  "change_this_secret_in_environment";
 
 
 function authMiddleware(

@@ -1,0 +1,8 @@
+{
+  "appUrl": "https://focusflow-ai-livid.vercel.app",
+  "backendUrl": "https://focusflow-ai-api.onrender.com",
+  "mode": "cloud",
+  "configured": true,
+  "builtAt": "2026-10-18T11:52:19.438Z",
+  "version": "3.0.4"
+}
