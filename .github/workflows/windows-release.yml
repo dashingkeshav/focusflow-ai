@@ -46,6 +46,19 @@ jobs:
       - name: Validate release artifacts
         shell: pwsh
         run: |
+          # Validate desktop configuration
+          $configPath = "desktop\desktop-config.json"
+          if (-not (Test-Path $configPath)) {
+            throw "desktop-config.json is missing from packaged repository."
+          }
+          $config = Get-Content $configPath | ConvertFrom-Json
+          if (-not $config.configured -or $config.mode -ne "cloud") {
+            throw "Desktop configuration is not configured for cloud release mode."
+          }
+          if (-not $config.backendUrl -or -not $config.backendUrl.StartsWith("https://") -or $config.backendUrl.Contains("localhost") -or $config.backendUrl.Contains("127.0.0.1")) {
+            throw "Production release installer must contain a valid, public HTTPS backend URL. Found: $($config.backendUrl)"
+          }
+
           $installerPath = "release\FocusFlow-Setup.exe"
           $installer = Get-Item $installerPath
           if ($installer.Length -le 65536) {

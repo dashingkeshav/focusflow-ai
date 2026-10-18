@@ -133,11 +133,6 @@
             <div>
               <p class="nav-group-title">Hardware & Workspace</p>
               <ul class="nav-list">
-                <li class="nav-item" data-view="camera" id="nav-camera">
-                  <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                  <span>Camera Attention AI</span>
-                  <span class="nav-badge">AI</span>
-                </li>
                 <li class="nav-item" data-view="settings" id="nav-settings">
                   <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
                   <span>Settings & Cloud</span>
@@ -477,76 +472,147 @@
             </section>
 
             <!-- ================= VIEW 5: DEDICATED FOCUS MODE ================= -->
+            <!-- ================= VIEW 5: DEDICATED FOCUS MODE WITH INTEGRATED CAMERA ATTENTION AI ================= -->
             <section id="view-focus" class="view-section">
               <div class="focus-workspace-container">
-                <!-- Session Context Banner -->
-                <div class="focus-task-selector-wrapper">
-                  <span class="focus-task-label">CURRENT OBJECTIVE</span>
-                  <div class="focus-task-input-row">
-                    <input id="focus-task-input" class="focus-task-input" type="text" placeholder="What are you focusing on?" value="Deep Work Session">
-                    <select id="focus-task-dropdown" class="focus-task-dropdown" title="Link to existing task">
-                      <option value="">Link to Task...</option>
-                    </select>
+                <div class="focus-grid-layout">
+                  <!-- Left Column: Primary Focus Timer & Controls -->
+                  <div class="focus-timer-column">
+                    <!-- Session Context Banner -->
+                    <div class="focus-task-selector-wrapper">
+                      <span class="focus-task-label">CURRENT OBJECTIVE</span>
+                      <div class="focus-task-input-row">
+                        <input id="focus-task-input" class="focus-task-input" type="text" placeholder="What are you focusing on?" value="Deep Work Session">
+                        <select id="focus-task-dropdown" class="focus-task-dropdown" title="Link to existing task">
+                          <option value="">Link to Task...</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Circular Drift-Resistant Timer Display -->
+                    <div class="timer-circle-wrapper">
+                      <svg class="timer-svg" viewBox="0 0 300 300">
+                        <defs>
+                          <linearGradient id="orange-glow-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#ff7538"/>
+                            <stop offset="100%" stop-color="#ff4500"/>
+                          </linearGradient>
+                        </defs>
+                        <circle class="timer-bg-track" cx="150" cy="150" r="135"/>
+                        <circle id="timer-circle-progress" class="timer-progress-ring" cx="150" cy="150" r="135" stroke-dasharray="848.23" stroke-dashoffset="0"/>
+                      </svg>
+                      <div class="timer-center-content">
+                        <span id="timer-status-badge" class="timer-status-badge">READY</span>
+                        <span id="timer-digits" class="timer-time-display">25:00</span>
+                        <span id="timer-sub-info" class="timer-sub-info">25 min interval</span>
+                      </div>
+                    </div>
+
+                    <!-- Primary Controls -->
+                    <div class="timer-controls-row">
+                      <button id="btn-timer-reset" class="btn btn-secondary btn-icon" title="Reset Session">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/></svg>
+                      </button>
+                      <button id="btn-timer-play-pause" class="btn-timer-primary" title="Start or Pause Focus Session">
+                        <svg id="timer-play-pause-icon" width="24" height="24" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+                      </button>
+                      <button id="btn-timer-finish" class="btn btn-secondary btn-icon" title="Complete Session & Save History">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                      </button>
+                    </div>
+
+                    <!-- Interval Mode Selector -->
+                    <div class="focus-modes-bar">
+                      <button class="focus-mode-chip active" data-interval="25">25m Work</button>
+                      <button class="focus-mode-chip" data-interval="50">50m Flow</button>
+                      <button class="focus-mode-chip" data-interval="90">90m Ultra</button>
+                      <button class="focus-mode-chip break-chip" data-interval="5" data-break="short">5m Break</button>
+                      <button class="focus-mode-chip break-chip" data-interval="15" data-break="long">15m Break</button>
+                    </div>
+
+                    <!-- Ambient Soundscape Selector -->
+                    <div class="timer-options-bar">
+                      <span style="font-size:12px; color:#9494a3; font-weight:600;">Soundscape:</span>
+                      <select id="ambient-sound-select" style="background:#13131c; color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:6px; padding:4px 10px; font-size:12px; outline:none;">
+                        <option value="mute">Mute (Silent)</option>
+                        <option value="rain">Gentle Rain (Audio Synthesizer)</option>
+                        <option value="binaural">40Hz Gamma Focus (Binaural)</option>
+                        <option value="whitenoise">Pure White Noise</option>
+                      </select>
+                    </div>
+
+                    <!-- Session Telemetry Counter & Protection Status -->
+                    <div id="session-telemetry-badge" class="session-telemetry-badge">
+                      <span id="session-protection-status">Local Focus Mode Active</span>
+                      <span class="telemetry-sep">•</span>
+                      <span id="session-tab-switches-text">0 tab interruptions</span>
+                    </div>
                   </div>
-                </div>
 
-                <!-- Circular Drift-Resistant Timer Display -->
-                <div class="timer-circle-wrapper">
-                  <svg class="timer-svg" viewBox="0 0 300 300">
-                    <defs>
-                      <linearGradient id="orange-glow-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#ff7538"/>
-                        <stop offset="100%" stop-color="#ff4500"/>
-                      </linearGradient>
-                    </defs>
-                    <circle class="timer-bg-track" cx="150" cy="150" r="135"/>
-                    <circle id="timer-circle-progress" class="timer-progress-ring" cx="150" cy="150" r="135" stroke-dasharray="848.23" stroke-dashoffset="0"/>
-                  </svg>
-                  <div class="timer-center-content">
-                    <span id="timer-status-badge" class="timer-status-badge">READY</span>
-                    <span id="timer-digits" class="timer-time-display">25:00</span>
-                    <span id="timer-sub-info" class="timer-sub-info">25 min interval</span>
+                  <!-- Right Column: Camera Attention AI Monitor (Integrated beside Timer) -->
+                  <div class="focus-camera-column glass-card">
+                    <div class="glass-card-header" style="margin-bottom:10px;">
+                      <div style="display:flex; align-items:center; gap:8px;">
+                        <h3 style="font-size:13.5px; margin:0;">Camera Attention AI</h3>
+                        <span class="nav-badge" style="font-size:10px; padding:2px 6px;">100% ON-DEVICE</span>
+                      </div>
+                      <span id="camera-status-pill" class="attention-status-pill off">CAMERA OFF</span>
+                    </div>
+
+                    <div class="camera-feed-box">
+                      <video id="camera-video-elem" autoplay playsinline muted></video>
+                      <canvas id="camera-overlay-canvas"></canvas>
+                      <div id="camera-offline-placeholder" class="camera-placeholder">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        <p id="camera-placeholder-title" style="font-size:12px; font-weight:700; margin-top:6px;">Camera monitoring is offline</p>
+                        <p id="camera-placeholder-desc" style="font-size:11px; color:#9494a3; margin-top:2px;">Click below to launch genuine on-device face & gaze tracking during your sprint.</p>
+                      </div>
+                    </div>
+
+                    <div style="margin-top:12px;">
+                      <button id="btn-toggle-camera" class="btn btn-primary btn-sm" style="width:100%;">
+                        Start Camera Monitor
+                      </button>
+                    </div>
+
+                    <!-- Real Model Detection Telemetry Meters -->
+                    <div class="camera-telemetry-panel" style="margin-top:12px;">
+                      <div class="telemetry-meter-row">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11.5px; color:#9494a3;">Attention Status</span>
+                          <span id="camera-metric-state" style="font-size:11.5px; font-weight:700; color:#9494a3;">Offline</span>
+                        </div>
+                      </div>
+                      <div class="telemetry-meter-row">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11.5px; color:#9494a3;">Face & Gaze Alignment</span>
+                          <span id="camera-metric-position" style="font-size:11.5px; font-weight:700; color:#9494a3;">—</span>
+                        </div>
+                        <div class="telemetry-meter-bar">
+                          <div id="telemetry-gaze-bar" class="telemetry-meter-fill" style="width:0%;"></div>
+                        </div>
+                      </div>
+                      <div class="telemetry-meter-row">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11.5px; color:#9494a3;">Session Attentive Ratio</span>
+                          <span id="camera-metric-ratio" style="font-size:11.5px; font-weight:700; color:#ff6422;">—</span>
+                        </div>
+                        <div class="telemetry-meter-bar">
+                          <div id="telemetry-attentive-bar" class="telemetry-meter-fill" style="width:0%;"></div>
+                        </div>
+                      </div>
+                      <div class="telemetry-meter-row" style="margin-bottom:0;">
+                        <div class="telemetry-meter-header">
+                          <span style="font-size:11px; color:#646473;">Detection Rate</span>
+                          <span id="camera-metric-fps" style="font-size:11px; color:#646473; font-family:var(--font-mono);">0 FPS</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style="margin-top:10px; padding:8px 10px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.18); border-radius:6px; font-size:10.5px; color:#10b981; line-height:1.4;">
+                      🔒 <strong>100% On-Device Privacy:</strong> Video frames are analyzed locally in Windows memory. No camera imagery is ever uploaded or recorded.
+                    </div>
                   </div>
-                </div>
-
-                <!-- Primary Controls -->
-                <div class="timer-controls-row">
-                  <button id="btn-timer-reset" class="btn btn-secondary btn-icon" title="Reset Session">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v6h6"/><path d="M21 12A9 9 0 0 0 6 5.3L3 8"/><path d="M21 22v-6h-6"/><path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"/></svg>
-                  </button>
-                  <button id="btn-timer-play-pause" class="btn-timer-primary" title="Start or Pause Focus Session">
-                    <svg id="timer-play-pause-icon" width="24" height="24" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
-                  </button>
-                  <button id="btn-timer-finish" class="btn btn-secondary btn-icon" title="Complete Session & Save History">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  </button>
-                </div>
-
-                <!-- Interval Mode Selector -->
-                <div class="focus-modes-bar">
-                  <button class="focus-mode-chip active" data-interval="25">25m Work</button>
-                  <button class="focus-mode-chip" data-interval="50">50m Flow</button>
-                  <button class="focus-mode-chip" data-interval="90">90m Ultra</button>
-                  <button class="focus-mode-chip break-chip" data-interval="5" data-break="short">5m Break</button>
-                  <button class="focus-mode-chip break-chip" data-interval="15" data-break="long">15m Break</button>
-                </div>
-
-                <!-- Ambient Soundscape Selector -->
-                <div class="timer-options-bar">
-                  <span style="font-size:12px; color:#9494a3; font-weight:600;">Soundscape:</span>
-                  <select id="ambient-sound-select" style="background:#13131c; color:#fff; border:1px solid rgba(255,255,255,0.12); border-radius:6px; padding:4px 10px; font-size:12px; outline:none;">
-                    <option value="mute">Mute (Silent)</option>
-                    <option value="rain">Gentle Rain (Audio Synthesizer)</option>
-                    <option value="binaural">40Hz Gamma Focus (Binaural)</option>
-                    <option value="whitenoise">Pure White Noise</option>
-                  </select>
-                </div>
-
-                <!-- Session Telemetry Counter -->
-                <div id="session-telemetry-badge" class="session-telemetry-badge">
-                  <span>Distraction Shield Active</span>
-                  <span class="telemetry-sep">•</span>
-                  <span id="session-tab-switches-text">0 tab interruptions</span>
                 </div>
               </div>
             </section>
@@ -736,58 +802,7 @@
               </div>
             </section>
 
-            <!-- ================= VIEW 11: CAMERA ATTENTION AI ================= -->
-            <section id="view-camera" class="view-section">
-              <div class="camera-privacy-banner">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span><strong>100% On-Device Privacy:</strong> Video frames are analyzed locally in Windows memory via hardware canvas. No camera images or video streams are ever uploaded, transmitted, or recorded.</span>
-              </div>
 
-              <div class="camera-grid">
-                <div class="glass-card" style="padding:18px;">
-                  <div class="glass-card-header" style="margin-bottom:12px;">
-                    <h3>Webcam Attention Tracker</h3>
-                    <span id="camera-status-pill" class="attention-status-pill off">CAMERA OFF</span>
-                  </div>
-                  <div class="camera-feed-box">
-                    <video id="camera-video-elem" autoplay playsinline muted></video>
-                    <canvas id="camera-overlay-canvas"></canvas>
-                    <div id="camera-offline-placeholder" class="camera-placeholder">
-                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                      <p style="font-size:12.5px;">Camera tracker is currently disabled.<br>Click below to launch real-time posture & gaze monitoring.</p>
-                    </div>
-                  </div>
-                  <button id="btn-toggle-camera" class="btn btn-primary" style="width:100%; margin-top:14px;">
-                    Start Camera Attention AI
-                  </button>
-                </div>
-
-                <div class="glass-card">
-                  <div class="glass-card-header">
-                    <h3>Biometric Telemetry Meters</h3>
-                    <span style="font-size:11px; color:#ff6422; font-weight:700;">REAL-TIME AI</span>
-                  </div>
-                  <div class="telemetry-meter-row">
-                    <div class="telemetry-meter-header">
-                      <span>Screen Gaze Alignment</span>
-                      <span id="meter-gaze-val">98%</span>
-                    </div>
-                    <div class="telemetry-meter-bar">
-                      <div id="meter-gaze-fill" class="telemetry-meter-fill" style="width:98%;"></div>
-                    </div>
-                  </div>
-                  <div class="telemetry-meter-row">
-                    <div class="telemetry-meter-header">
-                      <span>Spinal & Ergonomic Posture</span>
-                      <span id="meter-posture-val">Optimal (94%)</span>
-                    </div>
-                    <div class="telemetry-meter-bar">
-                      <div id="meter-posture-fill" class="telemetry-meter-fill" style="width:94%;"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
 
             <!-- ================= VIEW 12: SETTINGS & CLOUD CONNECTIVITY ================= -->
             <section id="view-settings" class="view-section">
@@ -817,6 +832,13 @@
                   <div style="display:flex; align-items:center; gap:8px;">
                     <span id="settings-endpoint-display" style="font-family:var(--font-mono); font-size:12px; color:#9494a3;">Local Standalone (No remote backend required)</span>
                     <button id="btn-test-backend" class="btn btn-secondary btn-sm">Check Connection</button>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-meta">
+                    <h4>Diagnostic Connection Status</h4>
+                    <p id="backend-status-message" style="font-size:12px; margin-top:4px; color:#9494a3;">Checking backend connectivity…</p>
                   </div>
                 </div>
 
@@ -920,7 +942,7 @@
                     <h4>Application Version</h4>
                     <p>FocusFlow AI for Windows — Standalone Desktop Productivity Workspace</p>
                   </div>
-                  <span id="settings-app-version-text" style="font-family:var(--font-mono); font-size:12px; color:#ff6422; font-weight:700;">v3.0.0 (x64)</span>
+                  <span id="settings-app-version-text" style="font-family:var(--font-mono); font-size:12px; color:#ff6422; font-weight:700;">v3.0.2 (x64)</span>
                 </div>
               </div>
             </section>
@@ -958,6 +980,10 @@
       </div>
     </div>
 
+    <!-- On-Device Vision Runtime -->
+    <script src="vision/pico.js"></script>
+    <script src="vision/lploc.js"></script>
+    <script src="vision/attention-tracker.js"></script>
     <!-- Application Script -->
     <script src="desktop.js"></script>
   </body>

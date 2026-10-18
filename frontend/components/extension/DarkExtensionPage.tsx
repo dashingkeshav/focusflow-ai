@@ -674,13 +674,13 @@ export default function DarkExtensionPage() {
                     </button>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Direct Static Mirror:</span>
+                    <span className="text-gray-500">Verified Release Asset:</span>
                     <a
-                      href="/downloads/FocusFlow-Setup.exe"
+                      href="/api/download/desktop"
                       download="FocusFlow-Setup.exe"
                       className="text-xs text-gray-400 hover:text-[#FF4500] hover:underline"
                     >
-                      /downloads/FocusFlow-Setup.exe
+                      Official GitHub Release (.exe)
                     </a>
                   </div>
                 </div>
@@ -784,11 +784,11 @@ export default function DarkExtensionPage() {
                     </a>
                     <span className="text-gray-600">|</span>
                     <a
-                      href="/downloads/FocusFlow-Setup.exe"
+                      href="/api/download/desktop"
                       download="FocusFlow-Setup.exe"
                       className="text-xs font-mono text-gray-400 hover:text-white"
                     >
-                      Static Mirror
+                      Official Release (.exe)
                     </a>
                   </div>
                 ),

@@ -1,7 +1,7 @@
 {
-  "backendUrl": null,
-  "mode": "standalone",
-  "configured": false,
-  "builtAt": "2026-10-17T08:33:39.233Z",
-  "version": "3.0.0"
+  "backendUrl": "https://focusflow-ai-livid.vercel.app",
+  "mode": "cloud",
+  "configured": true,
+  "builtAt": "2026-10-18T10:14:23.878Z",
+  "version": "3.0.2"
 }

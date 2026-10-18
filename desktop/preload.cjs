@@ -46,6 +46,9 @@ contextBridge.exposeInMainWorld("focusFlowDesktop", {
   // Safe external URL opening
   openExternal: (url) => ipcRenderer.invoke("focusflow:open-external", url),
 
+  // Genuine On-Device Vision Asset Loader
+  loadVisionAsset: (assetName) => ipcRenderer.invoke("focusflow:load-vision-asset", assetName),
+
   // Event Listeners from Main Process (with unsubscribe cleanup)
   onTimerTick: (callback) => {
     const handler = (_event, snap) => callback(snap);
@@ -66,5 +69,10 @@ contextBridge.exposeInMainWorld("focusFlowDesktop", {
     const handler = (_event, action) => callback(action);
     ipcRenderer.on("focusflow:global-shortcut", handler);
     return () => ipcRenderer.removeListener("focusflow:global-shortcut", handler);
+  },
+  onTrayAction: (callback) => {
+    const handler = (_event, action, payload) => callback(action, payload);
+    ipcRenderer.on("focusflow:tray-action", handler);
+    return () => ipcRenderer.removeListener("focusflow:tray-action", handler);
   },
 });

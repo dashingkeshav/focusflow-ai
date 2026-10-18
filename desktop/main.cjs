@@ -201,6 +201,7 @@ function updateTray() {
         if (mainWindow) {
           mainWindow.show();
           mainWindow.focus();
+          mainWindow.webContents.send("focusflow:tray-action", "open-focus");
         }
       },
     },
@@ -209,10 +210,19 @@ function updateTray() {
       click: () => {
         if (isRunning) {
           pauseTimer();
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send("focusflow:tray-action", "pause-timer");
+          }
         } else if (isPaused) {
           resumeTimer();
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send("focusflow:tray-action", "resume-timer");
+          }
         } else {
           startTimer({ durationMinutes: 25, taskTitle: "Deep Work Sprint" });
+          if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send("focusflow:tray-action", "start-timer", 25);
+          }
         }
       },
     },
@@ -221,6 +231,9 @@ function updateTray() {
       enabled: !isRunning,
       click: () => {
         startTimer({ durationMinutes: 50, taskTitle: "Deep Work Block" });
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send("focusflow:tray-action", "start-timer", 50);
+        }
       },
     },
     {
@@ -228,6 +241,9 @@ function updateTray() {
       enabled: isRunning || isPaused || isBreak,
       click: () => {
         completeTimer();
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send("focusflow:tray-action", "finish-timer");
+        }
       },
     },
     { type: "separator" },
@@ -616,14 +632,16 @@ ipcMain.handle("focusflow:get-config", async () => {
   let resolvedBackendUrl = null;
   let connectionMode = packagedConfig.mode || "standalone";
 
+  const envEndpoint = process.env.FOCUSFLOW_BACKEND_URL?.trim() || process.env.FOCUSFLOW_APP_URL?.trim();
+
   if (settings.backendOverride && typeof settings.backendOverride === "string" && settings.backendOverride.trim()) {
     resolvedBackendUrl = settings.backendOverride.trim().replace(/\/+$/, "");
     connectionMode = "override";
   } else if (packagedConfig.backendUrl) {
     resolvedBackendUrl = packagedConfig.backendUrl;
     connectionMode = "cloud";
-  } else if (process.env.FOCUSFLOW_BACKEND_URL?.trim()) {
-    resolvedBackendUrl = process.env.FOCUSFLOW_BACKEND_URL.trim().replace(/\/+$/, "");
+  } else if (envEndpoint) {
+    resolvedBackendUrl = envEndpoint.replace(/\/+$/, "");
     connectionMode = "env";
   } else if (!app.isPackaged) {
     // Development fallback
@@ -639,9 +657,19 @@ ipcMain.handle("focusflow:get-config", async () => {
     backendUrl: resolvedBackendUrl,
     mode: connectionMode,
     isPackaged: app.isPackaged,
-    version: packagedConfig.version || "3.0.0",
+    version: packagedConfig.version || "3.0.2",
     builtAt: packagedConfig.builtAt || null,
   };
+});
+
+// Genuine On-Device Vision Asset Loader
+ipcMain.handle("focusflow:load-vision-asset", async (_event, assetName) => {
+  const allowedAssets = ["facefinder.bin", "puploc.bin"];
+  if (!allowedAssets.includes(assetName)) {
+    throw new Error(`Unauthorized vision asset request: ${assetName}`);
+  }
+  const assetPath = path.join(__dirname, "vision", assetName);
+  return await fs.readFile(assetPath);
 });
 
 ipcMain.handle("focusflow:set-backend-override", async (_event, url) => {

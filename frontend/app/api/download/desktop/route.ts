@@ -25,6 +25,9 @@ function resolveInstallerPath(): string | null {
   return null;
 }
 
+const OFFICIAL_RELEASE_DOWNLOAD_URL =
+  "https://github.com/dashingkeshav/focusflow-ai/releases/latest/download/FocusFlow-Setup.exe";
+
 export async function HEAD(request: Request) {
   try {
     const externalUrl = process.env.DESKTOP_DOWNLOAD_URL || process.env.NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL;
@@ -34,10 +37,7 @@ export async function HEAD(request: Request) {
 
     const filePath = resolveInstallerPath();
     if (!filePath) {
-      return NextResponse.json(
-        { error: "Windows desktop installer not found" },
-        { status: 404 }
-      );
+      return NextResponse.redirect(OFFICIAL_RELEASE_DOWNLOAD_URL, 302);
     }
 
     const stat = await fs.promises.stat(/*turbopackIgnore: true*/ filePath);
@@ -54,7 +54,7 @@ export async function HEAD(request: Request) {
     });
   } catch (err) {
     console.error("Error in HEAD for Windows installer:", err);
-    return NextResponse.json({ error: "Failed to query desktop installer" }, { status: 500 });
+    return NextResponse.redirect(OFFICIAL_RELEASE_DOWNLOAD_URL, 302);
   }
 }
 
@@ -66,16 +66,11 @@ export async function GET(request: Request) {
       return NextResponse.redirect(externalUrl, 302);
     }
 
-    // 2. Local filesystem resolution
+    // 2. Local filesystem resolution if present (e.g. local dev / custom deployment)
     const filePath = resolveInstallerPath();
     if (!filePath) {
-      return NextResponse.json(
-        {
-          error: "Windows desktop installer not found",
-          message: "Please ensure release/FocusFlow-Setup.exe or public/downloads/FocusFlow-Setup.exe exists.",
-        },
-        { status: 404 }
-      );
+      // Gracefully redirect to official GitHub release asset (never return 404 in production)
+      return NextResponse.redirect(OFFICIAL_RELEASE_DOWNLOAD_URL, 302);
     }
 
     const stat = await fs.promises.stat(/*turbopackIgnore: true*/ filePath);
