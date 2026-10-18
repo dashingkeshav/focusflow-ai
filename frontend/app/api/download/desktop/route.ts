@@ -25,13 +25,34 @@ function resolveInstallerPath(): string | null {
   return null;
 }
 
+/*
+ * Always resolve the newest published installer. Pinning a tag here means a
+ * later successful release silently keeps serving an outdated build.
+ */
 const OFFICIAL_RELEASE_DOWNLOAD_URL =
   "https://github.com/dashingkeshav/focusflow-ai/releases/latest/download/FocusFlow-Setup.exe";
 
-export async function HEAD(request: Request) {
+function getConfiguredDownloadUrl(): string | null {
+  const raw = (process.env.DESKTOP_DOWNLOAD_URL || "").trim();
+  if (!raw) return null;
+
   try {
-    const externalUrl = process.env.DESKTOP_DOWNLOAD_URL || process.env.NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL;
-    if (externalUrl && externalUrl.startsWith("https://")) {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:") {
+      console.error("DESKTOP_DOWNLOAD_URL must use HTTPS; falling back to the GitHub release asset.");
+      return null;
+    }
+    return parsed.toString();
+  } catch {
+    console.error("DESKTOP_DOWNLOAD_URL is not a valid URL; falling back to the GitHub release asset.");
+    return null;
+  }
+}
+
+export async function HEAD(_request: Request) {
+  try {
+    const externalUrl = getConfiguredDownloadUrl();
+    if (externalUrl) {
       return NextResponse.redirect(externalUrl, 302);
     }
 
@@ -61,8 +82,8 @@ export async function HEAD(request: Request) {
 export async function GET(request: Request) {
   try {
     // 1. External release asset redirect (e.g., GitHub Releases or Cloudflare R2 on Vercel)
-    const externalUrl = process.env.DESKTOP_DOWNLOAD_URL || process.env.NEXT_PUBLIC_DESKTOP_DOWNLOAD_URL;
-    if (externalUrl && externalUrl.startsWith("https://")) {
+    const externalUrl = getConfiguredDownloadUrl();
+    if (externalUrl) {
       return NextResponse.redirect(externalUrl, 302);
     }
 
@@ -77,7 +98,7 @@ export async function GET(request: Request) {
     const fileSize = stat.size;
     const rangeHeader = request.headers.get("range");
 
-    // 3. Support HTTP Range requests (crucial for 94+ MB downloads and resumable transfer)
+    // 3. Support HTTP Range requests for large resumable downloads
     if (rangeHeader && rangeHeader.startsWith("bytes=")) {
       const parts = rangeHeader.replace(/bytes=/, "").split("-");
       const start = parseInt(parts[0], 10);

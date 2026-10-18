@@ -1,6 +1,6 @@
 {
   "name": "focusflow-ai",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "main": "desktop/main.cjs",
   "private": true,
   "scripts": {
@@ -29,7 +29,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "artifactName": "FocusFlow-Setup.exe"

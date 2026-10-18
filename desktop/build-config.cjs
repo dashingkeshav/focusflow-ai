@@ -6,6 +6,11 @@ console.log("🔨 Preparing FocusFlow AI Windows Desktop Package");
 console.log("=================================================");
 
 const desktopDir = __dirname;
+const rootPackage = JSON.parse(
+  fs.readFileSync(path.join(desktopDir, "..", "package.json"), "utf8")
+);
+const appVersion = rootPackage.version;
+
 const requiredFiles = [
   "index.html",
   "desktop.css",
@@ -29,65 +34,133 @@ for (const file of requiredFiles) {
   }
 }
 
-// Verified default production endpoint
-const VERIFIED_PRODUCTION_ENDPOINT = "https://focusflow-ai-livid.vercel.app";
+/*
+=====================================================
+TWO DISTINCT ENDPOINTS — NEVER INTERCHANGEABLE
+=====================================================
+FOCUSFLOW_APP_URL      → public frontend website (Vercel)
+FOCUSFLOW_BACKEND_URL  → public API base URL (Render)
+=====================================================
+*/
+const DEFAULT_APP_URL = "https://focusflow-ai-livid.vercel.app";
+const DEFAULT_BACKEND_URL = "https://focusflow-ai-api.onrender.com";
 
-// Check configured backend URL from environment variables
-// Supports FOCUSFLOW_BACKEND_URL or FOCUSFLOW_APP_URL
-const rawEndpoint =
-  process.env.FOCUSFLOW_BACKEND_URL?.trim() ||
-  process.env.FOCUSFLOW_APP_URL?.trim() ||
-  VERIFIED_PRODUCTION_ENDPOINT;
+const isReleaseBuild =
+  process.env.CI === "true" ||
+  Boolean(process.env.GITHUB_ACTIONS) ||
+  process.argv.includes("--release");
 
-let backendUrl = null;
-let mode = "standalone";
-let configured = false;
+function normalizePublicUrl(rawValue, label, { required }) {
+  const value = (rawValue || "").trim();
 
-if (process.env.FOCUSFLOW_STANDALONE === "true") {
-  console.log("ℹ️ FOCUSFLOW_STANDALONE=true explicitly requested.");
-  backendUrl = null;
-  mode = "standalone";
-  configured = false;
-} else if (rawEndpoint) {
-  try {
-    const parsed = new URL(rawEndpoint);
-    if (parsed.protocol === "https:" || parsed.protocol === "http:") {
-      backendUrl = rawEndpoint.replace(/\/+$/, "");
-      mode = "cloud";
-      configured = true;
-    } else {
-      throw new Error(`Invalid protocol: ${parsed.protocol}`);
+  if (!value) {
+    if (required) {
+      throw new Error(
+        `${label} is required for a production release build. ` +
+          `Set ${label} to the public HTTPS URL (never localhost).`
+      );
     }
-  } catch (err) {
-    throw new Error(`Invalid endpoint URL specified in environment: ${rawEndpoint} (${err.message})`);
+    return null;
   }
+
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error(`${label} is not a valid absolute URL: ${value}`);
+  }
+
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    throw new Error(`${label} must use http or https. Got: ${parsed.protocol}`);
+  }
+
+  const host = parsed.hostname.toLowerCase();
+  const isLoopback =
+    host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "0.0.0.0";
+
+  if (isReleaseBuild && (parsed.protocol !== "https:" || isLoopback)) {
+    throw new Error(
+      `${label} must be a public HTTPS URL for release builds. Got: ${value}`
+    );
+  }
+
+  if (parsed.pathname !== "/" && parsed.pathname !== "") {
+    throw new Error(`${label} must be an origin without a path. Got: ${value}`);
+  }
+
+  return parsed.origin;
 }
 
-// Fail packaging if release build is configured with localhost or empty endpoint in production
-const isReleaseBuild = process.env.CI || process.env.GITHUB_ACTIONS || process.argv.includes("--release");
-if (isReleaseBuild) {
-  if (!backendUrl || !backendUrl.startsWith("https://") || backendUrl.includes("localhost") || backendUrl.includes("127.0.0.1")) {
-    throw new Error(`Production release packaging requires a verified HTTPS cloud endpoint. Got: ${backendUrl}`);
-  }
+if (process.env.FOCUSFLOW_STANDALONE === "true") {
+  const configData = {
+    appUrl: normalizePublicUrl(
+      process.env.FOCUSFLOW_APP_URL || DEFAULT_APP_URL,
+      "FOCUSFLOW_APP_URL",
+      { required: false }
+    ),
+    backendUrl: null,
+    mode: "standalone",
+    configured: false,
+    builtAt: new Date().toISOString(),
+    version: appVersion,
+  };
+
+  fs.writeFileSync(
+    path.join(desktopDir, "desktop-config.json"),
+    JSON.stringify(configData, null, 2),
+    "utf8"
+  );
+
+  console.log("ℹ️ FOCUSFLOW_STANDALONE=true explicitly requested.");
+  console.log("📦 Packaging in Standalone Local Desktop Mode (no cloud API).");
+  console.log("=================================================");
+  process.exit(0);
+}
+
+const appUrl = normalizePublicUrl(
+  process.env.FOCUSFLOW_APP_URL || DEFAULT_APP_URL,
+  "FOCUSFLOW_APP_URL",
+  { required: isReleaseBuild }
+);
+
+const backendUrl = normalizePublicUrl(
+  process.env.FOCUSFLOW_BACKEND_URL || DEFAULT_BACKEND_URL,
+  "FOCUSFLOW_BACKEND_URL",
+  { required: isReleaseBuild }
+);
+
+if (!backendUrl) {
+  throw new Error(
+    "FOCUSFLOW_BACKEND_URL is required. This must be the public Render API origin " +
+      "(for example https://focusflow-ai-api.onrender.com), not the frontend website URL."
+  );
+}
+
+if (appUrl && appUrl === backendUrl) {
+  throw new Error(
+    "FOCUSFLOW_APP_URL and FOCUSFLOW_BACKEND_URL must be different origins. " +
+      "The website URL must never be used as the API backend."
+  );
 }
 
 const configData = {
+  appUrl,
   backendUrl,
-  mode,
-  configured,
+  mode: "cloud",
+  configured: true,
   builtAt: new Date().toISOString(),
-  version: "3.0.2",
+  version: appVersion,
 };
 
-const configPath = path.join(desktopDir, "desktop-config.json");
-fs.writeFileSync(configPath, JSON.stringify(configData, null, 2), "utf8");
+fs.writeFileSync(
+  path.join(desktopDir, "desktop-config.json"),
+  JSON.stringify(configData, null, 2),
+  "utf8"
+);
 
-if (configured) {
-  console.log(`✅ Production Cloud Backend configured: ${backendUrl}`);
-} else {
-  console.log("ℹ️ No production remote backend endpoint specified.");
-  console.log("📦 Packaging in Standalone Local Desktop Mode.");
-}
+console.log(`✅ Website (FOCUSFLOW_APP_URL):     ${appUrl}`);
+console.log(`✅ API backend (FOCUSFLOW_BACKEND_URL): ${backendUrl}`);
+console.log(`✅ Desktop version:                ${appVersion}`);
 console.log("✅ Standalone desktop interface assets verified.");
 console.log("📦 Ready for electron-builder packaging.");
 console.log("=================================================");

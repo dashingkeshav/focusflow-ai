@@ -5,6 +5,9 @@ contextBridge.exposeInMainWorld("focusFlowDesktop", {
   getConfig: () => ipcRenderer.invoke("focusflow:get-config"),
   setBackendOverride: (url) => ipcRenderer.invoke("focusflow:set-backend-override", url),
 
+  // Scoped backend request proxy (main process; avoids file:// CORS restrictions)
+  apiRequest: (request) => ipcRenderer.invoke("focusflow:api-request", request),
+
   // Secure Auth Persistence
   getStoredAuth: () => ipcRenderer.invoke("focusflow:get-stored-auth"),
   saveStoredAuth: (token, user) => ipcRenderer.invoke("focusflow:save-stored-auth", { token, user }),

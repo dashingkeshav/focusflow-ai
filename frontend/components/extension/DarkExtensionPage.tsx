@@ -67,23 +67,17 @@ const TABS: TabItem[] = [
 export default function DarkExtensionPage() {
   const [activeTab, setActiveTab] = useState<ActiveTabKey>("github");
   const [copiedUrl, setCopiedUrl] = useState(false);
-  const [copiedSha, setCopiedSha] = useState(false);
   const [downloadingChrome, setDownloadingChrome] = useState(false);
   const [downloadingWin, setDownloadingWin] = useState(false);
   const [featureMode, setFeatureMode] = useState<"warn" | "block">("warn");
-  const [setupTab, setSetupTab] = useState<"windows" | "chrome">("windows");
-
-  // Hash listener to switch tab when navigating to #windows or #chrome
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash.toLowerCase();
-      if (hash.includes("chrome") || hash.includes("extension")) {
-        setSetupTab("chrome");
-      } else if (hash.includes("windows") || hash.includes("desktop")) {
-        setSetupTab("windows");
-      }
-    }
-  }, []);
+  // Select the initial setup tab from the URL hash without a setState-in-effect
+  // cascade. The hash is only meaningful on first load.
+  const [setupTab, setSetupTab] = useState<"windows" | "chrome">(() => {
+    if (typeof window === "undefined") return "windows";
+    const hash = window.location.hash.toLowerCase();
+    if (hash.includes("chrome") || hash.includes("extension")) return "chrome";
+    return "windows";
+  });
 
   // 3D subtle perspective tilt
   const containerRef = useRef<HTMLDivElement>(null);
@@ -117,12 +111,6 @@ export default function DarkExtensionPage() {
     navigator.clipboard.writeText("chrome://extensions");
     setCopiedUrl(true);
     setTimeout(() => setCopiedUrl(false), 2000);
-  };
-
-  const handleCopySha = () => {
-    navigator.clipboard.writeText("321ca860b971ddcc089fc5fc5cc7999648379d4b32caf9fccc92d100519d686d");
-    setCopiedSha(true);
-    setTimeout(() => setCopiedSha(false), 2500);
   };
 
   const handleChromeDownload = () => {
@@ -180,11 +168,22 @@ export default function DarkExtensionPage() {
                 </a>
 
                 <a
-                  href="#how-it-works"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 hover:text-white font-medium text-sm backdrop-blur-md transition-all duration-200"
+                  href="/api/download/desktop"
+                  download="FocusFlow-Setup.exe"
+                  onClick={handleWinDownload}
+                  id="hero-windows-download-btn"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white font-semibold text-sm backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                 >
-                  <span>Explore How It Works</span>
-                  <ArrowRight className="w-4 h-4 text-gray-400" />
+                  <MonitorDown className="w-4 h-4 text-[#FF4500]" />
+                  <span>{downloadingWin ? "Downloading Installer..." : "Download for Windows"}</span>
+                </a>
+
+                <a
+                  href="#downloads"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-full text-xs text-gray-400 hover:text-white transition-colors"
+                >
+                  <span>Releases</span>
+                  <ArrowRight className="w-3.5 h-3.5 text-gray-500" />
                 </a>
               </div>
             </Reveal>
@@ -648,40 +647,30 @@ export default function DarkExtensionPage() {
                 <div className="mt-6 p-4 rounded-2xl bg-black/50 border border-white/10 space-y-2.5 text-xs font-mono text-gray-300">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Version:</span>
-                    <span className="text-white font-bold">v2.0.0 (Windows x64)</span>
+                    <span className="text-white font-bold">v3.0.3 (Windows x64)</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Installer Size:</span>
-                    <span className="text-white">94.5 MB (.exe installer)</span>
+                    <span className="text-white">92.1 MB (.exe installer)</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Target Platform:</span>
                     <span className="text-white">Windows 10 / 11 (64-bit)</span>
                   </div>
                   <div className="flex justify-between items-center pt-1 border-t border-white/5">
-                    <span className="text-gray-500">SHA-256 Checksum:</span>
-                    <button
-                      onClick={handleCopySha}
-                      className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[#FF4500] hover:text-white bg-white/5 hover:bg-white/10 px-2 py-0.5 rounded transition-colors"
-                      title="Click to copy SHA-256 hash"
-                    >
-                      <span>321ca8...686d</span>
-                      {copiedSha ? (
-                        <Check className="w-3 h-3 text-emerald-400" />
-                      ) : (
-                        <Copy className="w-3 h-3 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500">Verified Release Asset:</span>
+                    <span className="text-gray-500">Release:</span>
                     <a
-                      href="/api/download/desktop"
-                      download="FocusFlow-Setup.exe"
+                      href="https://github.com/dashingkeshav/focusflow-ai/releases/latest"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-xs text-gray-400 hover:text-[#FF4500] hover:underline"
                     >
-                      Official GitHub Release (.exe)
+                      Latest verified build &rarr;
                     </a>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-500">Checksum:</span>
+                    <span className="text-[11px] text-gray-400">SHA-256 published on the release page</span>
                   </div>
                 </div>
               </div>
@@ -771,7 +760,7 @@ export default function DarkExtensionPage() {
               {
                 num: "01",
                 title: "Download FocusFlow-Setup.exe",
-                desc: "Get the verified Windows installer (~94.5 MB, 64-bit) via the direct download button or our static mirror.",
+                desc: "Get the verified Windows installer (v3.0.3, 64-bit) from the latest published release. The button always serves the newest successful build.",
                 action: (
                   <div className="flex items-center gap-2">
                     <a
@@ -784,11 +773,12 @@ export default function DarkExtensionPage() {
                     </a>
                     <span className="text-gray-600">|</span>
                     <a
-                      href="/api/download/desktop"
-                      download="FocusFlow-Setup.exe"
+                      href="https://github.com/dashingkeshav/focusflow-ai/releases/latest"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-xs font-mono text-gray-400 hover:text-white"
                     >
-                      Official Release (.exe)
+                      Release notes &rarr;
                     </a>
                   </div>
                 ),
@@ -796,24 +786,17 @@ export default function DarkExtensionPage() {
               {
                 num: "02",
                 title: "Verify File Integrity (Optional & Recommended)",
-                desc: "Check the SHA-256 hash in PowerShell: `Get-FileHash .\\FocusFlow-Setup.exe`. Compare with our official build hash.",
+                desc: "Check the downloaded file in PowerShell: `Get-FileHash .\\FocusFlow-Setup.exe -Algorithm SHA256`. Compare it with the SHA-256 published on the GitHub release page.",
                 action: (
-                  <button
-                    onClick={handleCopySha}
+                  <a
+                    href="https://github.com/dashingkeshav/focusflow-ai/releases/latest"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                   >
-                    {copiedSha ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">Hash Copied!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5 text-[#FF4500]" />
-                        <span>Copy SHA-256 Hash</span>
-                      </>
-                    )}
-                  </button>
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#FF4500]" />
+                    <span>Open release checksums</span>
+                  </a>
                 ),
               },
               {

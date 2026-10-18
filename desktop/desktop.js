@@ -24,10 +24,12 @@
     activeView: "dashboard",
     config: {
       backendUrl: null,
+      appUrl: null,
       mode: "standalone", // 'standalone' | 'cloud'
       isPackaged: false,
     },
     backendUrl: null,
+    appUrl: null,
     isConnected: false,
     isCheckingHealth: false,
     latencyMs: 0,
@@ -94,7 +96,8 @@
 
   // Preload bridge helper with comprehensive fallback
   const desktopBridge = window.focusFlowDesktop || {
-    getConfig: async () => ({ backendUrl: null, mode: "standalone", isPackaged: false }),
+    getConfig: async () => ({ backendUrl: null, appUrl: null, mode: "standalone", isPackaged: false }),
+    apiRequest: async () => ({ ok: false, status: 0, error: "Desktop bridge unavailable." }),
     setBackendOverride: async () => ({ success: true }),
     getStoredAuth: async () => ({ token: null, user: null }),
     saveStoredAuth: async () => ({ success: true }),
@@ -246,6 +249,12 @@
   // =====================================================
   // API CLIENT & HEALTH CHECK (Bounded & Non-Sensitive)
   // =====================================================
+  /*
+   * All API traffic goes through the Electron main process proxy.
+   * The renderer is loaded from file://, so a direct browser fetch is
+   * rejected by the API's CORS policy (Origin: null). Routing through
+   * IPC keeps webSecurity, contextIsolation and sandbox enabled.
+   */
   async function apiRequest(path, options = {}) {
     if (!state.backendUrl) {
       const err = new Error("No backend server configured. Running in Standalone Local Desktop Mode.");
@@ -254,48 +263,39 @@
     }
 
     const cleanPath = path.startsWith("/") ? path : `/${path}`;
-    const url = `${state.backendUrl}${cleanPath}`;
+    const method = (options.method || "GET").toUpperCase();
 
-    const headers = {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    };
+    const result = await desktopBridge.apiRequest({
+      path: cleanPath,
+      method,
+      body: options.body === undefined ? null : options.body,
+      token: state.auth.token || null,
+    });
 
-    if (state.auth.token) {
-      headers.Authorization = `Bearer ${state.auth.token}`;
+    if (!result || typeof result !== "object") {
+      throw new Error("Desktop bridge returned an invalid API response.");
     }
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 6000);
-
-    try {
-      const res = await fetch(url, {
-        ...options,
-        headers,
-        signal: controller.signal,
-      });
-
-      let data = {};
-      try {
-        data = await res.json();
-      } catch (_) {}
-
-      if (!res.ok) {
-        const message = data.message || data.error || `HTTP ${res.status}`;
-        const err = new Error(message);
-        err.status = res.status;
-        throw err;
-      }
-
-      return data;
-    } catch (err) {
-      if (err.name === "AbortError") {
-        throw new Error("Backend request timed out (6s limit)");
-      }
+    if (!result.ok) {
+      const data = result.data || {};
+      const message =
+        data.message ||
+        data.error ||
+        result.error ||
+        result.text ||
+        `Request failed with status ${result.status}`;
+      const err = new Error(message);
+      err.status = result.status || 0;
       throw err;
-    } finally {
-      clearTimeout(timeoutId);
     }
+
+    if (result.data === null || result.data === undefined) {
+      throw new Error(
+        `Unexpected non-JSON response from ${state.backendUrl}${cleanPath} (status ${result.status}).`
+      );
+    }
+
+    return result.data;
   }
 
   async function checkBackendHealth() {
@@ -340,17 +340,13 @@
     state.isCheckingHealth = true;
     const t0 = performance.now();
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
-
-      const res = await fetch(`${state.backendUrl}/api/health`, {
+      const health = await desktopBridge.apiRequest({
+        path: "/api/health",
         method: "GET",
-        signal: controller.signal,
       });
-      clearTimeout(timeoutId);
 
-      if (res.ok) {
-        const data = await res.json().catch(() => ({}));
+      if (health && health.ok) {
+        const data = health.data || {};
         state.isConnected = true;
         state.latencyMs = Math.round(performance.now() - t0);
 
@@ -371,9 +367,12 @@
           statusMsgEl.style.color = "#10b981";
         }
         return true;
-      } else {
-        throw new Error(`HTTP ${res.status}`);
       }
+
+      throw new Error(
+        (health && (health.error || health.data?.message)) ||
+          `HTTP ${health ? health.status : 0}`
+      );
     } catch (err) {
       state.isConnected = false;
       if (badge) {
@@ -389,7 +388,9 @@
         settingsModePill.className = "badge-pill red";
       }
       if (statusMsgEl) {
-        statusMsgEl.textContent = `Could not reach ${state.backendUrl} (${err.message}). Local focus workflows remain fully functional.`;
+        statusMsgEl.textContent =
+          `Could not reach the FocusFlow API at ${state.backendUrl} (${err.message}). ` +
+          "Local timers, tasks and sessions keep working offline; cloud sync and the Gemini planner are unavailable until the API responds.";
         statusMsgEl.style.color = "#ef4444";
       }
       return false;
@@ -539,8 +540,8 @@
     if (!state.isConnected || !state.auth.token) return;
 
     try {
-      // Sync tasks
-      const tasksRes = await apiRequest("/api/sessions/tasks").catch(() => null);
+      // Sync tasks (real backend route: GET /api/tasks)
+      const tasksRes = await apiRequest("/api/tasks").catch(() => null);
       if (tasksRes) {
         const remoteTasks = Array.isArray(tasksRes) ? tasksRes : tasksRes.tasks || [];
         if (remoteTasks.length > 0) {
@@ -555,8 +556,8 @@
         }
       }
 
-      // Sync sessions
-      const sessionsRes = await apiRequest("/api/sessions").catch(() => null);
+      // Sync sessions (real backend route: GET /api/sessions/history)
+      const sessionsRes = await apiRequest("/api/sessions/history?limit=50").catch(() => null);
       if (sessionsRes) {
         const remoteSessions = Array.isArray(sessionsRes) ? sessionsRes : sessionsRes.sessions || [];
         if (remoteSessions.length > 0) {
@@ -571,6 +572,7 @@
         state.goals = Array.isArray(goalsRes) ? goalsRes : goalsRes.goals || [];
       }
 
+      state.lastCloudSyncAt = new Date().toISOString();
       renderAllViews();
     } catch (err) {
       console.warn("Cloud synchronization error:", err);
@@ -1139,7 +1141,7 @@
         <div class="pod-card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <strong style="color:#f4f4f7; font-size:14px;">Windows Desktop Release v3.0.2</strong>
+              <strong style="color:#f4f4f7; font-size:14px;">Windows Desktop Release v3.0.3</strong>
               <div style="font-size:11.5px; color:#9494a3;">Production packaging, camera attention integration, and QA verification.</div>
             </div>
             <span class="nav-badge-pill green">IN PROGRESS</span>
@@ -1271,16 +1273,37 @@
     // Connect to backend and Chrome extension if online and authenticated
     if (state.isConnected && state.auth.token) {
       try {
-        const startRes = await apiRequest("/api/focus/start", {
-          method: "POST",
-          body: JSON.stringify({
-            taskTitle,
-            durationSeconds,
-            strictness: "balanced",
-            browserProtection: true,
-            blockedSites: state.distractions.blockedDomains,
-          }),
-        });
+        const cloudPayload = {
+          taskTitle,
+          durationSeconds,
+          strictness: "balanced",
+          browserProtection: true,
+          blockedSites: state.distractions.blockedDomains,
+        };
+
+        // Local-only task ids are unknown to the cloud. Retry without the id
+        // instead of failing the whole cloud session for a 404.
+        if (taskId) {
+          cloudPayload.taskId = taskId;
+        }
+
+        let startRes;
+        try {
+          startRes = await apiRequest("/api/focus/start", {
+            method: "POST",
+            body: JSON.stringify(cloudPayload),
+          });
+        } catch (startErr) {
+          if (startErr.status === 404 && cloudPayload.taskId) {
+            delete cloudPayload.taskId;
+            startRes = await apiRequest("/api/focus/start", {
+              method: "POST",
+              body: JSON.stringify(cloudPayload),
+            });
+          } else {
+            throw startErr;
+          }
+        }
 
         if (startRes && (startRes.session || startRes.state)) {
           state.timer.cloudSessionId = startRes.session?.id || startRes.state?.sessionId;
@@ -1367,6 +1390,20 @@
     playSessionEndChime();
     stopAmbientSound();
 
+    // Camera monitoring belongs to the session: capture its genuine summary,
+    // then release the hardware so the webcam is never left running.
+    const cameraSummary =
+      trackerInstance && typeof trackerInstance.getSummary === "function"
+        ? trackerInstance.getSummary()
+        : null;
+    await stopCameraAttentionAI();
+
+    if (cameraSummary) {
+      session.cameraDistractions = cameraSummary.distractionEvents || 0;
+      session.cameraAttentiveRatio = cameraSummary.focusRatio;
+      session.cameraMonitoredSeconds = cameraSummary.totalSeconds || 0;
+    }
+
     if (state.timer.livePollInterval) {
       clearInterval(state.timer.livePollInterval);
       state.timer.livePollInterval = null;
@@ -1393,27 +1430,21 @@
             method: "POST",
             body: JSON.stringify({
               sessionId: state.timer.cloudSessionId,
+              durationSeconds: session.durationSeconds || 0,
               tabSwitches: session.tabSwitches || 0,
               idleTimeSeconds: session.idleTimeSeconds || 0,
+              cameraDistractions: session.cameraDistractions || 0,
             }),
           });
-        } catch (_) {}
+        } catch (err) {
+          console.warn("Cloud focus session end notice:", err);
+        }
         state.timer.cloudSessionId = null;
       }
 
-      try {
-        await apiRequest("/api/sessions/complete", {
-          method: "POST",
-          body: JSON.stringify({
-            title: session.title,
-            durationSeconds: session.durationSeconds,
-            tabSwitches: session.tabSwitches || 0,
-            idleTimeSeconds: session.idleTimeSeconds || 0,
-          }),
-        });
-      } catch (err) {
-        console.warn("Backend session record notice:", err);
-      }
+      // NOTE: the cloud session row is created by /api/focus/start and closed
+      // by /api/focus/end above. /api/sessions/start would create a duplicate
+      // row, so it is deliberately not called here.
     }
 
     renderAllViews();
@@ -1453,8 +1484,32 @@
         throw new Error("AI Daily Planning requires a connected FocusFlow backend with Gemini AI credentials.");
       }
 
+      // The backend planner accepts a plain prompt plus options. `inputs` is
+      // reserved for multimodal entries ({type, content}[]), so pending tasks
+      // are folded into the prompt instead of sending an invalid object.
+      const pendingTaskTitles = state.tasks
+        .filter((t) => !t.completed)
+        .map((t) => t.title)
+        .filter(Boolean)
+        .slice(0, 15);
+
+      const goalNames = state.goals
+        .map((g) => g.name || g.title)
+        .filter(Boolean)
+        .slice(0, 10);
+
+      const groundedPrompt = [
+        prompt,
+        pendingTaskTitles.length
+          ? `Current pending tasks: ${pendingTaskTitles.join("; ")}.`
+          : "",
+        goalNames.length ? `Active goals: ${goalNames.join("; ")}.` : "",
+      ]
+        .filter(Boolean)
+        .join("\n");
+
       const payload = {
-        prompt: prompt,
+        prompt: groundedPrompt,
         planType: "daily",
         planningMode: modeSelect ? modeSelect.value : "balanced",
         workingTimePreference: windowSelect ? windowSelect.value.toLowerCase() : "morning",
@@ -1462,10 +1517,7 @@
         breakDuration: 10,
         horizon: 1,
         availableHours: 8,
-        existingGoals: state.goals.map((g) => g.title),
-        inputs: {
-          pendingTasks: state.tasks.filter((t) => !t.completed).map((t) => t.title),
-        },
+        existingGoals: goalNames,
       };
 
       const res = await apiRequest("/api/planner/generate", {
@@ -1486,10 +1538,10 @@
           .map(
             (item) => `
           <div class="plan-time-block ${item.type === "break" ? "break" : ""}">
-            <div class="block-time">${escapeHtml(item.startTime || "")} - ${escapeHtml(item.endTime || "")}</div>
+            <div class="block-time">${escapeHtml(item.time || "")}${item.durationMinutes ? ` · ${escapeHtml(String(item.durationMinutes))}m` : ""}</div>
             <div class="block-details">
               <h4>${escapeHtml(item.title || "Scheduled Focus")}</h4>
-              <p>${escapeHtml(item.notes || "")}</p>
+              <p>${escapeHtml(item.why || item.notes || "")}</p>
             </div>
           </div>
         `
@@ -1666,6 +1718,11 @@
       return;
     }
 
+    // The webcam is only held while the Focus workspace is open.
+    if (state.activeView === "focus" && viewName !== "focus" && state.camera.isRunning) {
+      void stopCameraAttentionAI();
+    }
+
     state.activeView = viewName;
 
     document.querySelectorAll(".nav-item").forEach((el) => {
@@ -1780,46 +1837,7 @@
     const fpsEl = document.getElementById("camera-metric-fps");
 
     if (state.camera.isRunning) {
-      if (trackerInstance) {
-        trackerInstance.stop();
-        trackerInstance = null;
-      }
-      if (state.camera.stream) {
-        state.camera.stream.getTracks().forEach((track) => track.stop());
-        state.camera.stream = null;
-      }
-      state.camera.isRunning = false;
-      state.camera.attentionStatus = "off";
-
-      if (video) video.srcObject = null;
-      if (placeholder) {
-        placeholder.style.display = "flex";
-        placeholder.innerHTML = `
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#646473" stroke-width="1.7"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          <p style="font-size:13px; font-weight:600; color:#f4f4f7; margin-top:8px;">Camera Attention Monitor Standby</p>
-          <p style="font-size:11.5px; color:#9494a3; max-width:260px; line-height:1.4;">Click below to activate on-device posture, presence, and focus alignment tracking.</p>
-        `;
-      }
-      if (statusPill) {
-        statusPill.className = "attention-status-pill off";
-        statusPill.textContent = "CAMERA OFF";
-      }
-      if (toggleBtn) {
-        toggleBtn.textContent = "Start Camera Attention AI";
-        toggleBtn.className = "btn btn-primary";
-        toggleBtn.disabled = false;
-      }
-      if (positionEl) positionEl.textContent = "—";
-      if (metricStateEl) {
-        metricStateEl.textContent = "Offline";
-        metricStateEl.style.color = "#9494a3";
-      }
-      if (ratioEl) ratioEl.textContent = "—";
-      if (fpsEl) fpsEl.textContent = "0 FPS";
-      if (canvas) {
-        const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
+      await stopCameraAttentionAI();
       return;
     }
 
@@ -1833,66 +1851,80 @@
         statusPill.textContent = "INITIALIZING…";
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 320, height: 240, facingMode: "user" },
-      });
-
-      state.camera.stream = stream;
-      state.camera.isRunning = true;
-
-      if (video) {
-        video.srcObject = stream;
-        await video.play().catch(() => {});
+      if (!window.AttentionTracker) {
+        throw new Error("The on-device vision runtime failed to load (vision/attention-tracker.js).");
       }
-      if (placeholder) placeholder.style.display = "none";
 
-      if (window.AttentionTracker) {
-        trackerInstance = new window.AttentionTracker(video, canvas, async (assetName) => {
-          if (typeof desktopBridge.loadVisionAsset === "function") {
-            const buf = await desktopBridge.loadVisionAsset(assetName);
-            if (buf) return buf;
-          }
-          const res = await fetch(`vision/${assetName}`);
-          if (!res.ok) throw new Error(`Failed to load ${assetName}: HTTP ${res.status}`);
-          return await res.arrayBuffer();
-        });
+      // Model binaries are read from the packaged app through the scoped IPC
+      // bridge; no network fetch and no remote model download is involved.
+      const loadVisionAsset = async (assetName) => {
+        const buf = await desktopBridge.loadVisionAsset(assetName);
+        if (!buf || (buf.byteLength || buf.length || 0) < 1000) {
+          throw new Error(`Vision model ${assetName} is missing from this installation.`);
+        }
+        return buf;
+      };
 
-        trackerInstance.onStateChange = (status) => {
+      trackerInstance = new window.AttentionTracker({
+        video,
+        canvas,
+        onStateChange: (event) => {
+          const status = (event && event.state) || "off";
           state.camera.attentionStatus = status;
-          if (metricStateEl) {
-            metricStateEl.textContent = status.charAt(0).toUpperCase() + status.slice(1);
-            metricStateEl.style.color = status === "attentive" ? "#10b981" : status === "diverted" ? "#f59e0b" : "#ef4444";
-          }
-          if (statusPill) {
-            if (status === "attentive") {
-              statusPill.className = "attention-status-pill attentive";
-              statusPill.textContent = "● ATTENTIVE";
-            } else if (status === "diverted") {
-              statusPill.className = "attention-status-pill distracted";
-              statusPill.textContent = "▲ DIVERTED";
-            } else if (status === "absent") {
-              statusPill.className = "attention-status-pill away";
-              statusPill.textContent = "■ ABSENT";
-            } else {
-              statusPill.className = "attention-status-pill off";
-              statusPill.textContent = status.toUpperCase();
-            }
-          }
-        };
+          if (event && event.message) state.camera.lastMessage = event.message;
 
-        trackerInstance.onTelemetry = (stats) => {
-          if (positionEl) positionEl.textContent = stats.presence;
-          if (ratioEl) ratioEl.textContent = stats.attentiveRatio;
-          if (fpsEl) fpsEl.textContent = `${stats.fps} FPS`;
+          const labels = {
+            attentive: "Attentive",
+            diverted: "Gaze diverted",
+            absent: "Face absent",
+            outside_region: "Outside focus zone",
+            starting: "Initializing",
+            error: "Error",
+            off: "Offline",
+          };
+
+          if (metricStateEl) {
+            metricStateEl.textContent = labels[status] || status;
+            metricStateEl.style.color =
+              status === "attentive" ? "#10b981" : status === "diverted" ? "#f59e0b" : status === "off" ? "#9494a3" : "#ef4444";
+          }
+
+          if (statusPill) {
+            statusPill.className = `attention-status-pill ${event?.pillClass || (status === "attentive" ? "attentive" : "off")}`;
+            statusPill.textContent = event?.label || status.toUpperCase();
+          }
+
+          if (positionEl && event?.faceCoords) {
+            positionEl.textContent = `Detected (${event.faceCoords.size}px)`;
+          } else if (positionEl && (status === "absent" || status === "outside_region")) {
+            positionEl.textContent = "No face in zone";
+          }
+        },
+        onTelemetryUpdate: (stats) => {
+          if (ratioEl) ratioEl.textContent = `${stats.focusRatio}%`;
+          if (fpsEl) fpsEl.textContent = `${stats.detectionFps || 0} FPS`;
 
           const attentiveBar = document.getElementById("telemetry-attentive-bar");
           const gazeBar = document.getElementById("telemetry-gaze-bar");
-          if (attentiveBar) attentiveBar.style.width = stats.attentiveRatio !== "—" ? stats.attentiveRatio : "0%";
-          if (gazeBar) gazeBar.style.width = stats.gazeScore > 0 ? `${stats.gazeScore}%` : "0%";
-        };
+          if (attentiveBar) attentiveBar.style.width = `${stats.focusRatio}%`;
+          if (gazeBar) gazeBar.style.width = `${stats.attentiveNow ? 100 : 0}%`;
+        },
+        onError: (code, message) => {
+          console.warn("[Camera Attention]", code, message);
+        },
+      });
 
-        await trackerInstance.start();
+      if (placeholder) placeholder.style.display = "none";
+
+      const started = await trackerInstance.start({ loadVisionAsset });
+      if (!started) {
+        const reason = state.camera.lastMessage || "Camera attention tracking could not start.";
+        await stopCameraAttentionAI();
+        throw new Error(reason);
       }
+
+      state.camera.isRunning = true;
+      state.camera.stream = trackerInstance.stream || null;
 
       if (toggleBtn) {
         toggleBtn.disabled = false;
@@ -1921,6 +1953,75 @@
         toggleBtn.textContent = "Start Camera Attention AI";
         toggleBtn.className = "btn btn-primary";
       }
+      if (metricStateEl) {
+        metricStateEl.textContent = "Unavailable";
+        metricStateEl.style.color = "#ef4444";
+      }
+    }
+  }
+
+  async function stopCameraAttentionAI() {
+    if (trackerInstance) {
+      try {
+        trackerInstance.stop();
+      } catch (_) {}
+      trackerInstance = null;
+    }
+
+    if (state.camera.stream) {
+      state.camera.stream.getTracks().forEach((track) => {
+        try {
+          track.stop();
+        } catch (_) {}
+      });
+      state.camera.stream = null;
+    }
+
+    state.camera.isRunning = false;
+    state.camera.attentionStatus = "off";
+
+    const video = document.getElementById("camera-video-elem");
+    const canvas = document.getElementById("camera-overlay-canvas");
+    const placeholder = document.getElementById("camera-offline-placeholder");
+    const toggleBtn = document.getElementById("btn-toggle-camera");
+    const statusPill = document.getElementById("camera-status-pill");
+    const positionEl = document.getElementById("camera-metric-position");
+    const metricStateEl = document.getElementById("camera-metric-state");
+    const ratioEl = document.getElementById("camera-metric-ratio");
+    const fpsEl = document.getElementById("camera-metric-fps");
+    const attentiveBar = document.getElementById("telemetry-attentive-bar");
+    const gazeBar = document.getElementById("telemetry-gaze-bar");
+
+    if (video) video.srcObject = null;
+    if (placeholder) {
+      placeholder.style.display = "flex";
+      placeholder.innerHTML = `
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#646473" stroke-width="1.7"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <p style="font-size:13px; font-weight:600; color:#f4f4f7; margin-top:8px;">Camera Attention Monitor Standby</p>
+        <p style="font-size:11.5px; color:#9494a3; max-width:260px; line-height:1.4;">Start monitoring during a focus session for honest on-device face presence tracking.</p>
+      `;
+    }
+    if (statusPill) {
+      statusPill.className = "attention-status-pill off";
+      statusPill.textContent = "CAMERA OFF";
+    }
+    if (toggleBtn) {
+      toggleBtn.textContent = "Start Camera Monitor";
+      toggleBtn.className = "btn btn-primary btn-sm";
+      toggleBtn.disabled = false;
+    }
+    if (positionEl) positionEl.textContent = "—";
+    if (metricStateEl) {
+      metricStateEl.textContent = "Offline";
+      metricStateEl.style.color = "#9494a3";
+    }
+    if (ratioEl) ratioEl.textContent = "—";
+    if (fpsEl) fpsEl.textContent = "0 FPS";
+    if (attentiveBar) attentiveBar.style.width = "0%";
+    if (gazeBar) gazeBar.style.width = "0%";
+    if (canvas) {
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
   }
 
@@ -1999,6 +2100,12 @@
       if (cfg) {
         state.config = cfg;
         state.backendUrl = cfg.backendUrl || null;
+        state.appUrl = cfg.appUrl || null;
+      }
+
+      const websiteEl = document.getElementById("settings-website-display");
+      if (websiteEl) {
+        websiteEl.textContent = state.appUrl || "Not configured";
       }
     } catch (_) {}
 
@@ -2110,6 +2217,9 @@
     });
     document.getElementById("sidebar-signout-btn")?.addEventListener("click", logout);
     document.getElementById("btn-auth-skip")?.addEventListener("click", () => switchView("dashboard"));
+    document.getElementById("btn-open-website")?.addEventListener("click", () => {
+      if (state.appUrl) desktopBridge.openExternal(state.appUrl);
+    });
 
     // Window controls
     document.getElementById("btn-win-min")?.addEventListener("click", () => desktopBridge.windowMinimize());
@@ -2121,9 +2231,8 @@
     document.getElementById("btn-expand-full")?.addEventListener("click", () => toggleMiniMode(false));
     document.getElementById("btn-mini-close")?.addEventListener("click", () => toggleMiniMode(false));
 
-    // Command Palette
-    document.getElementById("btn-command-palette")?.addEventListener("click", openCommandPalette);
-    document.getElementById("btn-open-palette")?.addEventListener("click", openCommandPalette);
+    // Command Palette (titlebar + Ctrl/Cmd+K)
+    document.getElementById("titlebar-search-btn")?.addEventListener("click", openCommandPalette);
     document.getElementById("command-palette-backdrop")?.addEventListener("click", (e) => {
       if (e.target.id === "command-palette-backdrop") closeCommandPalette();
     });

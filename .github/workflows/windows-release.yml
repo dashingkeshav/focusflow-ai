@@ -11,7 +11,11 @@ on:
         required: true
         type: string
       site_url:
-        description: "Public HTTPS origin of the deployed FocusFlow app"
+        description: "Public HTTPS origin of the deployed FocusFlow website (FOCUSFLOW_APP_URL)"
+        required: true
+        type: string
+      api_url:
+        description: "Public HTTPS origin of the deployed FocusFlow API (FOCUSFLOW_BACKEND_URL, e.g. https://focusflow-ai-api.onrender.com)"
         required: true
         type: string
 
@@ -37,7 +41,13 @@ jobs:
       - name: Build Windows installer
         env:
           FOCUSFLOW_APP_URL: ${{ inputs.site_url || vars.FOCUSFLOW_APP_URL }}
-        run: npm run desktop:build:win
+          FOCUSFLOW_BACKEND_URL: ${{ inputs.api_url || vars.FOCUSFLOW_BACKEND_URL }}
+        run: |
+          if (-not $env:FOCUSFLOW_APP_URL) { throw "FOCUSFLOW_APP_URL is required (website origin)." }
+          if (-not $env:FOCUSFLOW_BACKEND_URL) { throw "FOCUSFLOW_BACKEND_URL is required (Render API origin)." }
+          if ($env:FOCUSFLOW_APP_URL -eq $env:FOCUSFLOW_BACKEND_URL) { throw "FOCUSFLOW_APP_URL and FOCUSFLOW_BACKEND_URL must be different origins." }
+          npm run desktop:build:win
+        shell: pwsh
 
       - name: Package Chrome extension
         shell: pwsh
@@ -55,8 +65,14 @@ jobs:
           if (-not $config.configured -or $config.mode -ne "cloud") {
             throw "Desktop configuration is not configured for cloud release mode."
           }
+          if (-not $config.appUrl -or -not $config.appUrl.StartsWith("https://")) {
+            throw "Desktop configuration must contain a public HTTPS website URL (appUrl). Found: $($config.appUrl)"
+          }
           if (-not $config.backendUrl -or -not $config.backendUrl.StartsWith("https://") -or $config.backendUrl.Contains("localhost") -or $config.backendUrl.Contains("127.0.0.1")) {
             throw "Production release installer must contain a valid, public HTTPS backend URL. Found: $($config.backendUrl)"
+          }
+          if ($config.appUrl -eq $config.backendUrl) {
+            throw "The website URL must never be used as the API backend (appUrl equals backendUrl)."
           }
 
           $installerPath = "release\FocusFlow-Setup.exe"

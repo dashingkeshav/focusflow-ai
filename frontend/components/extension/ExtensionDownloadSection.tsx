@@ -142,11 +142,11 @@ export default function ExtensionDownloadSection() {
               <div className="mt-6 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2 text-xs">
                 <div className="flex items-center justify-between text-slate-600">
                   <span>Version & Platform:</span>
-                  <span className="font-mono font-bold text-slate-900">v2.0.0 (Windows x64)</span>
+                  <span className="font-mono font-bold text-slate-900">v3.0.3 (Windows x64)</span>
                 </div>
                 <div className="flex items-center justify-between text-slate-600">
                   <span>Installer Size:</span>
-                  <span className="font-mono font-bold text-slate-900">94.5 MB (EXE Installer)</span>
+                  <span className="font-mono font-bold text-slate-900">92.1 MB (EXE Installer)</span>
                 </div>
                 <div className="flex items-center justify-between text-slate-600">
                   <span>Package Type:</span>

@@ -36,14 +36,21 @@
       this.currentState = "off"; // 'off' | 'starting' | 'attentive' | 'absent' | 'outside_region' | 'diverted' | 'error'
       this.lastDetection = null;
 
-      // Telemetry accounting
+      // Telemetry accounting (all values measured from real detections)
       this.metrics = {
         totalSeconds: 0,
         attentiveSeconds: 0,
         absentSeconds: 0,
         divertedSeconds: 0,
         focusRatio: 100,
+        distractionEvents: 0,
       };
+
+      // Real measured detection rate
+      this.detectionFps = 0;
+      this.framesProcessed = 0;
+      this.fpsWindowStart = 0;
+      this.previousState = "off";
 
       // Offscreen canvas for frame pixel processing
       this.offscreenCanvas = document.createElement("canvas");
@@ -60,22 +67,33 @@
           throw new Error("Pico face detection runtime is not loaded.");
         }
 
+        if (!bridge || typeof bridge.loadVisionAsset !== "function") {
+          throw new Error("No on-device vision asset loader was provided.");
+        }
+
+        const toInt8 = (buf) => {
+          if (buf instanceof Int8Array) return buf;
+          if (buf instanceof ArrayBuffer) return new Int8Array(buf);
+          if (ArrayBuffer.isView(buf)) {
+            return new Int8Array(buf.buffer, buf.byteOffset, buf.byteLength);
+          }
+          return new Int8Array(buf);
+        };
+
         // 1. Load facefinder cascade binary
         const facefinderBuf = await bridge.loadVisionAsset("facefinder.bin");
-        if (!facefinderBuf || facefinderBuf.length < 1000) {
+        if (!facefinderBuf || (facefinderBuf.byteLength || facefinderBuf.length || 0) < 1000) {
           throw new Error("Facefinder cascade model asset is missing or corrupted.");
         }
-        const faceBytes = new Int8Array(facefinderBuf.buffer || facefinderBuf);
-        this.faceClassifier = window.pico.unpack_cascade(faceBytes);
+        this.faceClassifier = window.pico.unpack_cascade(toInt8(facefinderBuf));
         this.updateMemory = window.pico.instantiate_detection_memory(5);
 
         // 2. Load pupil localizer binary if lploc runtime is present
         if (window.lploc && typeof window.lploc.unpack_localizer === "function") {
           try {
             const puplocBuf = await bridge.loadVisionAsset("puploc.bin");
-            if (puplocBuf && puplocBuf.length > 1000) {
-              const pupBytes = new Int8Array(puplocBuf.buffer || puplocBuf);
-              this.pupilLocalizer = window.lploc.unpack_localizer(pupBytes);
+            if (puplocBuf && (puplocBuf.byteLength || puplocBuf.length || 0) > 1000) {
+              this.pupilLocalizer = window.lploc.unpack_localizer(toInt8(puplocBuf));
             }
           } catch (e) {
             console.warn("Pupil localizer model asset notice:", e.message);
@@ -95,7 +113,7 @@
       if (this.isRunning) return true;
 
       this.currentState = "starting";
-      this.onStateChange({
+      this.emitState({
         state: "starting",
         label: "INITIALIZING SENSOR…",
         pillClass: "connecting",
@@ -106,7 +124,7 @@
       const modelsOk = await this.initModels(bridge);
       if (!modelsOk) {
         this.currentState = "error";
-        this.onStateChange({
+        this.emitState({
           state: "error",
           label: "MODEL ERROR",
           pillClass: "offline",
@@ -157,7 +175,7 @@
           errorLabel = "CAMERA IN USE";
         }
 
-        this.onStateChange({
+        this.emitState({
           state: "error",
           label: errorLabel,
           pillClass: "offline",
@@ -200,7 +218,7 @@
         ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       }
 
-      this.onStateChange({
+      this.emitState({
         state: "off",
         label: "CAMERA OFF",
         pillClass: "off",
@@ -223,6 +241,37 @@
       };
 
       detectStep();
+    }
+
+    /*
+     * Emit a state transition. Counts one distraction event only on a real
+     * attentive → not-attentive transition, never on every frame.
+     */
+    emitState(payload) {
+      const nextState = payload && payload.state ? payload.state : "off";
+      const distracting = ["absent", "diverted", "outside_region"].includes(nextState);
+
+      if (this.isRunning && distracting && this.previousState === "attentive") {
+        this.metrics.distractionEvents++;
+      }
+
+      if (nextState !== this.previousState) {
+        this.previousState = nextState;
+      }
+
+      this.onStateChange(payload);
+    }
+
+    getSummary() {
+      return {
+        totalSeconds: this.metrics.totalSeconds,
+        attentiveSeconds: this.metrics.attentiveSeconds,
+        absentSeconds: this.metrics.absentSeconds,
+        divertedSeconds: this.metrics.divertedSeconds,
+        focusRatio: this.metrics.focusRatio,
+        distractionEvents: this.metrics.distractionEvents,
+        detectionFps: this.detectionFps,
+      };
     }
 
     processFrame() {
@@ -265,6 +314,18 @@
       }
       dets = window.pico.cluster_detections(dets, 0.2);
 
+      // Measure the real detection rate from processed frames
+      this.framesProcessed++;
+      const nowMs = performance.now();
+      if (!this.fpsWindowStart) this.fpsWindowStart = nowMs;
+      if (nowMs - this.fpsWindowStart >= 1000) {
+        this.detectionFps = Math.round(
+          (this.framesProcessed * 1000) / (nowMs - this.fpsWindowStart)
+        );
+        this.framesProcessed = 0;
+        this.fpsWindowStart = nowMs;
+      }
+
       // Filter by confidence threshold (score >= 30)
       const validFaces = dets.filter((d) => d[3] >= 30.0);
 
@@ -272,7 +333,7 @@
         this.currentState = "absent";
         this.lastDetection = null;
         this.drawOverlay(targetW, targetH, null, null, "absent");
-        this.onStateChange({
+        this.emitState({
           state: "absent",
           label: "● FACE ABSENT",
           pillClass: "offline",
@@ -347,7 +408,7 @@
 
       this.drawOverlay(targetW, targetH, face, pupils, stateName);
 
-      this.onStateChange({
+      this.emitState({
         state: stateName,
         label: stateLabel,
         pillClass,
@@ -479,6 +540,9 @@
           absentSeconds: this.metrics.absentSeconds,
           divertedSeconds: this.metrics.divertedSeconds,
           focusRatio: ratio,
+          distractionEvents: this.metrics.distractionEvents,
+          detectionFps: this.detectionFps,
+          attentiveNow: this.currentState === "attentive",
         });
       }, 1000);
     }

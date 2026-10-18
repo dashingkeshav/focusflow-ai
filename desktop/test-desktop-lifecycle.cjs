@@ -36,19 +36,34 @@ function test(name, fn) {
 
 async function runAsyncTests() {
   // Test 1: Packaged configuration validation
-  test("Desktop config: Uses verified HTTPS endpoint or standalone, never localhost", () => {
+  test("Desktop config: Website and API backend are distinct HTTPS origins", () => {
     const configPath = path.join(__dirname, "desktop-config.json");
     assert(fs.existsSync(configPath), "desktop-config.json must exist");
     const cfg = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    const rootPkg = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8")
+    );
+
     assert(cfg.mode === "cloud" || cfg.mode === "standalone", "Mode must be 'cloud' or 'standalone'");
+    assert(cfg.version, "Configuration must specify application version");
+    assert.strictEqual(
+      cfg.version,
+      rootPkg.version,
+      "desktop-config.json version must match package.json version"
+    );
+
     if (cfg.mode === "cloud") {
-      assert(cfg.backendUrl && cfg.backendUrl.startsWith("https://"), "Cloud backendUrl must be a secure HTTPS URL");
+      assert(cfg.appUrl && cfg.appUrl.startsWith("https://"), "Cloud appUrl must be a secure HTTPS website URL");
+      assert(cfg.backendUrl && cfg.backendUrl.startsWith("https://"), "Cloud backendUrl must be a secure HTTPS API URL");
       assert(!cfg.backendUrl.includes("localhost"), "Production cloud backendUrl must never be localhost");
+      assert.notStrictEqual(cfg.appUrl, cfg.backendUrl, "Website URL must never equal the API backend URL");
+      assert(
+        !cfg.backendUrl.includes("vercel.app"),
+        "backendUrl must be the API origin (Render), not the Vercel website"
+      );
     } else {
       assert.strictEqual(cfg.backendUrl, null, "backendUrl must be null in standalone mode");
     }
-    assert(cfg.version, "Configuration must specify application version");
-    assert.strictEqual(cfg.version, "3.0.2", "Version must match release tag 3.0.2");
   });
 
   // Test 2: HTML & Assets completeness
@@ -84,6 +99,7 @@ async function runAsyncTests() {
     assert(preloadContent.includes("setBackendOverride"), "Must expose setBackendOverride");
     assert(preloadContent.includes("onTrayAction"), "Must expose onTrayAction");
     assert(preloadContent.includes("loadVisionAsset"), "Must expose loadVisionAsset");
+    assert(preloadContent.includes("apiRequest"), "Must expose the scoped apiRequest proxy");
   });
 
   // Test 4: Main Process Security & Architectural Requirements
@@ -98,6 +114,13 @@ async function runAsyncTests() {
     assert(mainContent.includes("will-navigate"), "Must prevent arbitrary remote navigation");
     assert(mainContent.includes("focusflow:tray-action"), "Must broadcast tray actions to renderer");
     assert(mainContent.includes("focusflow:load-vision-asset"), "Must handle vision asset loading via IPC");
+    assert(mainContent.includes("webSecurity: true"), "webSecurity must stay enabled");
+    assert(mainContent.includes("focusflow:api-request"), "Must provide the main-process API proxy");
+    assert(mainContent.includes("API_PATH_PATTERN"), "API proxy must restrict request paths");
+    assert(
+      !mainContent.includes("process.env.FOCUSFLOW_APP_URL?.trim() ||"),
+      "Backend resolution must not fall back to the frontend website URL"
+    );
   });
 
   // Test 5: Authoritative Drift-Free Timer Logic Simulation
@@ -211,6 +234,75 @@ async function runAsyncTests() {
     assert(
       desktopJs.includes('typeof desktopBridge.onTrayAction === "function"'),
       "desktop.js must guard onTrayAction invocation"
+    );
+    assert(
+      desktopJs.includes("apiRequest:") || desktopJs.includes("apiRequest: async"),
+      "desktop.js must include a safe apiRequest bridge fallback"
+    );
+  });
+
+  // Test 11: Camera Attention AI integration contract
+  test("Camera Attention AI: tracker is constructed with its real options API and a bridge", () => {
+    const desktopJs = fs.readFileSync(path.join(__dirname, "desktop.js"), "utf8");
+    const trackerJs = fs.readFileSync(
+      path.join(__dirname, "vision", "attention-tracker.js"),
+      "utf8"
+    );
+
+    assert(
+      desktopJs.includes("new window.AttentionTracker({"),
+      "Tracker must be constructed with the options object its constructor accepts"
+    );
+    assert(
+      desktopJs.includes("trackerInstance.start({ loadVisionAsset })"),
+      "Tracker.start must receive the vision asset loader bridge"
+    );
+    assert(
+      desktopJs.includes("onTelemetryUpdate"),
+      "Tracker telemetry must use the onTelemetryUpdate callback"
+    );
+    assert(
+      desktopJs.includes("stopCameraAttentionAI"),
+      "Camera must be stoppable and release its media tracks"
+    );
+    assert(
+      !desktopJs.includes("state.camera.attentionStatus = status.charAt"),
+      "Camera state must not be treated as a raw string"
+    );
+    assert(
+      trackerJs.includes("run_cascade") && trackerJs.includes("getSummary"),
+      "Tracker must run the real cascade and expose a real session summary"
+    );
+    assert(
+      trackerJs.includes("detectionFps") && trackerJs.includes("distractionEvents"),
+      "Tracker must report measured detection FPS and distraction events"
+    );
+  });
+
+  // Test 12: Download route must follow the newest release, never a pinned tag
+  test("Website download route: resolves the latest release asset", () => {
+    const routePath = path.join(
+      __dirname,
+      "..",
+      "frontend",
+      "app",
+      "api",
+      "download",
+      "desktop",
+      "route.ts"
+    );
+    const routeContent = fs.readFileSync(routePath, "utf8");
+    assert(
+      routeContent.includes("/releases/latest/download/FocusFlow-Setup.exe"),
+      "Download route must target the latest release asset"
+    );
+    assert(
+      !/releases\/download\/v\d/.test(routeContent),
+      "Download route must not pin a specific release tag"
+    );
+    assert(
+      routeContent.includes('parsed.protocol !== "https:"'),
+      "Configured download URL must be rejected when it is not HTTPS"
     );
   });
 

@@ -22,6 +22,14 @@ if (!gotLock) {
   process.exit(0);
 }
 
+/*
+ * Optional launch diagnostics: FOCUSFLOW_SMOKE_TEST=1 boots the real app,
+ * waits for the renderer to initialize, reports success/failure and exits.
+ * Never active in a normal user launch.
+ */
+const SMOKE_TEST = process.env.FOCUSFLOW_SMOKE_TEST === "1";
+const smokeTestErrors = [];
+
 let mainWindow = null;
 let tray = null;
 let isQuitting = false;
@@ -57,6 +65,56 @@ function getPackagedConfig() {
 }
 
 const packagedConfig = getPackagedConfig();
+
+/*
+=====================================================
+BACKEND RESOLUTION (single source of truth)
+=====================================================
+The backend is ALWAYS the API origin. It is never
+inferred from the frontend website URL.
+=====================================================
+*/
+function resolveBackendUrl(settings = {}) {
+  if (
+    settings.backendOverride &&
+    typeof settings.backendOverride === "string" &&
+    settings.backendOverride.trim()
+  ) {
+    return {
+      url: settings.backendOverride.trim().replace(/\/+$/, ""),
+      mode: "override",
+    };
+  }
+
+  if (packagedConfig.backendUrl) {
+    return {
+      url: String(packagedConfig.backendUrl).replace(/\/+$/, ""),
+      mode: "cloud",
+    };
+  }
+
+  const envEndpoint = process.env.FOCUSFLOW_BACKEND_URL?.trim();
+  if (envEndpoint) {
+    return { url: envEndpoint.replace(/\/+$/, ""), mode: "env" };
+  }
+
+  if (!app.isPackaged) {
+    return { url: "http://localhost:5001", mode: "development" };
+  }
+
+  return { url: null, mode: "standalone" };
+}
+
+function isLoopbackUrl(urlString) {
+  try {
+    const parsed = new URL(urlString);
+    return ["localhost", "127.0.0.1", "::1", "0.0.0.0"].includes(
+      parsed.hostname.toLowerCase()
+    );
+  } catch {
+    return false;
+  }
+}
 
 // Default Settings
 const DEFAULT_SETTINGS = {
@@ -516,16 +574,183 @@ async function createWindow() {
   mainWindow.on("resize", saveBounds);
   mainWindow.on("move", saveBounds);
 
-  // Grant media permission for Camera Attention AI
-  mainWindow.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
-    if (permission === "media") {
+  // Grant media permission for Camera Attention AI (local app origin only)
+  mainWindow.webContents.session.setPermissionRequestHandler((webContents, permission, callback, details) => {
+    const requestingUrl = details?.requestingUrl || webContents?.getURL?.() || "";
+    const isLocalApp = requestingUrl.startsWith("file://") || isLoopbackUrl(requestingUrl);
+    if (permission === "media" && isLocalApp) {
       return callback(true);
     }
     callback(false);
   });
 
+  // Reject other powerful permissions outright
+  mainWindow.webContents.session.setPermissionCheckHandler((_wc, permission) => {
+    return permission === "media";
+  });
+
   // Load the standalone local desktop interface
   await mainWindow.loadFile(path.join(__dirname, "index.html"));
+
+  if (SMOKE_TEST) {
+    mainWindow.webContents.on("console-message", (_event, levelOrDetails, legacyMessage) => {
+      const level =
+        typeof levelOrDetails === "object" ? levelOrDetails.level : levelOrDetails;
+      const message =
+        typeof levelOrDetails === "object" ? levelOrDetails.message : legacyMessage;
+
+      // The permission-denied probe intentionally triggers this diagnostic.
+      const isExpected =
+        typeof message === "string" && message.includes("Camera access error: NotAllowedError");
+
+      // level 3 = error
+      if (level >= 3 && !isExpected) smokeTestErrors.push(message);
+    });
+
+    mainWindow.webContents.on("render-process-gone", (_event, details) => {
+      smokeTestErrors.push(`render-process-gone: ${details.reason}`);
+    });
+
+    setTimeout(async () => {
+      let probe = null;
+      let vision = null;
+
+      try {
+        probe = await mainWindow.webContents.executeJavaScript(
+          `({
+            bridgeReady: typeof window.focusFlowDesktop === "object",
+            apiProxy: typeof window.focusFlowDesktop?.apiRequest === "function",
+            activeView: document.querySelector(".view-section.active")?.id || null,
+            connectivity: document.getElementById("connectivity-text")?.textContent || null,
+            cameraInFocus: !!document.querySelector("#view-focus #camera-video-elem"),
+            timerDigits: document.getElementById("timer-digits")?.textContent || null
+          })`
+        );
+      } catch (err) {
+        smokeTestErrors.push(`probe failed: ${err.message}`);
+      }
+
+      try {
+        /*
+         * Deep vision checks, no physical webcam required:
+         * A. Real cascade inference on a synthetic blank frame must honestly
+         *    report "absent" (proves models load and inference executes).
+         * B. Denying camera permission must surface a real error and leave the
+         *    timer intact.
+         */
+        vision = await mainWindow.webContents.executeJavaScript(`
+          (async () => {
+            const out = {};
+
+            const frameCanvas = document.createElement("canvas");
+            frameCanvas.width = 320;
+            frameCanvas.height = 240;
+            const frameCtx = frameCanvas.getContext("2d");
+            frameCtx.fillStyle = "#808080";
+            frameCtx.fillRect(0, 0, 320, 240);
+
+            const syntheticVideo = document.createElement("video");
+            syntheticVideo.autoplay = true;
+            syntheticVideo.muted = true;
+            syntheticVideo.playsInline = true;
+            syntheticVideo.srcObject = frameCanvas.captureStream(5);
+            await syntheticVideo.play().catch(() => {});
+
+            let lastState = null;
+            const tracker = new window.AttentionTracker({
+              video: syntheticVideo,
+              canvas: document.createElement("canvas"),
+              onStateChange: (e) => { lastState = e && e.state; },
+              onTelemetryUpdate: () => {},
+              onError: (code, message) => { out.visionError = code + ": " + message; },
+            });
+
+            // Exercise model loading + inference directly. start() would open
+            // the real webcam, so the blank-frame check bypasses hardware.
+            const modelsReady = await tracker.initModels({
+              loadVisionAsset: (name) => window.focusFlowDesktop.loadVisionAsset(name),
+            });
+            tracker.isRunning = true;
+            for (let i = 0; i < 3; i++) {
+              tracker.processFrame();
+              await new Promise((r) => setTimeout(r, 120));
+            }
+            out.blankFrame = {
+              modelsReady,
+              state: lastState,
+              summary: tracker.getSummary(),
+            };
+            tracker.stop();
+
+            const originalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+            navigator.mediaDevices.getUserMedia = () =>
+              Promise.reject(Object.assign(new Error("Permission denied by test"), { name: "NotAllowedError" }));
+
+            document.getElementById("btn-toggle-camera").click();
+            await new Promise((r) => setTimeout(r, 2200));
+
+            out.permissionDenied = {
+              pill: document.getElementById("camera-status-pill").textContent,
+              metric: document.getElementById("camera-metric-state").textContent,
+              timerDigits: document.getElementById("timer-digits").textContent,
+              buttonText: document.getElementById("btn-toggle-camera").textContent.trim(),
+            };
+
+            navigator.mediaDevices.getUserMedia = originalGetUserMedia;
+
+            // Navigation: every sidebar item must activate its matching view.
+            const navResults = [];
+            document.querySelectorAll(".nav-item").forEach((item) => {
+              const view = item.dataset.view;
+              if (!view) return;
+              item.click();
+              const active = document.querySelector(".view-section.active");
+              navResults.push({
+                view,
+                ok: active && active.id === "view-" + view,
+              });
+            });
+            out.navigation = navResults;
+            out.websiteDisplay =
+              document.getElementById("settings-website-display")?.textContent || null;
+            out.endpointDisplay =
+              document.getElementById("settings-endpoint-display")?.textContent || null;
+
+            // Persistence round-trip through Electron userData, preserving
+            // whatever the user already had stored.
+            const beforeTasks = await window.focusFlowDesktop.getLocalTasks();
+            await window.focusFlowDesktop.saveLocalTasks([
+              { id: "__smoke__", title: "Smoke persistence probe", completed: false },
+            ]);
+            const afterTasks = await window.focusFlowDesktop.getLocalTasks();
+            await window.focusFlowDesktop.saveLocalTasks(beforeTasks);
+            const restoredTasks = await window.focusFlowDesktop.getLocalTasks();
+
+            out.persistence = {
+              wrote: Array.isArray(afterTasks) && afterTasks.some((t) => t.id === "__smoke__"),
+              restored: Array.isArray(restoredTasks) && !restoredTasks.some((t) => t.id === "__smoke__"),
+            };
+
+            // Command palette opens from the titlebar control.
+            document.getElementById("titlebar-search-btn").click();
+            await new Promise((r) => setTimeout(r, 150));
+            out.paletteOpen =
+              document.getElementById("command-palette-backdrop").style.display !== "none";
+
+            return out;
+          })()
+        `);
+      } catch (err) {
+        smokeTestErrors.push(`vision probe failed: ${err.message}`);
+      }
+
+      console.log(
+        "SMOKE_RESULT " + JSON.stringify({ probe, vision, errors: smokeTestErrors })
+      );
+
+      app.exit(smokeTestErrors.length > 0 ? 1 : 0);
+    }, 6000);
+  }
 
   // Security: Handle external links safely in OS browser
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
@@ -621,45 +846,127 @@ IPC HANDLERS
 // Configuration & Connection resolution
 ipcMain.handle("focusflow:get-config", async () => {
   const settings = await readJsonFile(settingsStoragePath(), DEFAULT_SETTINGS);
-
-  // Resolution hierarchy:
-  // 1. Developer override if explicitly set in settings
-  // 2. Packaged configuration from desktop-config.json (e.g. production cloud URL)
-  // 3. Environment variable FOCUSFLOW_BACKEND_URL (for CLI/dev launches)
-  // 4. In development mode (!app.isPackaged), default to http://localhost:5001
-  // 5. In packaged production mode with no URL, backendUrl is null (Standalone Local Mode)
-
-  let resolvedBackendUrl = null;
-  let connectionMode = packagedConfig.mode || "standalone";
-
-  const envEndpoint = process.env.FOCUSFLOW_BACKEND_URL?.trim() || process.env.FOCUSFLOW_APP_URL?.trim();
-
-  if (settings.backendOverride && typeof settings.backendOverride === "string" && settings.backendOverride.trim()) {
-    resolvedBackendUrl = settings.backendOverride.trim().replace(/\/+$/, "");
-    connectionMode = "override";
-  } else if (packagedConfig.backendUrl) {
-    resolvedBackendUrl = packagedConfig.backendUrl;
-    connectionMode = "cloud";
-  } else if (envEndpoint) {
-    resolvedBackendUrl = envEndpoint.replace(/\/+$/, "");
-    connectionMode = "env";
-  } else if (!app.isPackaged) {
-    // Development fallback
-    resolvedBackendUrl = "http://localhost:5001";
-    connectionMode = "development";
-  } else {
-    // Packaged production without remote backend configuration
-    resolvedBackendUrl = null;
-    connectionMode = "standalone";
-  }
+  const resolved = resolveBackendUrl(settings);
 
   return {
-    backendUrl: resolvedBackendUrl,
-    mode: connectionMode,
+    backendUrl: resolved.url,
+    appUrl: packagedConfig.appUrl || null,
+    mode: resolved.url ? resolved.mode : "standalone",
     isPackaged: app.isPackaged,
-    version: packagedConfig.version || "3.0.2",
+    version: packagedConfig.version || app.getVersion(),
     builtAt: packagedConfig.builtAt || null,
   };
+});
+
+/*
+=====================================================
+SECURE BACKEND REQUEST PROXY
+=====================================================
+The renderer runs on file://, so any direct browser fetch
+to the API is blocked by CORS (Origin: null). Instead of
+weakening webSecurity or allowing a null origin, requests
+are performed in the main process over a narrowly scoped
+IPC channel: only /api/* paths, only the configured API
+origin, and an explicit method allowlist.
+=====================================================
+*/
+const API_METHOD_ALLOWLIST = new Set(["GET", "POST", "PUT", "PATCH", "DELETE"]);
+const API_PATH_PATTERN = /^\/api\/[A-Za-z0-9\-._~/]+(\?[A-Za-z0-9\-._~=&%+]*)?$/;
+
+ipcMain.handle("focusflow:api-request", async (_event, request) => {
+  if (!request || typeof request !== "object") {
+    return { ok: false, status: 0, error: "Invalid API request payload." };
+  }
+
+  const settings = await readJsonFile(settingsStoragePath(), DEFAULT_SETTINGS);
+  const resolved = resolveBackendUrl(settings);
+
+  if (!resolved.url) {
+    return {
+      ok: false,
+      status: 0,
+      error:
+        "No FocusFlow API backend is configured for this installation. Running in Standalone Local Mode.",
+    };
+  }
+
+  const apiPath = typeof request.path === "string" ? request.path : "";
+  if (!API_PATH_PATTERN.test(apiPath) || apiPath.includes("..")) {
+    return { ok: false, status: 0, error: "Blocked: only /api/* paths are allowed." };
+  }
+
+  const method = typeof request.method === "string" ? request.method.toUpperCase() : "GET";
+  if (!API_METHOD_ALLOWLIST.has(method)) {
+    return { ok: false, status: 0, error: `Blocked: method ${method} is not allowed.` };
+  }
+
+  let backendOrigin;
+  try {
+    backendOrigin = new URL(resolved.url);
+  } catch {
+    return { ok: false, status: 0, error: "Configured API backend URL is invalid." };
+  }
+
+  if (backendOrigin.protocol !== "https:" && !isLoopbackUrl(resolved.url)) {
+    return { ok: false, status: 0, error: "Refusing to send credentials over plain HTTP." };
+  }
+
+  const targetUrl = `${backendOrigin.origin}${apiPath}`;
+  if (new URL(targetUrl).origin !== backendOrigin.origin) {
+    return { ok: false, status: 0, error: "Blocked: request origin mismatch." };
+  }
+
+  const headers = { Accept: "application/json" };
+  if (request.body !== undefined && request.body !== null) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  // Bearer token is forwarded from the renderer's in-memory state only.
+  const token = typeof request.token === "string" ? request.token : "";
+  if (token && token.length < 4096) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  if (typeof request.body === "string" && request.body.length > 2 * 1024 * 1024) {
+    return { ok: false, status: 0, error: "Request body too large." };
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const response = await fetch(targetUrl, {
+      method,
+      headers,
+      body: request.body === undefined || request.body === null ? undefined : request.body,
+      signal: controller.signal,
+    });
+
+    const rawText = await response.text();
+    let data = null;
+    if (rawText) {
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        data = null;
+      }
+    }
+
+    return {
+      ok: response.ok,
+      status: response.status,
+      data,
+      text: data === null && rawText ? rawText.slice(0, 2000) : null,
+    };
+  } catch (err) {
+    const message =
+      err.name === "AbortError"
+        ? "Request timed out after 15 seconds."
+        : `Could not reach ${resolved.url}: ${err.message}`;
+    return { ok: false, status: 0, error: message };
+  } finally {
+    clearTimeout(timeoutId);
+  }
 });
 
 // Genuine On-Device Vision Asset Loader
