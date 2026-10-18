@@ -647,7 +647,7 @@ export default function DarkExtensionPage() {
                 <div className="mt-6 p-4 rounded-2xl bg-black/50 border border-white/10 space-y-2.5 text-xs font-mono text-gray-300">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Version:</span>
-                    <span className="text-white font-bold">v3.0.3 (Windows x64)</span>
+                    <span className="text-white font-bold">v3.0.4 (Windows x64)</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Installer Size:</span>
@@ -760,7 +760,7 @@ export default function DarkExtensionPage() {
               {
                 num: "01",
                 title: "Download FocusFlow-Setup.exe",
-                desc: "Get the verified Windows installer (v3.0.3, 64-bit) from the latest published release. The button always serves the newest successful build.",
+                desc: "Get the verified Windows installer (v3.0.4, 64-bit) from the latest published release. The button always serves the newest successful build.",
                 action: (
                   <div className="flex items-center gap-2">
                     <a

@@ -332,7 +332,7 @@
                     <div class="glass-card-header">
                       <h3>Priority Queue</h3>
                       <div style="display:flex; gap:8px;">
-                        <button class="btn btn-secondary btn-sm" onclick="window.FocusFlowApp.switchView('tasks')">+ All Tasks</button>
+                        <button class="btn btn-secondary btn-sm" data-action="switch-view" data-view="tasks">+ All Tasks</button>
                       </div>
                     </div>
                     <div id="dashboard-tasks-list" class="task-items-list">
@@ -346,7 +346,7 @@
                   <div class="glass-card">
                     <div class="glass-card-header">
                       <h3>Target Goals</h3>
-                      <button class="btn btn-secondary btn-sm" onclick="window.FocusFlowApp.switchView('tasks')">+ New Goal</button>
+                      <button class="btn btn-secondary btn-sm" data-action="switch-view" data-view="tasks">+ New Goal</button>
                     </div>
                     <div id="dashboard-goals-list">
                       <!-- Rendered dynamically from real goals -->
@@ -357,7 +357,7 @@
                   <div class="glass-card">
                     <div class="glass-card-header">
                       <h3>Recent Focus Sessions</h3>
-                      <button class="btn btn-secondary btn-sm" onclick="window.FocusFlowApp.switchView('reports')">View Ledger</button>
+                      <button class="btn btn-secondary btn-sm" data-action="switch-view" data-view="reports">View Ledger</button>
                     </div>
                     <div id="dashboard-recent-sessions">
                       <!-- Rendered dynamically from real session records -->
@@ -953,7 +953,7 @@
                     <h4>Application Version</h4>
                     <p>FocusFlow AI for Windows — Standalone Desktop Productivity Workspace</p>
                   </div>
-                  <span id="settings-app-version-text" style="font-family:var(--font-mono); font-size:12px; color:#ff6422; font-weight:700;">v3.0.3 (x64)</span>
+                  <span id="settings-app-version-text" style="font-family:var(--font-mono); font-size:12px; color:#ff6422; font-weight:700;">v3.0.4 (x64)</span>
                 </div>
               </div>
             </section>

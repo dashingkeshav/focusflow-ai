@@ -716,6 +716,42 @@ async function createWindow() {
             out.endpointDisplay =
               document.getElementById("settings-endpoint-display")?.textContent || null;
 
+            // Genuine UI interaction: create a task through the DOM, then remove
+            // it with the rendered delete control (verifies delegated events).
+            document.querySelector('[data-view="tasks"]').click();
+            await new Promise((r) => setTimeout(r, 300));
+
+            document.getElementById("new-task-input").value = "SMOKE_UI_TASK";
+            document.getElementById("btn-add-task").click();
+            await new Promise((r) => setTimeout(r, 800));
+
+            const afterCreate = await window.focusFlowDesktop.getLocalTasks();
+            const createdTask = afterCreate.find((t) => t.title === "SMOKE_UI_TASK");
+
+            let deletedViaButton = false;
+            if (createdTask) {
+              const deleteBtn = document.querySelector(
+                '#tasks-screen-list [data-action="delete-task"][data-id="' + createdTask.id + '"]'
+              );
+              out.taskDeleteButtonFound = Boolean(deleteBtn);
+              if (deleteBtn) {
+                deleteBtn.click();
+                await new Promise((r) => setTimeout(r, 900));
+              }
+              const afterDelete = await window.focusFlowDesktop.getLocalTasks();
+              deletedViaButton = !afterDelete.some((t) => t.id === createdTask.id);
+
+              if (!deletedViaButton) {
+                await window.FocusFlowApp.deleteTask(createdTask.id);
+              }
+            }
+
+            out.taskUi = {
+              created: Boolean(createdTask),
+              deletedViaButton,
+            };
+            out.noInlineHandlers = document.querySelectorAll("[onclick]").length === 0;
+
             // Persistence round-trip through Electron userData, preserving
             // whatever the user already had stored.
             const beforeTasks = await window.focusFlowDesktop.getLocalTasks();

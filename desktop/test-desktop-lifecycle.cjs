@@ -279,7 +279,32 @@ async function runAsyncTests() {
     );
   });
 
-  // Test 12: Download route must follow the newest release, never a pinned tag
+  // Test 12: No inline handlers may be relied on (page CSP forbids them)
+  test("UI events: rendered controls use delegated data-action handlers, not inline onclick", () => {
+    const desktopJs = fs.readFileSync(path.join(__dirname, "desktop.js"), "utf8");
+    const html = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+    const queueCsp = html.includes("Content-Security-Policy");
+
+    assert(queueCsp, "index.html must declare a Content-Security-Policy");
+    assert(
+      html.includes("script-src 'self'"),
+      "CSP must not permit unsafe-inline scripts"
+    );
+    assert(
+      !desktopJs.includes("onclick=") && !html.includes("onclick="),
+      "Inline onclick handlers are blocked by CSP; use data-action delegation"
+    );
+    assert(
+      desktopJs.includes('closest("[data-action]")'),
+      "desktop.js must delegate clicks through data-action"
+    );
+    assert(
+      desktopJs.includes('data-action="delete-task"'),
+      "Task delete control must use the delegated action"
+    );
+  });
+
+  // Test 13: Download route must follow the newest release, never a pinned tag
   test("Website download route: resolves the latest release asset", () => {
     const routePath = path.join(
       __dirname,

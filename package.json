@@ -1,6 +1,6 @@
 {
   "name": "focusflow-ai",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "main": "desktop/main.cjs",
   "private": true,
   "scripts": {

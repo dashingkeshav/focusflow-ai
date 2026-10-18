@@ -92,6 +92,7 @@
   };
 
   let lastGeneratedSchedule = [];
+  let lastRecommendations = [];
   let trackerInstance = null;
 
   // Preload bridge helper with comprehensive fallback
@@ -721,12 +722,12 @@
           .slice(0, 5)
           .map((task) => `
           <div class="task-item-row ${task.completed ? "done" : ""}" data-id="${task.id || task._id}">
-            <div class="task-checkbox ${task.completed ? "completed" : ""}" onclick="window.FocusFlowApp.toggleTask('${task.id || task._id}')">
+            <div class="task-checkbox ${task.completed ? "completed" : ""}" data-action="toggle-task" data-id="${escapeHtml(String(task.id || task._id))}">
               ${task.completed ? "✓" : ""}
             </div>
             <span class="task-title" style="${task.completed ? "text-decoration:line-through; color:#646473;" : ""}">${escapeHtml(task.title)}</span>
             <span class="priority-pill ${task.priority || "medium"}">${(task.priority || "med").toUpperCase()}</span>
-            <button class="btn btn-secondary btn-sm" style="padding:2px 8px; font-size:11px; margin-left:auto;" onclick="window.FocusFlowApp.focusOnTask('${escapeHtml(task.title)}', '${task.id || task._id}')">Focus ▶</button>
+            <button class="btn btn-secondary btn-sm" style="padding:2px 8px; font-size:11px; margin-left:auto;" data-action="focus-task" data-id="${escapeHtml(String(task.id || task._id))}" data-title="${escapeHtml(task.title)}">Focus ▶</button>
           </div>
         `)
           .join("");
@@ -746,15 +747,15 @@
           .map((task) => `
           <div class="task-item-row ${task.completed ? "done" : ""}" style="justify-content:space-between;" data-id="${task.id || task._id}">
             <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:0;">
-              <div class="task-checkbox ${task.completed ? "completed" : ""}" onclick="window.FocusFlowApp.toggleTask('${task.id || task._id}')">
+              <div class="task-checkbox ${task.completed ? "completed" : ""}" data-action="toggle-task" data-id="${escapeHtml(String(task.id || task._id))}">
                 ${task.completed ? "✓" : ""}
               </div>
               <span class="task-title" style="${task.completed ? "text-decoration:line-through; color:#646473;" : ""}">${escapeHtml(task.title)}</span>
               <span class="priority-pill ${task.priority || "medium"}">${(task.priority || "med").toUpperCase()}</span>
             </div>
             <div style="display:flex; align-items:center; gap:8px;">
-              <button class="btn btn-secondary btn-sm" style="padding:3px 10px; font-size:11px;" onclick="window.FocusFlowApp.focusOnTask('${escapeHtml(task.title)}', '${task.id || task._id}')">Focus ▶</button>
-              <button class="btn-icon" style="width:24px; height:24px; color:#ef4444; background:transparent; border:none; cursor:pointer;" onclick="window.FocusFlowApp.deleteTask('${task.id || task._id}')" title="Delete Task">×</button>
+              <button class="btn btn-secondary btn-sm" style="padding:3px 10px; font-size:11px;" data-action="focus-task" data-id="${escapeHtml(String(task.id || task._id))}" data-title="${escapeHtml(task.title)}">Focus ▶</button>
+              <button class="btn-icon" style="width:24px; height:24px; color:#ef4444; background:transparent; border:none; cursor:pointer;" data-action="delete-task" data-id="${escapeHtml(String(task.id || task._id))}" title="Delete Task">×</button>
             </div>
           </div>
         `)
@@ -848,7 +849,7 @@
         (domain) => `
       <div class="domain-chip">
         <span>${escapeHtml(domain)}</span>
-        <button onclick="window.FocusFlowApp.removeBlockDomain('${escapeHtml(domain)}')">×</button>
+        <button data-action="remove-domain" data-domain="${escapeHtml(domain)}" title="Remove blocked domain">×</button>
       </div>
     `
       )
@@ -1002,16 +1003,20 @@
       });
     }
 
+    // Handlers stay in this closure; only an index reaches the DOM, so no
+    // function source is serialized into markup (and no inline script runs).
+    lastRecommendations = recommendations;
+
     container.innerHTML = recommendations
       .map(
-        (r) => `
+        (r, index) => `
       <div class="rec-card">
         <div class="rec-card-header">
           <strong style="color:#f4f4f7; font-size:13.5px;">${escapeHtml(r.title)}</strong>
           <span class="rec-tag ${r.tagClass}">${r.tag}</span>
         </div>
         <p style="color:#9494a3; font-size:12px; line-height:1.4;">${escapeHtml(r.desc)}</p>
-        <button class="btn btn-secondary btn-sm" style="align-self:flex-start; margin-top:4px;" onclick="(${r.onAction.toString()})()">${escapeHtml(r.action)}</button>
+        <button class="btn btn-secondary btn-sm" style="align-self:flex-start; margin-top:4px;" data-action="recommendation" data-recommendation="${index}">${escapeHtml(r.action)}</button>
       </div>
     `
       )
@@ -1070,7 +1075,7 @@
         <div style="padding:24px; text-align:center; background:rgba(255,255,255,0.02); border-radius:12px; border:1px solid var(--border-subtle);">
           <div style="font-size:13.5px; font-weight:700; color:#f4f4f7; margin-bottom:6px;">${featureName} Requires Cloud Account</div>
           <p style="font-size:12px; color:#9494a3; max-width:440px; margin:0 auto 14px;">Sign in to synchronize real-time co-working sessions, accountability circles, and peer assistance with other FocusFlow members.</p>
-          <button class="btn btn-primary btn-sm" onclick="window.FocusFlowApp.switchView('auth')">Sign In / Create Account</button>
+          <button class="btn btn-primary btn-sm" data-action="switch-view" data-view="auth">Sign In / Create Account</button>
         </div>
       `;
       if (roomsEl) roomsEl.innerHTML = offlineMsg("Live Focus Rooms");
@@ -1095,7 +1100,7 @@
               <div class="participant-avatars">
                 <div class="avatar-mini">JD</div><div class="avatar-mini">MK</div><div class="avatar-mini">AL</div>
               </div>
-              <button class="btn btn-secondary btn-sm" onclick="window.FocusFlowApp.switchView('focus'); window.FocusFlowApp.startFocusTimer(50);">Join Room ▶</button>
+              <button class="btn btn-secondary btn-sm" data-action="start-focus" data-minutes="50">Join Room ▶</button>
             </div>
           </div>
           <div class="room-card-v2">
@@ -1110,7 +1115,7 @@
               <div class="participant-avatars">
                 <div class="avatar-mini">FF</div><div class="avatar-mini">RK</div>
               </div>
-              <button class="btn btn-secondary btn-sm" onclick="window.FocusFlowApp.switchView('focus'); window.FocusFlowApp.startFocusTimer(25);">Join Room ▶</button>
+              <button class="btn btn-secondary btn-sm" data-action="start-focus" data-minutes="25">Join Room ▶</button>
             </div>
           </div>
         </div>
@@ -1141,7 +1146,7 @@
         <div class="pod-card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <strong style="color:#f4f4f7; font-size:14px;">Windows Desktop Release v3.0.3</strong>
+              <strong style="color:#f4f4f7; font-size:14px;">Windows Desktop Release v3.0.4</strong>
               <div style="font-size:11.5px; color:#9494a3;">Production packaging, camera attention integration, and QA verification.</div>
             </div>
             <span class="nav-badge-pill green">IN PROGRESS</span>
@@ -2196,6 +2201,34 @@
   }
 
   function bindEvents() {
+    // Delegated actions. The page CSP forbids inline handlers (script-src 'self'),
+    // so dynamically rendered controls use data-action attributes instead.
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("[data-action]");
+      if (!target) return;
+
+      const action = target.dataset.action;
+      const id = target.dataset.id || null;
+
+      if (action === "toggle-task" && id) {
+        window.FocusFlowApp.toggleTask(id);
+      } else if (action === "delete-task" && id) {
+        window.FocusFlowApp.deleteTask(id);
+      } else if (action === "focus-task" && id) {
+        window.FocusFlowApp.focusOnTask(target.dataset.title || "", id);
+      } else if (action === "remove-domain") {
+        window.FocusFlowApp.removeBlockDomain(target.dataset.domain || "");
+      } else if (action === "switch-view" && target.dataset.view) {
+        switchView(target.dataset.view);
+      } else if (action === "start-focus") {
+        switchView("focus");
+        startFocusTimer(Number(target.dataset.minutes) || 25);
+      } else if (action === "recommendation" && target.dataset.recommendation) {
+        const rec = lastRecommendations[Number(target.dataset.recommendation)];
+        if (rec && typeof rec.onAction === "function") rec.onAction();
+      }
+    });
+
     // Navigation
     document.querySelectorAll(".nav-item").forEach((item) => {
       item.addEventListener("click", () => {
