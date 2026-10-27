@@ -82,7 +82,7 @@ export default function RegisterPage() {
     <AuthShell>
       <AuthBrand />
 
-      <div className="rounded-3xl border border-white/10 bg-[#0d0d0d]/85 p-8 md:p-10 shadow-2xl shadow-black/80 backdrop-blur-2xl">
+      <div className="rounded-3xl border border-white/10 bg-slate-50/85 p-8 md:p-10 shadow-2xl shadow-black/80 backdrop-blur-2xl">
         <h1 className="text-2xl font-bold tracking-tight text-white font-serif">
           Create your account
         </h1>
