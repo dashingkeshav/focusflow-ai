@@ -16,6 +16,41 @@
 (function () {
   'use strict';
 
+  if (window.__focusflowContentScriptInjected) {
+    return;
+  }
+  window.__focusflowContentScriptInjected = true;
+
+  // ── Context validity & Safe Messaging Helper ─────────────────────────────────
+  function isExtensionValid() {
+    try {
+      return Boolean(typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id);
+    } catch {
+      return false;
+    }
+  }
+
+  function safeSendMessage(message, callback) {
+    if (!isExtensionValid()) {
+      if (typeof callback === 'function') callback(null, new Error('Extension context invalidated'));
+      return false;
+    }
+    try {
+      chrome.runtime.sendMessage(message, (response) => {
+        const err = chrome.runtime?.lastError;
+        if (typeof callback === 'function') {
+          callback(response, err);
+        }
+      });
+      return true;
+    } catch (err) {
+      if (typeof callback === 'function') {
+        callback(null, err);
+      }
+      return false;
+    }
+  }
+
   // ── 1. Privacy-safe aggregate telemetry ──────────────────────────────────────
   let keyStrokeCount = 0;
   let mouseMovementCount = 0;
@@ -76,37 +111,34 @@
   // Visibility changes.
   document.addEventListener('visibilitychange', () => {
     lastInteractionTime = Date.now();
-    try {
-      chrome.runtime.sendMessage({
-        type: 'VISIBILITY_CHANGE',
-        isVisible: document.visibilityState === 'visible',
-        url: window.location.href,
-        domain: window.location.hostname,
-        timestamp: Date.now(),
-      });
-    } catch {
-      // Extension context invalidated during reload.
-    }
+    if (!isExtensionValid()) return;
+    safeSendMessage({
+      type: 'VISIBILITY_CHANGE',
+      isVisible: document.visibilityState === 'visible',
+      url: window.location.href,
+      domain: window.location.hostname,
+      timestamp: Date.now(),
+    });
   });
 
   // Periodic flush of interaction aggregates every 10 seconds.
-  setInterval(() => {
+  const metricsInterval = setInterval(() => {
+    if (!isExtensionValid()) {
+      clearInterval(metricsInterval);
+      return;
+    }
     if (keyStrokeCount > 0 || mouseMovementCount > 0 || clickCount > 0 || scrollCount > 0) {
-      try {
-        chrome.runtime.sendMessage({
-          type: 'INTERACTION_METRICS',
-          keyStrokes: keyStrokeCount,
-          mouseMovements: mouseMovementCount,
-          clicks: clickCount,
-          scrolls: scrollCount,
-          lastInteraction: lastInteractionTime,
-          isVisible: document.visibilityState === 'visible',
-          url: window.location.href,
-          domain: window.location.hostname,
-        });
-      } catch {
-        // Extension context invalidated.
-      }
+      safeSendMessage({
+        type: 'INTERACTION_METRICS',
+        keyStrokes: keyStrokeCount,
+        mouseMovements: mouseMovementCount,
+        clicks: clickCount,
+        scrolls: scrollCount,
+        lastInteraction: lastInteractionTime,
+        isVisible: document.visibilityState === 'visible',
+        url: window.location.href,
+        domain: window.location.hostname,
+      });
       keyStrokeCount = 0;
       mouseMovementCount = 0;
       clickCount = 0;
@@ -125,49 +157,48 @@
     let lastReportedTitle = '';
 
     function checkAndReportYouTube() {
-      const url = new URL(window.location.href);
-      const videoId = url.searchParams.get('v') || (url.pathname.startsWith('/shorts/') ? url.pathname.split('/')[2] : null);
+      if (!isExtensionValid()) return;
+      try {
+        const url = new URL(window.location.href);
+        const videoId = url.searchParams.get('v') || (url.pathname.startsWith('/shorts/') ? url.pathname.split('/')[2] : null);
 
-      let videoTitle = '';
-      const titleEl =
-        document.querySelector('h1.ytd-watch-metadata yt-formatted-string') ||
-        document.querySelector('h1.title yt-formatted-string') ||
-        document.querySelector('#title h1 yt-formatted-string');
+        let videoTitle = '';
+        const titleEl =
+          document.querySelector('h1.ytd-watch-metadata yt-formatted-string') ||
+          document.querySelector('h1.title yt-formatted-string') ||
+          document.querySelector('#title h1 yt-formatted-string');
 
-      if (titleEl && titleEl.textContent && titleEl.textContent.trim()) {
-        videoTitle = titleEl.textContent.trim();
-      } else if (document.title && !document.title.startsWith('(') && document.title !== 'YouTube') {
-        videoTitle = document.title.replace(/- YouTube$/i, '').trim();
-      }
+        if (titleEl && titleEl.textContent && titleEl.textContent.trim()) {
+          videoTitle = titleEl.textContent.trim();
+        } else if (document.title && !document.title.startsWith('(') && document.title !== 'YouTube') {
+          videoTitle = document.title.replace(/- YouTube$/i, '').trim();
+        }
 
-      let channelName = '';
-      const channelEl =
-        document.querySelector('#channel-name yt-formatted-string') ||
-        document.querySelector('#owner-name a') ||
-        document.querySelector('ytd-channel-name yt-formatted-string');
-      if (channelEl && channelEl.textContent) {
-        channelName = channelEl.textContent.trim();
-      }
+        let channelName = '';
+        const channelEl =
+          document.querySelector('#channel-name yt-formatted-string') ||
+          document.querySelector('#owner-name a') ||
+          document.querySelector('ytd-channel-name yt-formatted-string');
+        if (channelEl && channelEl.textContent) {
+          channelName = channelEl.textContent.trim();
+        }
 
-      // If we found a watch page or video title
-      if (videoId || videoTitle) {
-        if (videoId !== lastReportedVideoId || (videoTitle && videoTitle !== lastReportedTitle)) {
-          lastReportedVideoId = videoId;
-          lastReportedTitle = videoTitle;
+        // If we found a watch page or video title
+        if (videoId || videoTitle) {
+          if (videoId !== lastReportedVideoId || (videoTitle && videoTitle !== lastReportedTitle)) {
+            lastReportedVideoId = videoId;
+            lastReportedTitle = videoTitle;
 
-          try {
-            chrome.runtime.sendMessage({
+            safeSendMessage({
               type: 'YOUTUBE_METADATA',
               videoId: videoId || null,
               title: videoTitle || document.title,
               channel: channelName,
               url: window.location.href,
             });
-          } catch {
-            // Extension context invalidated.
           }
         }
-      }
+      } catch (_) {}
     }
 
     // YouTube uses SPA navigation without full page reloads.
@@ -209,21 +240,24 @@
     window.dispatchEvent(new CustomEvent('FOCUSFLOW_EXTENSION_HELLO'));
 
     window.addEventListener('FOCUSFLOW_PING', () => {
-      window.dispatchEvent(new CustomEvent('FOCUSFLOW_EXTENSION_HELLO'));
+      if (isExtensionValid()) {
+        window.dispatchEvent(new CustomEvent('FOCUSFLOW_EXTENSION_HELLO'));
+      }
     });
 
     // Auto-sync authenticated session from localStorage if present
     function syncAuthFromPage() {
+      if (!isExtensionValid()) return;
       try {
         const token = localStorage.getItem('focusflow_token');
         const userRaw = localStorage.getItem('focusflow_user');
         const user = userRaw ? JSON.parse(userRaw) : null;
         if (token && user && user.id) {
-          chrome.runtime.sendMessage({
+          safeSendMessage({
             type: 'FOCUSFLOW_AUTH_SYNC',
             token,
             user,
-          }, () => void chrome.runtime.lastError);
+          });
         }
       } catch (_) {}
     }
@@ -231,63 +265,81 @@
     setTimeout(syncAuthFromPage, 800);
 
     // Explicit auth updates dispatched by auth context (login, logout, refresh)
-    window.addEventListener('FOCUSFLOW_AUTH_SYNC', (event) => {
+    function onAuthSync(event) {
+      if (!isExtensionValid()) {
+        window.removeEventListener('FOCUSFLOW_AUTH_SYNC', onAuthSync);
+        return;
+      }
       const detail = event.detail || {};
-      chrome.runtime.sendMessage({
+      safeSendMessage({
         type: 'FOCUSFLOW_AUTH_SYNC',
         token: detail.token || null,
         user: detail.user || null,
-      }, () => void chrome.runtime.lastError);
-    });
+      });
+    }
+    window.addEventListener('FOCUSFLOW_AUTH_SYNC', onAuthSync);
 
     // Web app requesting real-time extension counters before session end
-    window.addEventListener('FOCUSFLOW_GET_COUNTERS', () => {
-      chrome.runtime.sendMessage({ type: 'FOCUSFLOW_GET_COUNTERS' }, (response) => {
-        const err = chrome.runtime.lastError;
+    function onGetCounters() {
+      if (!isExtensionValid()) {
+        window.removeEventListener('FOCUSFLOW_GET_COUNTERS', onGetCounters);
+        window.dispatchEvent(new CustomEvent('FOCUSFLOW_COUNTERS_RESPONSE', { detail: {} }));
+        return;
+      }
+      safeSendMessage({ type: 'FOCUSFLOW_GET_COUNTERS' }, (response, err) => {
         const counters = (!err && response && response.counters) ? response.counters : {};
         window.dispatchEvent(new CustomEvent('FOCUSFLOW_COUNTERS_RESPONSE', { detail: counters }));
       });
-    });
+    }
+    window.addEventListener('FOCUSFLOW_GET_COUNTERS', onGetCounters);
 
     // Relay commands from the web app (dashboard) to service worker
-    window.addEventListener('FOCUSFLOW_EXTENSION_COMMAND', (event) => {
+    function onExtensionCommand(event) {
+      if (!isExtensionValid()) {
+        window.removeEventListener('FOCUSFLOW_EXTENSION_COMMAND', onExtensionCommand);
+        return;
+      }
       const command = event.detail;
       if (!command || !['START', 'PAUSE', 'CLEAR'].includes(command.type)) return;
-      chrome.runtime.sendMessage({ type: 'FOCUSFLOW_WEB_COMMAND', command }, () => {
-        void chrome.runtime.lastError;
-      });
-    });
+      safeSendMessage({ type: 'FOCUSFLOW_WEB_COMMAND', command });
+    }
+    window.addEventListener('FOCUSFLOW_EXTENSION_COMMAND', onExtensionCommand);
 
     // Relay overlay decisions
-    window.addEventListener('FOCUSFLOW_OVERLAY_DECISION', (event) => {
-      const detail = event.detail || {};
-      try {
-        chrome.runtime.sendMessage({
-          type: 'FOCUSFLOW_OVERLAY_DECISION',
-          domain: detail.domain,
-          decision: detail.decision,
-          videoId: detail.videoId || null,
-        }, () => void chrome.runtime.lastError);
-      } catch {
-        // Extension context invalidated.
+    function onOverlayDecision(event) {
+      if (!isExtensionValid()) {
+        window.removeEventListener('FOCUSFLOW_OVERLAY_DECISION', onOverlayDecision);
+        return;
       }
-    });
+      const detail = event.detail || {};
+      safeSendMessage({
+        type: 'FOCUSFLOW_OVERLAY_DECISION',
+        domain: detail.domain,
+        decision: detail.decision,
+        videoId: detail.videoId || null,
+      });
+    }
+    window.addEventListener('FOCUSFLOW_OVERLAY_DECISION', onOverlayDecision);
 
     // Receive messages from service worker and dispatch to web page
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === 'FOCUSFLOW_SITE_UPDATE') {
-        window.dispatchEvent(
-          new CustomEvent('FOCUSFLOW_CURRENT_SITE', {
-            detail: JSON.stringify(message.site),
-          })
-        );
-      }
-      if (message.type === 'FOCUSFLOW_SHOW_OVERLAY') {
-        window.dispatchEvent(
-          new CustomEvent('FOCUSFLOW_SHOW_OVERLAY', { detail: message })
-        );
-      }
-    });
+    if (isExtensionValid() && chrome.runtime?.onMessage) {
+      try {
+        chrome.runtime.onMessage.addListener((message) => {
+          if (message.type === 'FOCUSFLOW_SITE_UPDATE') {
+            window.dispatchEvent(
+              new CustomEvent('FOCUSFLOW_CURRENT_SITE', {
+                detail: JSON.stringify(message.site),
+              })
+            );
+          }
+          if (message.type === 'FOCUSFLOW_SHOW_OVERLAY') {
+            window.dispatchEvent(
+              new CustomEvent('FOCUSFLOW_SHOW_OVERLAY', { detail: message })
+            );
+          }
+        });
+      } catch (_) {}
+    }
   }
 
   const hasMetaTag = Boolean(document.querySelector('meta[name="focusflow-app"]'));
@@ -302,26 +354,40 @@
     initDashboardBridge();
     if (hasMetaTag && window.location.protocol.startsWith('http')) {
       try {
-        chrome.storage.local.get(['appUrl'], (result) => {
-          if (!result?.appUrl || result.appUrl.includes('localhost')) {
-            chrome.storage.local.set({ appUrl: window.location.origin });
-          }
-        });
+        if (isExtensionValid() && chrome.storage?.local) {
+          const isProd = !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1');
+          chrome.storage.local.get(['appUrl', 'backendUrl'], (result) => {
+            const updates = {};
+            if (isProd) {
+              if (!result?.appUrl || result.appUrl.includes('localhost')) {
+                updates.appUrl = window.location.origin;
+              }
+              if (!result?.backendUrl || result.backendUrl.includes('localhost:5001')) {
+                updates.backendUrl = window.location.origin;
+              }
+            }
+            if (Object.keys(updates).length > 0) {
+              chrome.storage.local.set(updates);
+            }
+          });
+        }
       } catch (_) {}
     }
   } else {
     // Check if custom appUrl matches this host
     try {
-      chrome.storage.local.get(['appUrl'], (result) => {
-        if (result?.appUrl) {
-          try {
-            const configuredHost = new URL(result.appUrl).hostname;
-            if (host === configuredHost) {
-              initDashboardBridge();
-            }
-          } catch (_) {}
-        }
-      });
+      if (isExtensionValid() && chrome.storage?.local) {
+        chrome.storage.local.get(['appUrl'], (result) => {
+          if (result?.appUrl) {
+            try {
+              const configuredHost = new URL(result.appUrl).hostname;
+              if (host === configuredHost) {
+                initDashboardBridge();
+              }
+            } catch (_) {}
+          }
+        });
+      }
     } catch (_) {}
   }
 })();

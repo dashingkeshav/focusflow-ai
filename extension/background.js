@@ -130,6 +130,21 @@ chrome.storage.local.get(
   }
 );
 
+// ─── Install / Reload Handler ─────────────────────────────────────────────────
+chrome.runtime.onInstalled.addListener(async () => {
+  updateDNRRules();
+  try {
+    const tabs = await chrome.tabs.query({ url: ['http://*/*', 'https://*/*'] });
+    for (const tab of tabs) {
+      if (!tab.id || tab.url?.startsWith('chrome://') || tab.url?.startsWith('chrome-extension://')) continue;
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['content.js'],
+      }).catch(() => null);
+    }
+  } catch (_) {}
+});
+
 // ─── Recovery from Backend ────────────────────────────────────────────────────
 async function syncStateFromBackend() {
   try {
