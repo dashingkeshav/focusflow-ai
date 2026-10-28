@@ -722,9 +722,92 @@ function redirectTabToBlockPage(tabId, host, classification, message, attemptCou
     remaining: String(Math.max(0, Math.floor((endsAt - Date.now()) / 1000))),
     blockedAt: String(Date.now()),
     mode: mode || 'smart',
+    primary: primarySite || '',
   });
   chrome.tabs.update(tabId, {
     url: chrome.runtime.getURL('blocked.html') + '?' + params.toString(),
+  });
+}
+
+// ─── Return to Task Handler ───────────────────────────────────────────────────
+function handleReturnToTask(sender, sendResponse) {
+  const tabId = sender?.tab?.id;
+  const windowId = sender?.tab?.windowId;
+
+  chrome.storage.local.get(['appUrl', 'primarySite', 'allowedSites', 'taskTitle'], (storage) => {
+    const appUrl = storage?.appUrl || 'http://localhost:3000';
+    const cleanPrimary = storage?.primarySite || primarySite;
+    const sites = storage?.allowedSites || allowedSites || [];
+
+    let targetUrl = null;
+    if (cleanPrimary) {
+      targetUrl = cleanPrimary.startsWith('http') ? cleanPrimary : `https://${cleanPrimary}`;
+    } else if (sites.length > 0 && sites[0]) {
+      targetUrl = sites[0].startsWith('http') ? sites[0] : `https://${sites[0]}`;
+    } else {
+      targetUrl = `${appUrl}/dashboard/sessions`;
+    }
+
+    if (!tabId) {
+      if (typeof sendResponse === 'function') {
+        sendResponse({ ok: true, action: 'navigated', targetUrl });
+      }
+      return;
+    }
+
+    const queryInfo = windowId ? { windowId } : { currentWindow: true };
+    chrome.tabs.query(queryInfo, (tabs) => {
+      const allTabs = tabs || [];
+      const validTabs = allTabs.filter((t) =>
+        t.id !== tabId &&
+        t.url &&
+        !t.url.includes('blocked.html') &&
+        !t.url.startsWith('chrome://') &&
+        !t.url.startsWith('chrome-extension://') &&
+        !t.url.startsWith('about:')
+      );
+
+      if (validTabs.length > 0) {
+        let preferredTab = null;
+        if (cleanPrimary) {
+          const primaryHost = FocusFlowClassifier.cleanHost(cleanPrimary);
+          preferredTab = validTabs.find((t) => {
+            const h = getDomainFromUrl(t.url);
+            return h && h.includes(primaryHost);
+          });
+        }
+        if (!preferredTab && sites.length > 0) {
+          preferredTab = validTabs.find((t) => {
+            const h = getDomainFromUrl(t.url);
+            return h && FocusFlowClassifier.matchesDomain(h, sites);
+          });
+        }
+        if (!preferredTab) {
+          preferredTab = validTabs.find((t) => t.url && t.url.includes('/dashboard'));
+        }
+        if (!preferredTab) {
+          preferredTab = validTabs[validTabs.length - 1];
+        }
+
+        chrome.tabs.update(preferredTab.id, { active: true }, () => {
+          chrome.tabs.remove(tabId, () => {
+            if (chrome.runtime.lastError) {
+              chrome.tabs.update(tabId, { url: targetUrl });
+            }
+          });
+        });
+
+        if (typeof sendResponse === 'function') {
+          sendResponse({ ok: true, action: 'switched', targetTabId: preferredTab.id });
+        }
+      } else {
+        chrome.tabs.update(tabId, { url: targetUrl }, () => {
+          if (typeof sendResponse === 'function') {
+            sendResponse({ ok: true, action: 'navigated', targetUrl });
+          }
+        });
+      }
+    });
   });
 }
 
@@ -1034,8 +1117,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       confidence: 1.0,
       recoveryDurationSeconds,
     });
-    sendResponse({ ok: true });
-    return false;
+    handleReturnToTask(sender, sendResponse);
+    return true;
   }
 
   if (message.type === 'FOCUSFLOW_ALLOW_VIDEO') {
