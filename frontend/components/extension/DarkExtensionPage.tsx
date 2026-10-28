@@ -157,7 +157,7 @@ export default function DarkExtensionPage() {
             <Reveal delay={0.3}>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
                 <a
-                  href="/api/download/extension"
+                  href="/downloads/FocusFlow-Chrome-Extension.zip"
                   download="FocusFlow-Chrome-Extension.zip"
                   onClick={handleChromeDownload}
                   id="hero-chrome-download-btn"
@@ -596,7 +596,7 @@ export default function DarkExtensionPage() {
 
               <div className="mt-8 space-y-3">
                 <a
-                  href="/api/download/extension"
+                  href="/downloads/FocusFlow-Chrome-Extension.zip"
                   download="FocusFlow-Chrome-Extension.zip"
                   onClick={handleChromeDownload}
                   id="download-chrome-zip-btn"
@@ -854,7 +854,7 @@ export default function DarkExtensionPage() {
                 desc: "Get the FocusFlow-Chrome-Extension.zip archive (v3.0.0, ~51 KB) from the download button above.",
                 action: (
                   <a
-                    href="/api/download/extension"
+                    href="/downloads/FocusFlow-Chrome-Extension.zip"
                     download="FocusFlow-Chrome-Extension.zip"
                     onClick={handleChromeDownload}
                     className="text-xs font-mono font-bold text-[#FF4500] hover:underline"
@@ -1024,7 +1024,7 @@ export default function DarkExtensionPage() {
               </a>
 
               <a
-                href="/api/download/extension"
+                href="/downloads/FocusFlow-Chrome-Extension.zip"
                 download="FocusFlow-Chrome-Extension.zip"
                 onClick={handleChromeDownload}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-[#FF4500] hover:bg-[#e03e00] text-white font-semibold text-sm shadow-xl shadow-[#FF4500]/25 transition-all duration-200"

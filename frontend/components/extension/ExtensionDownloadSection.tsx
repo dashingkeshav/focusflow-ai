@@ -98,7 +98,7 @@ export default function ExtensionDownloadSection() {
 
             <div className="mt-8 space-y-3">
               <a
-                href="/api/download/extension"
+                href="/downloads/FocusFlow-Chrome-Extension.zip"
                 download="FocusFlow-Chrome-Extension.zip"
                 onClick={handleChromeDownload}
                 className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold text-base shadow-lg shadow-teal-600/25 transition-all duration-200 active:scale-[0.99]"

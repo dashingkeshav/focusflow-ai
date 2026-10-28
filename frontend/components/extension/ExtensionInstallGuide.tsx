@@ -183,7 +183,7 @@ export default function ExtensionInstallGuide() {
                 {item.actionText && (
                   <div className="mt-5 pt-3 border-t border-slate-100">
                     <a
-                      href="/api/download/extension"
+                      href="/downloads/FocusFlow-Chrome-Extension.zip"
                       download="FocusFlow-Chrome-Extension.zip"
                       className="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-800 transition-colors"
                     >
