@@ -62,14 +62,6 @@ const COLLAB_CARDS = [
     ],
     highlight: "Weekly accountability",
   },
-    features: [
-      "Target requests strictly to selected Circles or Project Pods",
-      "Review helper offers and accept the best assistance match",
-      "Spin up a paired Focus Room to co-solve the blocker",
-      "Log authentic outcome notes and build peer reputation",
-    ],
-    highlight: "Fast unblocking",
-  },
 ];
 
 export default function CollaborationSection() {

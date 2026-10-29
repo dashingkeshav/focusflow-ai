@@ -117,22 +117,6 @@ const FEATURES = [
     href: "/dashboard/focus-circles",
     link: "View Focus Circles",
   },
-  {
-    title: "Project Pods (Shared Workspaces)",
-    description:
-      "Lightweight project spaces for client work, apps, or content (own 1 in Free, up to 10 in Pro). Coordinate milestones, assign tasks, and trigger focus sprints.",
-    icon: FolderGit2,
-    href: "/dashboard/project-pods",
-    link: "Open Project Pods",
-  },
-  {
-    title:
-    description:
-      "Structured assistance requests (3/7d in Free, 20/7d in Pro). Tap trusted circles and pods for help, spin up pair focus rooms, and log outcome notes.",
-    icon: HelpCircle,
-    href: "/dashboard/unblock-exchange",
-    link: "Launch Unblock Exchange",
-  },
 ];
 
 const SIGNALS = [
