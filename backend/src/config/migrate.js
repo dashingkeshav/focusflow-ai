@@ -1182,9 +1182,13 @@ async function runMigrations() {
       ON focus_room_members (active_session_id)
       WHERE active_session_id IS NOT NULL;
 
-    -- Clean up any automated test/dummy records so only real user information exists
-    DELETE FROM focus_rooms WHERE title LIKE 'QA %' OR title LIKE 'Autonomous QA %';
-    DELETE FROM focus_circles WHERE name LIKE 'QA %' OR name LIKE 'Autonomous QA %';
+    -- Clean up all existing rooms and circles as requested so user can create fresh
+    DELETE FROM focus_room_messages;
+    DELETE FROM focus_room_members;
+    DELETE FROM focus_rooms;
+    DELETE FROM focus_circle_commitments;
+    DELETE FROM focus_circle_members;
+    DELETE FROM focus_circles;
     DELETE FROM project_pods WHERE name LIKE 'QA %' OR name LIKE 'Autonomous QA %';
     DELETE FROM unblock_requests WHERE title LIKE 'Need review on deployment pipeline %';
     DELETE FROM users WHERE email LIKE 'qa_%@focusflow.test';

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   CircleDot,
@@ -50,9 +50,8 @@ import {
   type FocusCircleCommitment,
 } from '@/lib/api';
 
-export default function FocusCirclesPage() {
+function FocusCirclesPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user, token } = useAuth();
   const { isPro } = useEntitlements();
 
@@ -141,9 +140,12 @@ export default function FocusCirclesPage() {
       setError(null);
       const res = await fetchCollaborationCircles();
       if (res.success) {
-        const cleanCircles = (res.circles || []).filter((c: any) => !c.name.startsWith('QA ') && !c.name.startsWith('Autonomous QA ')); setCircles(cleanCircles);
-        if (res.circles?.length > 0) {
-          const targetId = autoSelectId || selectedCircleId || res.circles[0].id;
+        const cleanCircles = (res.circles || []).filter(
+          (c: any) => !c.name.startsWith('QA ') && !c.name.startsWith('Autonomous QA ')
+        );
+        setCircles(cleanCircles);
+        if (cleanCircles.length > 0) {
+          const targetId = autoSelectId || (selectedCircleId && cleanCircles.some((c: any) => c.id === selectedCircleId) ? selectedCircleId : cleanCircles[0].id);
           setSelectedCircleId(targetId);
           loadCircleDetails(targetId);
         } else {
@@ -187,14 +189,17 @@ export default function FocusCirclesPage() {
     loadCircles();
   }, []);
 
-  // Handle URL join code
+  // Handle URL join code safely without Next.js useSearchParams suspense deopt
   useEffect(() => {
-    const codeParam = searchParams.get('join') || searchParams.get('code');
-    if (codeParam) {
-      setJoinCode(codeParam);
-      handleJoinByCode(codeParam);
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search);
+      const codeParam = sp.get('join') || sp.get('code');
+      if (codeParam) {
+        setJoinCode(codeParam);
+        handleJoinByCode(codeParam);
+      }
     }
-  }, [searchParams]);
+  }, []);
 
   const handleJoinByCode = async (codeToUse?: string) => {
     const raw = codeToUse || joinCode;
@@ -953,5 +958,21 @@ export default function FocusCirclesPage() {
         </div>
       )}
     </div>
+  );
+}
+
+
+export default function FocusCirclesPage() {
+  return (
+    <React.Suspense fallback={
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="text-center space-y-2">
+          <div className="w-8 h-8 rounded-full border-2 border-[#FF4500] border-t-transparent animate-spin mx-auto" />
+          <p className="text-xs font-mono text-gray-400">Loading Focus Circles...</p>
+        </div>
+      </div>
+    }>
+      <FocusCirclesPageContent />
+    </React.Suspense>
   );
 }

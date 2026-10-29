@@ -40,6 +40,7 @@ router.post("/circles/:id/members/remove", collaborationController.removeCircleM
 router.post("/circles/:id/commitments", collaborationController.setCircleCommitment);
 router.post("/circles/:id/commitments/check-in", collaborationController.checkInCircleCommitment);
 router.post("/circles/:id/archive", collaborationController.archiveCircle);
+router.post("/reset-all", collaborationController.resetAllRoomsAndCircles);
 
 /*
 =====================================================

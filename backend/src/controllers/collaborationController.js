@@ -2612,3 +2612,21 @@ exports.deleteOffer = async (req, res) => {
   }
 };
 
+
+
+exports.resetAllRoomsAndCircles = async (req, res) => {
+  try {
+    await pool.query(`
+      DELETE FROM focus_room_messages;
+      DELETE FROM focus_room_members;
+      DELETE FROM focus_rooms;
+      DELETE FROM focus_circle_commitments;
+      DELETE FROM focus_circle_members;
+      DELETE FROM focus_circles;
+    `);
+    return res.json({ success: true, message: "All focus rooms and circles successfully cleared from database." });
+  } catch (error) {
+    console.error("resetAllRoomsAndCircles error:", error.message);
+    return res.status(500).json({ success: false, message: "Failed to reset rooms and circles." });
+  }
+};

@@ -47,7 +47,7 @@ export default function ErrorBoundary({
           </button>
           <Link
             href="/dashboard"
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-6 text-sm font-semibold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 sm:w-auto"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-900 px-6 text-sm font-bold text-white shadow-xs transition-colors hover:bg-slate-800 sm:w-auto"
           >
             <Home className="h-4 w-4" aria-hidden />
             Go to Dashboard

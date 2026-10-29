@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Users,
@@ -42,9 +42,8 @@ const CATEGORIES = [
   { id: 'general', label: 'General' },
 ];
 
-export default function FocusRoomsPage() {
+function FocusRoomsPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { user } = useAuth();
   const { isPro } = useEntitlements();
 
@@ -96,14 +95,17 @@ export default function FocusRoomsPage() {
     loadRooms();
   }, [selectedCategory]);
 
-  // Handle URL join code if provided in query ?join=code
+  // Handle URL join code safely without Next.js useSearchParams suspense deopt
   useEffect(() => {
-    const codeParam = searchParams.get('join') || searchParams.get('code');
-    if (codeParam) {
-      setJoinCode(codeParam);
-      handleJoinByCode(codeParam);
+    if (typeof window !== 'undefined') {
+      const sp = new URLSearchParams(window.location.search);
+      const codeParam = sp.get('join') || sp.get('code');
+      if (codeParam) {
+        setJoinCode(codeParam);
+        handleJoinByCode(codeParam);
+      }
     }
-  }, [searchParams]);
+  }, []);
 
   const handleJoinByCode = async (codeToUse?: string) => {
     const raw = codeToUse || joinCode;
@@ -636,5 +638,21 @@ export default function FocusRoomsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+
+export default function FocusRoomsPage() {
+  return (
+    <React.Suspense fallback={
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <div className="text-center space-y-2">
+          <div className="w-8 h-8 rounded-full border-2 border-[#FF4500] border-t-transparent animate-spin mx-auto" />
+          <p className="text-xs font-mono text-gray-400">Loading Focus Rooms...</p>
+        </div>
+      </div>
+    }>
+      <FocusRoomsPageContent />
+    </React.Suspense>
   );
 }
