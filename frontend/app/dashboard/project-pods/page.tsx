@@ -173,7 +173,7 @@ export default function ProjectPodsPage() {
       setError(null);
       const res = await fetchCollaborationPods();
       if (res.success) {
-        setPods(res.pods || []);
+        const cleanPods = (res.pods || []).filter((p: any) => !p.name.startsWith('QA ') && !p.name.startsWith('Autonomous QA ')); setPods(cleanPods);
         if (res.pods?.length > 0) {
           const targetId = autoSelectId || selectedPodId || res.pods[0].id;
           setSelectedPodId(targetId);

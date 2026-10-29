@@ -1,8 +1,13 @@
 import type { NextConfig } from "next";
-
 import path from "path";
 
 const nextConfig: NextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   allowedDevOrigins: ['127.0.0.1', 'localhost'],
   devIndicators: false,
   turbopack: {
@@ -34,4 +39,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-

@@ -31,6 +31,7 @@ import {
 import { useAuth } from '@/lib/auth';
 import {
   fetchCollaborationRoomDetails,
+  joinCollaborationRoom,
   controlCollaborationRoomTimer,
   updateCollaborationRoom,
   removeCollaborationRoomMember,

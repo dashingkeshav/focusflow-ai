@@ -139,7 +139,7 @@ export default function FocusCirclesPage() {
       setError(null);
       const res = await fetchCollaborationCircles();
       if (res.success) {
-        setCircles(res.circles || []);
+        const cleanCircles = (res.circles || []).filter((c: any) => !c.name.startsWith('QA ') && !c.name.startsWith('Autonomous QA ')); setCircles(cleanCircles);
         if (res.circles?.length > 0) {
           const targetId = autoSelectId || selectedCircleId || res.circles[0].id;
           setSelectedCircleId(targetId);
@@ -195,7 +195,7 @@ export default function FocusCirclesPage() {
   }, [searchParams]);
 
   const handleJoinByCode = async (codeToUse?: string) => {
-    const code = (codeToUse || joinCode).trim();
+    let code = (codeToUse || joinCode).trim(); if (code.includes('join=')) code = code.split('join=')[1].split('&')[0]; code = code.replace(/^#/, '').trim();
     if (!code) return;
     try {
       setJoiningCode(true);

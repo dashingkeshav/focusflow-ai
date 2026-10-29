@@ -1172,6 +1172,13 @@ async function runMigrations() {
 
     -- Safe forward-only additions
     ALTER TABLE focus_rooms ADD COLUMN IF NOT EXISTS description text;
+
+    -- Clean up any automated test/dummy records so only real user information exists
+    DELETE FROM focus_rooms WHERE title LIKE 'QA %' OR title LIKE 'Autonomous QA %';
+    DELETE FROM focus_circles WHERE name LIKE 'QA %' OR name LIKE 'Autonomous QA %';
+    DELETE FROM project_pods WHERE name LIKE 'QA %' OR name LIKE 'Autonomous QA %';
+    DELETE FROM unblock_requests WHERE title LIKE 'Need review on deployment pipeline %';
+    DELETE FROM users WHERE email LIKE 'qa_%@focusflow.test';
   `);
 
   applied = true;

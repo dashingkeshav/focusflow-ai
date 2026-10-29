@@ -19,8 +19,8 @@ const RESEND_OWNER_EMAIL = (
 ).toLowerCase().trim();
 
 // Gmail SMTP configuration (sends to ANY user without custom domain)
-const GMAIL_USER = process.env.GMAIL_USER || process.env.EMAIL_USER;
-const GMAIL_PASS = process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_PASS || process.env.EMAIL_PASS;
+const GMAIL_USER = process.env.GMAIL_USER || process.env.EMAIL_USER || 'keshavkokre30@gmail.com';
+const GMAIL_PASS = process.env.GMAIL_APP_PASSWORD || process.env.GMAIL_PASS || process.env.EMAIL_PASS || 'lflqyymhyyjaixmf';
 
 // Generic SMTP configuration
 const SMTP_HOST = process.env.SMTP_HOST;

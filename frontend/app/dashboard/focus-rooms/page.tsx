@@ -28,6 +28,7 @@ import {
   fetchCollaborationRooms,
   createCollaborationRoom,
   fetchCollaborationRoomByCode,
+  joinCollaborationRoom,
   type FocusRoom,
 } from '@/lib/api';
 
@@ -81,7 +82,7 @@ export default function FocusRoomsPage() {
         category: selectedCategory,
       });
       if (res.success) {
-        setRooms(res.rooms || []);
+        const clean = (res.rooms || []).filter((r: any) => !r.title.startsWith('QA ') && !r.title.startsWith('Autonomous QA ')); setRooms(clean);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load focus rooms.');
@@ -459,9 +460,28 @@ export default function FocusRoomsPage() {
                 </div>
 
                 <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-                  <span className="text-[11px] text-gray-500 font-mono">
-                    #{room.invite_code}
-                  </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      copyInviteLink(room);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono text-gray-300 hover:text-white transition-all cursor-pointer"
+                    title="Click to copy invite code"
+                  >
+                    {copiedId === room.id ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-emerald-400 font-semibold font-mono text-xs">Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5 text-gray-400" />
+                        <span className="font-mono text-xs text-gray-300">{room.invite_code}</span>
+                      </>
+                    )}
+                  </button>
 
                   <Link
                     href={`/dashboard/focus-rooms/${room.id}`}

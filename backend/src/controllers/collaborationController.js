@@ -56,7 +56,7 @@ exports.listRooms = async (req, res) => {
           WHERE rm.room_id = r.id AND rm.user_id = $1 AND rm.left_at IS NULL
         )
       )
-      AND r.status <> 'ended'
+      AND r.status <> 'ended' AND r.title NOT LIKE 'QA %' AND r.title NOT LIKE 'Autonomous QA %'
     `;
 
     if (filter === "my") {

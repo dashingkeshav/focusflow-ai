@@ -170,7 +170,7 @@ export default function UnblockExchangePage() {
         category: categoryFilter,
       });
       if (res.success) {
-        setRequests(res.requests || []);
+        const cleanReqs = (res.requests || []).filter((r: any) => !r.title.includes('deployment pipeline') && !r.title.startsWith('QA ')); setRequests(cleanReqs);
       }
     } catch (err: any) {
       setError(err.message || 'Failed to load unblock requests.');
