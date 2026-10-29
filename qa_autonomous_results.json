@@ -1,0 +1,65 @@
+{
+  "environment": {
+    "url": "https://focusflow-ai-livid.vercel.app",
+    "backendStatus": "healthy",
+    "databaseStatus": "connected",
+    "browserVersion": "Chrome/156.0.8078.73"
+  },
+  "authentication": {
+    "registration": "PASS",
+    "signIn": "PASS",
+    "sessionPersistence": "PASS",
+    "protectedRouteGuard": "PASS",
+    "signOut": "PASS"
+  },
+  "features": {
+    "Dashboard Overview": "PASS",
+    "Goals & Tasks": "PASS",
+    "Study Sessions": "PASS",
+    "Focus Rooms": "PASS",
+    "Focus Circles": "PASS",
+    "Project Pods": "PASS",
+    "Unblock Exchange": "PASS",
+    "AI Planner": "PASS",
+    "Distraction Shield": "PASS",
+    "Analytics & Reports": "PASS",
+    "Settings": "PASS"
+  },
+  "controlsTested": 31,
+  "controlsPassed": 31,
+  "controlsFailed": 0,
+  "databaseEvidence": [
+    {
+      "action": "USER_AUTHENTICATION",
+      "user": "qa_autonomous_1793238611423@focusflow.test",
+      "tokenReceived": true
+    },
+    {
+      "action": "TASK_CREATED_IN_POSTGRES",
+      "taskId": "d33ef453-2305-4f72-b8d0-070666dab1a4",
+      "title": "QA Autonomous Task 1793238611423"
+    },
+    {
+      "action": "SESSION_SAVED_IN_POSTGRES",
+      "sessionId": "66e5f328-cab6-48f1-b9f5-cf80aa943659"
+    },
+    {
+      "action": "FOCUS_ROOM_CREATED_IN_POSTGRES",
+      "roomId": "7612189f-7655-4e9d-9f2f-fb26b25a4e07",
+      "inviteCode": "rm-05477fc5"
+    },
+    {
+      "action": "FOCUS_CIRCLE_CREATED_IN_POSTGRES",
+      "circleId": "e274e642-87cc-4bb4-835b-d39a695c0541"
+    },
+    {
+      "action": "PROJECT_POD_CREATED_IN_POSTGRES",
+      "podId": "7ea7cc72-fc32-4d8d-a421-7c5722ce64a1"
+    },
+    {
+      "action": "UNBLOCK_REQUEST_CREATED_IN_POSTGRES",
+      "requestId": "c878a82a-a8d2-4892-a197-fc79056a3e6d"
+    }
+  ],
+  "failures": []
+}
