@@ -80,8 +80,33 @@ export default function FocusRoomLivePage({
   const [messages, setMessages] = useState<FocusRoomMessage[]>([]);
   const [newMsg, setNewMsg] = useState('');
   const [sendingMsg, setSendingMsg] = useState(false);
+  const [privateCodeInput, setPrivateCodeInput] = useState('');
+  const [joiningPrivate, setJoiningPrivate] = useState(false);
+  const [privateJoinError, setPrivateJoinError] = useState<string | null>(null);
+
+  const handleJoinPrivate = async () => {
+    if (!privateCodeInput.trim()) return;
+    try {
+      setJoiningPrivate(true);
+      setPrivateJoinError(null);
+      const res = await joinCollaborationRoom(roomId, privateCodeInput.trim());
+      if (res.success) {
+        await loadRoom();
+        await loadMessages();
+      }
+    } catch (err: any) {
+      setPrivateJoinError(err.message || 'Invalid invite code.');
+    } finally {
+      setJoiningPrivate(false);
+    }
+  };
 
   const socketRef = useRef<Socket | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages.length]);
 
   // 1. Initial Room Data Fetch
   const loadRoom = async () => {
@@ -699,6 +724,7 @@ export default function FocusRoomLivePage({
               )}
             </div>
 
+            <div ref={messagesEndRef} />
             {/* Message Input */}
             <form
               onSubmit={(e) => {

@@ -33,7 +33,7 @@ function getWeekNumber(d) {
 exports.listRooms = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { q, category } = req.query;
+    const { q, category, filter = "all" } = req.query;
 
     const params = [userId];
     let query = `
@@ -58,6 +58,14 @@ exports.listRooms = async (req, res) => {
       )
       AND r.status <> 'ended'
     `;
+
+    if (filter === "my") {
+      query += ` AND (r.host_user_id = $1 OR EXISTS (SELECT 1 FROM focus_room_members rm WHERE rm.room_id = r.id AND rm.user_id = $1 AND rm.left_at IS NULL))`;
+    } else if (filter === "active") {
+      query += ` AND r.timer_status = 'running'`;
+    } else if (filter === "discover") {
+      query += ` AND r.is_public = true AND r.status = 'open'`;
+    }
 
     if (category && category !== "all") {
       params.push(category);
@@ -88,6 +96,7 @@ exports.createRoom = async (req, res) => {
     const userId = req.user.id;
     const {
       title,
+      description = null,
       category = "general",
       isPublic = false,
       maxParticipants = 4,
@@ -118,15 +127,16 @@ exports.createRoom = async (req, res) => {
 
     const insertResult = await pool.query(
       `INSERT INTO focus_rooms (
-        host_user_id, title, category, is_public, max_participants,
+        host_user_id, title, description, category, is_public, max_participants,
         invite_code, status, timer_status, timer_duration_seconds,
         pod_id, task_id, help_request_id
       )
-      VALUES ($1, $2, $3, $4, $5, $6, 'open', 'idle', $7, $8, $9, $10)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, 'open', 'idle', $8, $9, $10, $11)
       RETURNING *`,
       [
         userId,
         title.trim().slice(0, 255),
+        description ? description.trim() : null,
         category.trim().slice(0, 64),
         Boolean(isPublic),
         safeMax,
@@ -779,7 +789,12 @@ exports.getCircleDetails = async (req, res) => {
     }
 
     const membersRes = await pool.query(
-      `SELECT m.*, u.name, u.email
+      `SELECT m.*, u.name, u.email,
+              (
+                SELECT COUNT(*)::int
+                FROM focus_circle_commitments fcc
+                WHERE fcc.circle_id = m.circle_id AND fcc.user_id = m.user_id AND fcc.is_completed = true
+              ) AS completed_checkins
        FROM focus_circle_members m
        JOIN users u ON u.id = m.user_id
        WHERE m.circle_id = $1 AND m.status = 'active'
@@ -1485,7 +1500,7 @@ exports.launchRoomFromPod = async (req, res) => {
 exports.listUnblockRequests = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { filter = "all", category } = req.query;
+    const { filter = "all", category, q } = req.query;
 
     const params = [userId];
     let query = `
@@ -1527,8 +1542,17 @@ exports.listUnblockRequests = async (req, res) => {
 
     if (filter === "my") {
       query += ` AND r.requester_user_id = $1`;
-    } else if (filter === "needs_help") {
+    } else if (filter === "needs_help" || filter === "open") {
       query += ` AND r.requester_user_id <> $1 AND r.status IN ('open', 'offered')`;
+    } else if (filter === "helping") {
+      query += ` AND (r.accepted_helper_user_id = $1 OR EXISTS (SELECT 1 FROM unblock_offers uo WHERE uo.request_id = r.id AND uo.helper_user_id = $1))`;
+    } else if (filter === "resolved") {
+      query += ` AND r.status = 'resolved'`;
+    }
+
+    if (q && q.trim()) {
+      params.push(`%${q.trim()}%`);
+      query += ` AND (r.title ILIKE $\${params.length} OR r.description ILIKE $\${params.length})`;
     }
 
     if (category && category !== "all") {

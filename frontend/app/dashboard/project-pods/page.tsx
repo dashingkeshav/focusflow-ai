@@ -24,6 +24,8 @@ import {
   Layers,
   ChevronRight,
   Loader2,
+  RefreshCw,
+  Search,
   CheckSquare,
   Square,
   Activity,
@@ -68,6 +70,7 @@ export default function ProjectPodsPage() {
   const [selectedPodId, setSelectedPodId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [podSearch, setPodSearch] = useState('');
 
   // Selected Pod Workspace Data
   const [podDetail, setPodDetail] = useState<ProjectPod | null>(null);

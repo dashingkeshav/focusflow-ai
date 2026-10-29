@@ -1169,6 +1169,9 @@ async function runMigrations() {
 
     CREATE INDEX IF NOT EXISTS idx_unblock_offers_request
       ON unblock_offers (request_id, created_at ASC);
+
+    -- Safe forward-only additions
+    ALTER TABLE focus_rooms ADD COLUMN IF NOT EXISTS description text;
   `);
 
   applied = true;

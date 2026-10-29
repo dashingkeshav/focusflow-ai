@@ -2261,16 +2261,18 @@ export interface UnblockOffer {
 }
 
 // 1. Focus Rooms API
-export async function fetchCollaborationRooms(params?: { q?: string; category?: string }): Promise<{ success: boolean; rooms: FocusRoom[] }> {
+export async function fetchCollaborationRooms(params?: { q?: string; category?: string; filter?: string }): Promise<{ success: boolean; rooms: FocusRoom[] }> {
   const query = new URLSearchParams();
   if (params?.q) query.set('q', params.q);
   if (params?.category) query.set('category', params.category);
+  if (params?.filter) query.set('filter', params.filter);
   const qStr = query.toString();
   return apiRequest(`/api/collaboration/rooms${qStr ? '?' + qStr : ''}`);
 }
 
 export async function createCollaborationRoom(data: {
   title: string;
+  description?: string;
   category?: string;
   isPublic?: boolean;
   maxParticipants?: number;
@@ -2482,10 +2484,11 @@ export async function launchRoomFromCollaborationPod(id: string, data?: { taskId
 }
 
 // 4. Unblock Exchange API
-export async function fetchCollaborationUnblockRequests(params?: { filter?: string; category?: string }): Promise<{ success: boolean; requests: UnblockRequest[] }> {
+export async function fetchCollaborationUnblockRequests(params?: { filter?: string; category?: string; q?: string }): Promise<{ success: boolean; requests: UnblockRequest[] }> {
   const query = new URLSearchParams();
   if (params?.filter) query.set('filter', params.filter);
   if (params?.category) query.set('category', params.category);
+  if (params?.q) query.set('q', params.q);
   const qStr = query.toString();
   return apiRequest(`/api/collaboration/unblock${qStr ? '?' + qStr : ''}`);
 }

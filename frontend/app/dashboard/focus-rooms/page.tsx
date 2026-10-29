@@ -20,6 +20,7 @@ import {
   ChevronRight,
   ShieldAlert,
   Loader2,
+  RefreshCw,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { useEntitlements } from '@/lib/useEntitlements';
@@ -50,10 +51,12 @@ export default function FocusRoomsPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [roomFilter, setRoomFilter] = useState<'all' | 'my' | 'active'>('all');
 
   // Create room modal
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createTitle, setCreateTitle] = useState('');
+  const [createDescription, setCreateDescription] = useState('');
   const [createCategory, setCreateCategory] = useState('deep_work');
   const [createIsPublic, setCreateIsPublic] = useState(false);
   const [createMaxParticipants, setCreateMaxParticipants] = useState(4);
@@ -219,6 +222,27 @@ export default function FocusRoomsPage() {
           {joinError}
         </div>
       )}
+
+      {/* Room Scope Filters (Discover / My Rooms / Active) */}
+      <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+        {[
+          { id: 'all', label: 'Discover All' },
+          { id: 'my', label: 'My Rooms' },
+          { id: 'active', label: 'Active Now' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setRoomFilter(tab.id as any)}
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              roomFilter === tab.id
+                ? 'bg-[#FF4500]/15 text-[#FF4500] border border-[#FF4500]/30 shadow-xs'
+                : 'text-gray-400 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
 
       {/* Category Filter Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1">

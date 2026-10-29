@@ -19,6 +19,8 @@ import {
   FolderKanban,
   CircleDot,
   Loader2,
+  RefreshCw,
+  Search,
   XCircle,
   Check,
   Trash2,
@@ -65,7 +67,8 @@ export default function UnblockExchangePage() {
   const [error, setError] = useState<string | null>(null);
 
   // Filters
-  const [filterTab, setFilterTab] = useState<'all' | 'my' | 'needs_help'>('all');
+  const [filterTab, setFilterTab] = useState<'all' | 'needs_help' | 'my' | 'helping' | 'resolved'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
   // Selected Request Details & Offers Modal

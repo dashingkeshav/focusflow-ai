@@ -18,6 +18,8 @@ import {
   Target,
   ShieldCheck,
   Loader2,
+  RefreshCw,
+  Search,
   AlertTriangle,
   Play,
   History,
@@ -57,6 +59,7 @@ export default function FocusCirclesPage() {
   const [selectedCircleId, setSelectedCircleId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [circleSearch, setCircleSearch] = useState('');
 
   // Selected Circle Details
   const [circleDetail, setCircleDetail] = useState<FocusCircle | null>(null);
