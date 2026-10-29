@@ -53,3 +53,5 @@ venv/
 
 # Temp tool artifacts
 .freebuff/
+
+scratch/
