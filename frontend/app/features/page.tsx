@@ -126,7 +126,7 @@ const FEATURES = [
     link: "Open Project Pods",
   },
   {
-    title: "Unblock Exchange (Peer Problem Solving)",
+    title:
     description:
       "Structured assistance requests (3/7d in Free, 20/7d in Pro). Tap trusted circles and pods for help, spin up pair focus rooms, and log outcome notes.",
     icon: HelpCircle,

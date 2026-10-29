@@ -35,6 +35,7 @@ import {
   fetchCollaborationCircles,
   createCollaborationCircle,
   fetchCollaborationCircleByCode,
+  cleanInviteCode,
   acceptCollaborationCircleInvite,
   fetchCollaborationCircleDetails,
   setCollaborationCircleCommitment,
@@ -100,6 +101,7 @@ export default function FocusCirclesPage() {
 
   // Copy link feedback
   const [copiedLink, setCopiedLink] = useState(false);
+  const [copiedCardCodeId, setCopiedCardCodeId] = useState<string | null>(null);
 
   const socketRef = React.useRef<Socket | null>(null);
 
@@ -195,7 +197,8 @@ export default function FocusCirclesPage() {
   }, [searchParams]);
 
   const handleJoinByCode = async (codeToUse?: string) => {
-    let code = (codeToUse || joinCode).trim(); if (code.includes('join=')) code = code.split('join=')[1].split('&')[0]; code = code.replace(/^#/, '').trim();
+    const raw = codeToUse || joinCode;
+    const code = cleanInviteCode(raw);
     if (!code) return;
     try {
       setJoiningCode(true);
@@ -204,9 +207,13 @@ export default function FocusCirclesPage() {
       if (res.success) {
         setJoinCode('');
         await loadCircles(res.circleId);
+        if (res.circleId) {
+          setSelectedCircleId(res.circleId);
+          loadCircleDetails(res.circleId);
+        }
       }
     } catch (err: any) {
-      setJoinError(err.message || 'Invalid or full Focus Circle invitation.');
+      setJoinError(err.message || 'Focus Circle not found or closed. Please verify the invitation code.');
     } finally {
       setJoiningCode(false);
     }
@@ -287,6 +294,16 @@ export default function FocusCirclesPage() {
     } catch (err: any) {
       alert(err.message || 'Failed to launch room.');
     }
+  };
+
+  
+  const copyCircleCodeOnly = (c: FocusCircle, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(c.invite_code);
+    }
+    setCopiedCardCodeId(c.id);
+    setTimeout(() => setCopiedCardCodeId(null), 2500);
   };
 
   const copyInvite = () => {
@@ -386,7 +403,7 @@ export default function FocusCirclesPage() {
         <div className="flex items-center gap-2 w-full sm:max-w-xs">
           <input
             type="text"
-            placeholder="Enter Circle code..."
+            placeholder="Enter code (e.g. fc-...) or paste invite link..."
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"

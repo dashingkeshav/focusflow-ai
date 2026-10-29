@@ -254,7 +254,7 @@ export default function DashboardOverviewPage() {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* 1. Focus Rooms */}
           <Link
             href="/dashboard/focus-rooms"
@@ -309,60 +309,7 @@ export default function DashboardOverviewPage() {
             </div>
           </Link>
 
-          {/* 3. Project Pods */}
-          <Link
-            href="/dashboard/project-pods"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/25 flex items-center justify-center text-[#FF4500] group-hover:scale-110 transition-transform">
-                  <FolderGit2 className="w-4.5 h-4.5" />
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 text-gray-400 border border-white/5">
-                  Projects
-                </span>
-              </div>
-              <h3 className="text-sm font-serif font-bold text-white group-hover:text-[#FF4500] transition-colors">
-                Project Pods
-              </h3>
-              <p className="mt-1 text-xs text-gray-400 leading-snug">
-                Own {isPro ? "up to 10 active Pods (10 members)" : "1 active Pod (up to 3 members)"} for team shipping.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono font-bold text-[#FF4500]">
-              <span>Open Pods</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-
-          {/* 4. Unblock Exchange */}
-          <Link
-            href="/dashboard/unblock-exchange"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/25 flex items-center justify-center text-[#FF4500] group-hover:scale-110 transition-transform">
-                  <HelpCircle className="w-4.5 h-4.5" />
-                </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 text-gray-400 border border-white/5">
-                  Peer Help
-                </span>
-              </div>
-              <h3 className="text-sm font-serif font-bold text-white group-hover:text-[#FF4500] transition-colors">
-                Unblock Exchange
-              </h3>
-              <p className="mt-1 text-xs text-gray-400 leading-snug">
-                {isPro ? "20 requests" : "3 requests"} per 7 rolling days. Tap trusted peers for assistance when stuck.
-              </p>
-            </div>
-            <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs font-mono font-bold text-[#FF4500]">
-              <span>Ask or Assist</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
-        </div>
+                  </div>
       </section>
 
       {/* ==============================================================

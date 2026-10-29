@@ -48,7 +48,6 @@ export default function PricingPreview() {
                   "Browser Extension monitoring",
                   "Focus Rooms (host up to 4 peers)",
                   "Focus Circles & Pods (1 of each)",
-                  "Unblock Exchange (3 requests / 7d)",
                   "Join any Pro room or group free",
                 ].map((feat) => (
                   <li key={feat} className="flex items-center gap-2.5">
@@ -97,8 +96,6 @@ export default function PricingPreview() {
                   "200 AI plan generations / day",
                   "Adaptive Replanning & What-if scenarios",
                   "Focus Rooms hosting up to 12 participants",
-                  "Lead up to 10 Circles & 10 Project Pods",
-                  "Unblock Exchange (20 requests / 7d)",
                   "Advanced Focus Intelligence & Heatmaps",
                   "Comprehensive PDF & CSV Export",
                 ].map((feat) => (

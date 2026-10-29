@@ -1,3 +1,13 @@
+
+export function cleanInviteCode(raw: string): string {
+  if (!raw) return '';
+  const match = raw.match(/((?:fc|rm)-[a-f0-9]+)/i);
+  if (match) return match[1].toLowerCase();
+  let clean = raw.trim();
+  if (clean.includes('join=')) clean = clean.split('join=')[1].split('&')[0];
+  else if (clean.includes('code=')) clean = clean.split('code=')[1].split('&')[0];
+  return clean.replace(/^#/, '').trim();
+}
 function isLoopbackHostname(hostname: string): boolean {
   return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '0.0.0.0';
 }

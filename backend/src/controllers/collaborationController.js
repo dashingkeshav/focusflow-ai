@@ -1,3 +1,10 @@
+
+function sanitizeCollabCode(raw) {
+  if (!raw) return "";
+  const match = String(raw).match(/((?:fc|rm)-[a-f0-9]+)/i);
+  if (match) return match[1].toLowerCase();
+  return String(raw).replace(/^.*[?&](?:join|code)=/, '').replace(/^#/, '').trim();
+}
 const crypto = require("crypto");
 const { pool } = require("../config/db");
 const Session = require("../models/Session");
@@ -180,7 +187,7 @@ exports.getRoomByCode = async (req, res) => {
        LEFT JOIN focus_room_members m ON m.room_id = r.id
        WHERE r.invite_code = $1
        GROUP BY r.id, u.id`,
-      [code.trim()]
+      [cleanCode]
     );
 
     if (result.rows.length === 0) {
@@ -248,6 +255,7 @@ exports.joinRoom = async (req, res) => {
     const userId = req.user.id;
     const { id } = req.params;
     const { inviteCode } = req.body;
+    const cleanInviteCode = sanitizeCollabCode(inviteCode);
 
     const roomRes = await pool.query(`SELECT * FROM focus_rooms WHERE id = $1`, [id]);
     if (roomRes.rows.length === 0) {
@@ -681,7 +689,7 @@ exports.getCircleByCode = async (req, res) => {
        LEFT JOIN focus_circle_members m ON m.circle_id = c.id AND m.status = 'active'
        WHERE c.invite_code = $1 AND c.status = 'active'
        GROUP BY c.id, u.id`,
-      [code.trim()]
+      [cleanCode]
     );
 
     if (result.rows.length === 0) {

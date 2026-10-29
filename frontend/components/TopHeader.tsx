@@ -103,8 +103,6 @@ export default function TopHeader({
           "/dashboard/planner": "AI Planner",
           "/dashboard/focus-rooms": "Focus Rooms",
           "/dashboard/focus-circles": "Focus Circles",
-          "/dashboard/project-pods": "Project Pods",
-          "/dashboard/unblock-exchange": "Unblock Exchange",
           "/dashboard/settings": "Settings",
         }[pathname] || "Workspace");
 

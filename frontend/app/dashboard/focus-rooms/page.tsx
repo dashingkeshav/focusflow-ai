@@ -28,6 +28,7 @@ import {
   fetchCollaborationRooms,
   createCollaborationRoom,
   fetchCollaborationRoomByCode,
+  cleanInviteCode,
   joinCollaborationRoom,
   type FocusRoom,
 } from '@/lib/api';
@@ -105,14 +106,20 @@ export default function FocusRoomsPage() {
   }, [searchParams]);
 
   const handleJoinByCode = async (codeToUse?: string) => {
-    const code = (codeToUse || joinCode).trim();
+    const raw = codeToUse || joinCode;
+    const code = cleanInviteCode(raw);
     if (!code) return;
     try {
       setJoiningCode(true);
       setJoinError(null);
       const res = await fetchCollaborationRoomByCode(code);
       if (res.success && res.room) {
+        try {
+          await joinCollaborationRoom(res.room.id, code);
+        } catch (_) {}
         router.push(`/dashboard/focus-rooms/${res.room.id}`);
+      } else {
+        setJoinError('Focus room not found for this code or link.');
       }
     } catch (err: any) {
       setJoinError(err.message || 'Invalid or expired room code.');
@@ -202,7 +209,7 @@ export default function FocusRoomsPage() {
         <div className="flex items-center gap-2">
           <input
             type="text"
-            placeholder="Enter invite code..."
+            placeholder="Enter code (e.g. rm-...) or paste invite link..."
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleJoinByCode()}

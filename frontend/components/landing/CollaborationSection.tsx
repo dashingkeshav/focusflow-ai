@@ -62,40 +62,6 @@ const COLLAB_CARDS = [
     ],
     highlight: "Weekly accountability",
   },
-  {
-    id: "project-pods",
-    title: "Project Pods",
-    subtitle: "Collaborative Workspaces",
-    tagline: "Lightweight shared spaces for shipping real client and team deliverables.",
-    icon: FolderGit2,
-    badge: "Shared Milestones",
-    href: "/dashboard/project-pods",
-    cta: "Manage Project Pods",
-    limits: {
-      free: "Own 1 Pod (up to 3 members)",
-      pro: "Own up to 10 Pods (10 members each)",
-    },
-    features: [
-      "Milestones with progress meters & prioritized task backlogs",
-      "Attach notes, reference links & team deliverable checklists",
-      "Launch a dedicated Focus Room straight from any blocked task",
-      "Direct integration with Unblock Exchange for stalled items",
-    ],
-    highlight: "Deliverable tracking",
-  },
-  {
-    id: "unblock-exchange",
-    title: "Unblock Exchange",
-    subtitle: "Structured Peer Assistance",
-    tagline: "Ask trusted circle or pod members for help when you hit a technical wall.",
-    icon: HelpCircle,
-    badge: "Peer Problem Solving",
-    href: "/dashboard/unblock-exchange",
-    cta: "Request or Offer Help",
-    limits: {
-      free: "3 requests / rolling 7 days",
-      pro: "20 requests / rolling 7 days",
-    },
     features: [
       "Target requests strictly to selected Circles or Project Pods",
       "Review helper offers and accept the best assistance match",
@@ -126,7 +92,7 @@ export default function CollaborationSection() {
             <span className="serif-italic text-gradient-ai">multiplied together.</span>
           </h2>
           <p className="mt-4 text-base sm:text-lg text-gray-400 font-light leading-relaxed">
-            Solo discipline only goes so far. FocusFlow AI connects you with peers through synchronized coworking, weekly habit circles, structured project pods, and trusted peer unblocking.
+            Solo discipline only goes so far. FocusFlow AI connects you with peers through synchronized coworking and weekly habit circles.
           </p>
         </div>
 

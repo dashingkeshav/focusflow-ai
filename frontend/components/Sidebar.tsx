@@ -48,8 +48,6 @@ export const NAV_ITEMS: Array<{
   { name: "AI Planner", href: "/dashboard/planner", icon: Bot, badge: "AI", group: "Goals & Tasks" },
   { name: "Focus Rooms", href: "/dashboard/focus-rooms", icon: Users, group: "COLLABORATION" },
   { name: "Focus Circles", href: "/dashboard/focus-circles", icon: CircleDot, group: "COLLABORATION" },
-  { name: "Project Pods", href: "/dashboard/project-pods", icon: FolderKanban, group: "COLLABORATION" },
-  { name: "Unblock Exchange", href: "/dashboard/unblock-exchange", icon: LifeBuoy, group: "COLLABORATION" },
   { name: "Settings", href: "/dashboard/settings", icon: Settings, group: "System" },
 ];
 
