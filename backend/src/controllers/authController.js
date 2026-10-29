@@ -246,10 +246,9 @@ exports.register = async (req, res) => {
     let welcomeEmailSent = false;
 
     try {
-      const emailRes = await sendWelcomeEmail(
-        sanitizedEmail,
-        cleanName
-      );
+      const emailPromise = sendWelcomeEmail(sanitizedEmail, cleanName);
+      const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ success: false, timedOut: true }), 4000));
+      const emailRes = await Promise.race([emailPromise, timeoutPromise]);
       welcomeEmailSent = Boolean(emailRes?.success);
     } catch (emailError) {
       console.error(

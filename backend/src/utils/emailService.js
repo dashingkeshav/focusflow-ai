@@ -55,6 +55,9 @@ function initializeTransporter() {
         user: GMAIL_USER,
         pass: GMAIL_PASS.replace(/\s+/g, ""), // strip spaces if copied from Google
       },
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 12000,
     });
     console.log(`✅ Nodemailer Gmail SMTP configured for: ${GMAIL_USER} (sends to ALL users)`);
     return;
