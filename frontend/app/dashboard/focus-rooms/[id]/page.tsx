@@ -156,7 +156,7 @@ export default function FocusRoomLivePage({
   useEffect(() => {
     if (!token || !roomId) return;
 
-    const socket = socketIO(getApiBaseUrl(), {
+    const socket = socketIO(getSocketUrl(), {
       auth: { token },
       transports: ['websocket', 'polling'],
     });
@@ -277,7 +277,7 @@ export default function FocusRoomLivePage({
   }, [timerStatus, timerStartTime, timerElapsed, timerDuration, isHost, roomId]);
 
   // Timer Controls (Host)
-  const handleTimerAction = async (action: 'start' | 'pause' | 'resume' | 'reset') => {
+  const handleTimerAction = async (action: 'start' | 'pause' | 'resume' | 'reset' | 'complete') => {
     try {
       const res = await controlCollaborationRoomTimer(roomId, action, timerDuration);
       if (res.success && res.room) {

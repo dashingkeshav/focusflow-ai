@@ -12,6 +12,30 @@ function isLoopbackHostname(hostname: string): boolean {
   return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '0.0.0.0';
 }
 
+export function getSocketUrl(): string {
+  const envSocket = (process.env.NEXT_PUBLIC_SOCKET_URL || '').trim();
+  if (envSocket) return envSocket.replace(/\/+$/, '');
+
+  const envApi = (process.env.NEXT_PUBLIC_API_URL || '').trim();
+  if (typeof window !== 'undefined') {
+    const isClientLocal = isLoopbackHostname(window.location.hostname);
+    if (isClientLocal) {
+      return envApi || 'http://localhost:5001';
+    }
+    // In production browser, connect to Render backend where persistent WebSockets live
+    if (envApi) {
+      try {
+        const parsed = new URL(envApi);
+        if (!isLoopbackHostname(parsed.hostname)) {
+          return envApi.replace(/\/+$/, '');
+        }
+      } catch {}
+    }
+    return 'https://focusflow-ai-api.onrender.com';
+  }
+  return envApi || 'https://focusflow-ai-api.onrender.com';
+}
+
 export function getApiBaseUrl(): string {
   const envUrl = (process.env.NEXT_PUBLIC_API_URL || '').trim();
 

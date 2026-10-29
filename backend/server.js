@@ -74,6 +74,11 @@ const isAllowedOrigin = (origin) => {
 
   if (allowedOrigins.has(origin)) return true;
 
+  // Deployed Vercel origins for FocusFlow AI (production & preview branches)
+  if (/^https:\/\/focusflow-ai(-[a-z0-9-]+)?\.vercel\.app$/.test(origin)) {
+    return true;
+  }
+
   // Chrome extension handling
   if (origin.startsWith("chrome-extension://")) {
     const extId = origin.replace("chrome-extension://", "").split("/")[0];
@@ -515,6 +520,30 @@ io.on("connection", (socket) => {
         timerStatus = "running";
         timerStartTime = now;
         timerElapsedSeconds = 0;
+
+        try {
+          const activeMembers = await pool.query(
+            `SELECT user_id, active_session_id FROM focus_room_members WHERE room_id = $1 AND left_at IS NULL`,
+            [roomId]
+          );
+          for (const m of activeMembers.rows) {
+            try {
+              const memberSession = await Session.create({
+                userId: m.user_id,
+                title: `Focus Room: ${room.title}`,
+                plannedDurationSeconds: timerDuration,
+                startTime: now,
+                status: "active",
+              });
+              await pool.query(
+                `UPDATE focus_room_members SET active_session_id = $1 WHERE room_id = $2 AND user_id = $3`,
+                [memberSession.id, roomId, m.user_id]
+              );
+            } catch (mErr) {
+              console.warn("Could not create member session via socket:", mErr.message);
+            }
+          }
+        } catch (_) {}
       } else if (action === "pause") {
         if (timerStatus === "running" && timerStartTime) {
           const added = Math.floor((now.getTime() - new Date(timerStartTime).getTime()) / 1000);
@@ -533,6 +562,27 @@ io.on("connection", (socket) => {
         timerStatus = "completed";
         timerStartTime = null;
         timerElapsedSeconds = timerDuration;
+
+        try {
+          const activeMembers = await pool.query(
+            `SELECT user_id, active_session_id FROM focus_room_members WHERE room_id = $1 AND left_at IS NULL`,
+            [roomId]
+          );
+          for (const m of activeMembers.rows) {
+            if (m.active_session_id) {
+              try {
+                await Session.findOneAndUpdate(
+                  { id: m.active_session_id, userId: m.user_id },
+                  { status: "completed", endTime: now, durationSeconds: timerDuration }
+                );
+                await pool.query(
+                  `UPDATE focus_room_members SET active_session_id = NULL WHERE room_id = $1 AND user_id = $2`,
+                  [roomId, m.user_id]
+                );
+              } catch (_) {}
+            }
+          }
+        } catch (_) {}
       }
 
       await pool.query(
@@ -545,6 +595,17 @@ io.on("connection", (socket) => {
       io.to(`collab_room:${roomId}`).emit("room_timer_sync", {
         roomId,
         timerStatus,
+        timerStartTime,
+        timerElapsedSeconds,
+        timerDurationSeconds: timerDuration,
+        serverTime: Date.now(),
+        taskTitle: room.title,
+      });
+
+      io.to(`collab_room:${roomId}`).emit("room_session_state", {
+        roomId,
+        status: timerStatus,
+        action,
         timerStartTime,
         timerElapsedSeconds,
         timerDurationSeconds: timerDuration,

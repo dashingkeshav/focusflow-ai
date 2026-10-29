@@ -29,6 +29,10 @@ function createCorsEvaluator() {
 
     if (allowedOrigins.has(origin)) return true;
 
+    if (/^https:\/\/focusflow-ai(-[a-z0-9-]+)?\.vercel\.app$/.test(origin)) {
+      return true;
+    }
+
     if (origin.startsWith("chrome-extension://")) {
       const extId = origin.replace("chrome-extension://", "").split("/")[0];
       const allowedExtIds = [
@@ -116,4 +120,16 @@ test("CORS Security: Extension filtering restricts to approved extension IDs whe
 
   assert.equal(isAllowedOrigin("chrome-extension://abcdefghijklmnopabcdefghijklmnop", prodEnvWithExt), true);
   assert.equal(isAllowedOrigin("chrome-extension://maliciousunauthorizedextensionid", prodEnvWithExt), false);
+});
+
+test("CORS Security: Production permits FocusFlow AI Vercel deployment origins", () => {
+  const isAllowedOrigin = createCorsEvaluator();
+  const prodEnv = {
+    NODE_ENV: "production",
+    FRONTEND_URL: "https://focusflow-ai-api.onrender.com",
+  };
+
+  assert.equal(isAllowedOrigin("https://focusflow-ai-livid.vercel.app", prodEnv), true);
+  assert.equal(isAllowedOrigin("https://focusflow-ai-preview-abc123.vercel.app", prodEnv), true);
+  assert.equal(isAllowedOrigin("https://other-project.vercel.app", prodEnv), false);
 });

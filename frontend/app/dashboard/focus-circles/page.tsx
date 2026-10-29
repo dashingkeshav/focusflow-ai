@@ -109,7 +109,7 @@ export default function FocusCirclesPage() {
   useEffect(() => {
     if (!token || !selectedCircleId) return;
 
-    const socket = socketIO(getApiBaseUrl(), {
+    const socket = socketIO(getSocketUrl(), {
       auth: { token },
       transports: ['websocket', 'polling'],
     });

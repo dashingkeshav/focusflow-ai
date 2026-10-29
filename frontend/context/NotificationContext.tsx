@@ -17,7 +17,7 @@ import {
   deleteNotification as apiDeleteNotification,
   clearAllNotifications as apiClearAllNotifications,
   triggerTestNotification,
-  getApiBaseUrl,
+  getSocketUrl,
 } from "@/lib/api";
 import { io as socketIO, type Socket } from "socket.io-client";
 
@@ -132,7 +132,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (!userId || !token) return;
 
-    const socket = socketIO(getApiBaseUrl(), {
+    const socket = socketIO(getSocketUrl(), {
       auth: { token },
       transports: ["websocket", "polling"],
     });

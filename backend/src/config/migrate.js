@@ -1172,6 +1172,15 @@ async function runMigrations() {
 
     -- Safe forward-only additions
     ALTER TABLE focus_rooms ADD COLUMN IF NOT EXISTS description text;
+    ALTER TABLE focus_room_members ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+    ALTER TABLE focus_circle_members ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+
+    CREATE INDEX IF NOT EXISTS idx_focus_room_members_presence
+      ON focus_room_members (room_id, presence_status);
+
+    CREATE INDEX IF NOT EXISTS idx_focus_room_members_active_session
+      ON focus_room_members (active_session_id)
+      WHERE active_session_id IS NOT NULL;
 
     -- Clean up any automated test/dummy records so only real user information exists
     DELETE FROM focus_rooms WHERE title LIKE 'QA %' OR title LIKE 'Autonomous QA %';

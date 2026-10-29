@@ -475,6 +475,33 @@ exports.controlRoomTimer = async (req, res) => {
       timerStatus = "running";
       timerStartTime = now;
       timerElapsedSeconds = 0;
+
+      // Automatically provision/link authentic Session records for all active room members
+      try {
+        const activeMembers = await pool.query(
+          `SELECT user_id, active_session_id FROM focus_room_members WHERE room_id = $1 AND left_at IS NULL`,
+          [id]
+        );
+        for (const m of activeMembers.rows) {
+          try {
+            const memberSession = await Session.create({
+              userId: m.user_id,
+              title: `Focus Room: ${room.title}`,
+              plannedDurationSeconds: timerDuration,
+              startTime: now,
+              status: "active",
+            });
+            await pool.query(
+              `UPDATE focus_room_members SET active_session_id = $1 WHERE room_id = $2 AND user_id = $3`,
+              [memberSession.id, id, m.user_id]
+            );
+          } catch (mErr) {
+            console.warn("Could not create member session:", mErr.message);
+          }
+        }
+      } catch (memErr) {
+        console.warn("Failed querying active room members:", memErr.message);
+      }
     } else if (action === "pause") {
       if (timerStatus === "running" && timerStartTime) {
         const added = Math.floor((now.getTime() - new Date(timerStartTime).getTime()) / 1000);
@@ -493,6 +520,32 @@ exports.controlRoomTimer = async (req, res) => {
       timerStatus = "completed";
       timerStartTime = null;
       timerElapsedSeconds = timerDuration;
+
+      // Complete sessions for all active room members
+      try {
+        const activeMembers = await pool.query(
+          `SELECT user_id, active_session_id FROM focus_room_members WHERE room_id = $1 AND left_at IS NULL`,
+          [id]
+        );
+        for (const m of activeMembers.rows) {
+          if (m.active_session_id) {
+            try {
+              await Session.findOneAndUpdate(
+                { id: m.active_session_id, userId: m.user_id },
+                { status: "completed", endTime: now, durationSeconds: timerDuration }
+              );
+              await pool.query(
+                `UPDATE focus_room_members SET active_session_id = NULL WHERE room_id = $1 AND user_id = $2`,
+                [id, m.user_id]
+              );
+            } catch (cErr) {
+              console.warn("Could not complete member session:", cErr.message);
+            }
+          }
+        }
+      } catch (compErr) {
+        console.warn("Failed completing member sessions:", compErr.message);
+      }
     } else {
       return res.status(400).json({ success: false, message: "Invalid timer action." });
     }
@@ -516,6 +569,17 @@ exports.controlRoomTimer = async (req, res) => {
       io.to(`collab_room:${id}`).emit("room_timer_sync", {
         roomId: id,
         timerStatus,
+        timerStartTime,
+        timerElapsedSeconds,
+        timerDurationSeconds: timerDuration,
+        serverTime: Date.now(),
+        taskTitle: room.title,
+      });
+
+      io.to(`collab_room:${id}`).emit("room_session_state", {
+        roomId: id,
+        status: timerStatus,
+        action,
         timerStartTime,
         timerElapsedSeconds,
         timerDurationSeconds: timerDuration,
@@ -749,8 +813,16 @@ exports.acceptCircleInvite = async (req, res) => {
       [circle.id, userId]
     );
 
-    // Notify circle owner
+    // Notify circle owner and broadcast to circle
     const io = req.app.get("io");
+    if (io) {
+      io.to(`collab_circle:${circle.id}`).emit("circle_member_joined", {
+        circleId: circle.id,
+        userId,
+        name: req.user.name,
+      });
+    }
+
     await createNotification({
       userId: circle.owner_user_id,
       title: "New Circle Member",
@@ -869,6 +941,16 @@ exports.setCircleCommitment = async (req, res) => {
       [id, userId, week, year, commitment.trim()]
     );
 
+    const io = req.app.get("io");
+    if (io) {
+      io.to(`collab_circle:${id}`).emit("circle_commitment_updated", {
+        circleId: id,
+        userId,
+        week,
+        year,
+      });
+    }
+
     return res.json({ success: true, commitment: result.rows[0] });
   } catch (error) {
     console.error("setCircleCommitment error:", error.message);
@@ -899,6 +981,16 @@ exports.checkInCircleCommitment = async (req, res) => {
 
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: "No active commitment found for this week to check in." });
+    }
+
+    const io = req.app.get("io");
+    if (io) {
+      io.to(`collab_circle:${id}`).emit("circle_checkin_updated", {
+        circleId: id,
+        userId,
+        week,
+        year,
+      });
     }
 
     return res.json({ success: true, commitment: result.rows[0] });
@@ -935,6 +1027,14 @@ exports.removeCircleMember = async (req, res) => {
       `UPDATE focus_circle_members SET status = 'left' WHERE circle_id = $1 AND user_id = $2`,
       [id, memberUserId]
     );
+
+    const io = req.app.get("io");
+    if (io) {
+      io.to(`collab_circle:${id}`).emit("circle_member_left", {
+        circleId: id,
+        memberUserId,
+      });
+    }
 
     return res.json({ success: true, message: isSelf ? "Left circle." : "Member removed." });
   } catch (error) {

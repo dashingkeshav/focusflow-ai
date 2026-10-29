@@ -22,7 +22,7 @@ import {
   deleteCustomAchievementApi,
   AchievementItem,
   AchievementStats,
-  getApiBaseUrl,
+  getSocketUrl,
 } from "@/lib/api";
 import { io as socketIO, Socket } from "socket.io-client";
 import { useAuth } from "@/lib/auth";
@@ -115,7 +115,7 @@ export default function AchievementManager({ flash }: AchievementManagerProps) {
     let socket: Socket | null = null;
 
     if (token) {
-      socket = socketIO(getApiBaseUrl(), {
+      socket = socketIO(getSocketUrl(), {
         auth: { token },
         transports: ["websocket", "polling"],
       });
