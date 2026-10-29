@@ -225,3 +225,4 @@ errPage = errPage.replace(
 );
 fs.writeFileSync('frontend/app/error.tsx', errPage);
 console.log('Updated app/error.tsx button styling');
+
