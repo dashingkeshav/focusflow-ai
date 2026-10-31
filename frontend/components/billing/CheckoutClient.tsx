@@ -8,7 +8,7 @@ import { AlertCircle, ArrowLeft, CheckCircle2, LoaderCircle, ShieldCheck } from 
 import { apiRequest } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useEntitlements } from "@/lib/useEntitlements";
-import { AuthBrand, AuthShell } from "@/app/login/page";
+import { AuthBrand, AuthShell } from "@/components/auth/AuthShell";
 
 interface SubscriptionResponse {
   success: boolean;

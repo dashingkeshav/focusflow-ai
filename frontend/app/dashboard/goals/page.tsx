@@ -55,7 +55,7 @@ type GoalForm = {
 export type Goal = GoalItem;
 
 const today = () => new Date().toISOString().slice(0, 10);
-const fields = 'w-full rounded-xl border border-white/10 bg-slate-50 px-3.5 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500]';
+const fields = 'w-full rounded-xl border border-[#262832] bg-slate-50 px-3.5 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500]';
 const views = ['goals', 'tasks', 'habits', 'calendar', 'achievements'] as const;
 type View = typeof views[number];
 
@@ -485,7 +485,7 @@ export default function GoalsPage() {
               className={`flex items-center gap-2 whitespace-nowrap rounded-full border px-4 py-1.5 text-xs font-mono font-semibold transition-all ${
                 isActive
                   ? 'border-[#FF4500] bg-[#FF4500]/15 text-[#FF4500] shadow-sm'
-                  : 'border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                  : 'border-[#262832] bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
               }`}
             >
               <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-[#FF4500]' : 'text-gray-400'}`} />
@@ -527,7 +527,7 @@ export default function GoalsPage() {
               <button
                 key={String(label)}
                 onClick={() => setFilter(String(label).replace(' Goals', ''))}
-                className="glass-card rounded-2xl border border-white/10 p-4 text-left transition-all hover:border-[#FF4500]/40"
+                className="glass-card rounded-2xl border border-[#262832] p-4 text-left transition-all hover:border-[#FF4500]/40"
               >
                 <p className="text-xs font-mono text-gray-400">{String(label)}</p>
                 <p className="mt-1 font-serif text-2xl font-bold text-white">{String(count)}</p>
@@ -550,10 +550,10 @@ export default function GoalsPage() {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             >
-              <option className="bg-card text-white">All</option>
-              <option className="bg-card text-white">Active</option>
-              <option className="bg-card text-white">Completed</option>
-              <option className="bg-card text-white">Overdue</option>
+              <option className="bg-[#12131A] text-white">All</option>
+              <option className="bg-[#12131A] text-white">Active</option>
+              <option className="bg-[#12131A] text-white">Completed</option>
+              <option className="bg-[#12131A] text-white">Overdue</option>
             </select>
           </div>
 

@@ -293,7 +293,7 @@ export default function InsightsPage() {
 
         <button
           onClick={load}
-          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-card px-3.5 py-2 text-xs font-medium text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white"
+          className="inline-flex items-center gap-2 rounded-xl border border-[#262832] bg-[#12131A] px-3.5 py-2 text-xs font-medium text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[#FF4500]" : ""}`} aria-hidden />
           Refresh Analysis
@@ -308,7 +308,7 @@ export default function InsightsPage() {
           { label: "Tab Switches", value: tabSwitches, icon: Zap, tone: "text-amber-400" },
           { label: "Active Streak", value: streak > 0 ? `${streak} Days` : "—", icon: Flame, tone: "text-[#FF4500]" },
         ].map((m) => (
-          <div key={m.label} className="rounded-2xl border border-white/10 bg-card p-4 shadow-sm">
+          <div key={m.label} className="rounded-2xl border border-[#262832] bg-[#12131A] p-4 shadow-sm">
             <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-white/50">
               <span>{m.label}</span>
               <m.icon className={`h-4 w-4 ${m.tone}`} aria-hidden />
@@ -329,7 +329,7 @@ export default function InsightsPage() {
       {loading && !stats && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl border border-white/10 bg-white/5" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl border border-[#262832] bg-white/5" />
           ))}
         </div>
       )}
@@ -340,7 +340,7 @@ export default function InsightsPage() {
           {cards.map((c) => (
             <div
               key={c.tag}
-              className={`flex flex-col justify-between space-y-4 rounded-2xl border p-6 transition-all bg-card ${
+              className={`flex flex-col justify-between space-y-4 rounded-2xl border p-6 transition-all bg-[#12131A] ${
                 c.tone === "positive"
                   ? "border-emerald-500/30"
                   : c.tone === "warning"
@@ -393,7 +393,7 @@ export default function InsightsPage() {
               </div>
 
               {c.actionHref && (
-                <div className="pt-3 border-t border-white/10">
+                <div className="pt-3 border-t border-[#262832]">
                   <Link
                     href={c.actionHref}
                     className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#FF4500] transition-colors hover:text-[#FF4500]/80"
@@ -410,17 +410,17 @@ export default function InsightsPage() {
           {serverInsights.map((si, idx) => (
             <div
               key={`${si.kind}-${idx}`}
-              className="flex flex-col justify-between space-y-3 rounded-2xl border border-white/10 bg-card p-6 shadow-xs"
+              className="flex flex-col justify-between space-y-3 rounded-2xl border border-[#262832] bg-[#12131A] p-6 shadow-xs"
             >
               <div>
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-white/60">
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-[#262832] bg-white/5 px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider text-white/60">
                   <Sparkles className="h-3 w-3 text-[#FF4500]" />
                   {si.kind.replace(/_/g, " ")}
                 </span>
                 <h3 className="mt-3 text-sm font-bold text-white font-serif">{si.title}</h3>
                 <p className="mt-2 text-xs leading-relaxed text-white/70">{si.body}</p>
                 {si.detail && (
-                  <p className="mt-2 text-[11px] leading-relaxed text-white/40 border-t border-white/10 pt-2 font-mono">
+                  <p className="mt-2 text-[11px] leading-relaxed text-white/40 border-t border-[#262832] pt-2 font-mono">
                     {si.detail}
                   </p>
                 )}
@@ -432,8 +432,8 @@ export default function InsightsPage() {
 
       {/* ── EMPTY STATE ── */}
       {!loading && !hasData && !error && (
-        <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-card p-16 text-center shadow-xs">
-          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/30">
+        <div className="flex flex-col items-center rounded-2xl border border-[#262832] bg-[#12131A] p-16 text-center shadow-xs">
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#262832] bg-white/5 text-white/30">
             <Clock className="h-6 w-6" aria-hidden />
           </div>
           <h3 className="text-base font-bold text-white font-serif">Not enough telemetry yet</h3>

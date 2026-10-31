@@ -33,7 +33,7 @@ export default function CountUp({
     const controls = animate(0, value, {
       duration,
       ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => {
+      onUpdate: (v: any) => {
         node.textContent =
           prefix +
           v.toLocaleString("en-US", {

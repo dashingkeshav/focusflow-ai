@@ -36,16 +36,16 @@ export default function ExtensionPreview() {
               whileInView={reduce ? { opacity: 1 } : { opacity: 1, rotateX: 0, y: 0 }}
               viewport={{ once: true, amount: 0.35 }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-              className="overflow-hidden rounded-3xl border border-white/10 bg-card shadow-[0_32px_80px_-48px_rgba(0,0,0,0.8)] backdrop-blur-xl"
+              className="overflow-hidden rounded-3xl border border-[#262832] bg-[#12131A] shadow-[0_32px_80px_-48px_rgba(0,0,0,0.8)] backdrop-blur-xl"
               style={{ transformStyle: "preserve-3d" }}
             >
-              <div className="flex items-center gap-3 border-b border-white/10 bg-white/3 px-4 py-3">
+              <div className="flex items-center gap-3 border-b border-[#262832] bg-white/3 px-4 py-3">
                 <div className="flex gap-1.5" aria-hidden>
                   {["bg-rose-500", "bg-amber-500", "bg-emerald-500"].map((tone) => (
                     <span key={tone} className={`h-2.5 w-2.5 rounded-full ${tone}`} />
                   ))}
                 </div>
-                <div className="mx-auto flex max-w-sm flex-1 items-center justify-center gap-2 rounded-lg border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] font-mono text-gray-400">
+                <div className="mx-auto flex max-w-sm flex-1 items-center justify-center gap-2 rounded-lg border border-[#262832] bg-black/40 px-3 py-1.5 text-[10px] font-mono text-gray-400">
                   <Lock className="h-3 w-3" aria-hidden />
                   FocusFlow browser protection
                 </div>
@@ -53,7 +53,7 @@ export default function ExtensionPreview() {
               </div>
 
               <div className="grid gap-5 p-5 sm:p-7 md:grid-cols-[0.9fr_1.1fr]">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <div className="rounded-2xl border border-[#262832] bg-white/5 p-5">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/15 text-[#FF4500] shadow-sm">
                     <Shield className="h-5 w-5" aria-hidden />
                   </span>
@@ -61,13 +61,13 @@ export default function ExtensionPreview() {
                   <p className="mt-2 text-xs leading-relaxed text-gray-400">
                     The extension checks the active session and your focus preferences before acting.
                   </p>
-                  <div className="mt-5 flex items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-3 py-2.5">
+                  <div className="mt-5 flex items-center gap-2 rounded-xl border border-[#262832] bg-black/40 px-3 py-2.5">
                     <span className="h-1.5 w-1.5 rounded-full bg-gray-500" />
                     <span className="text-[10px] font-mono font-medium text-gray-400">Waiting for a focus session</span>
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <div className="rounded-2xl border border-[#262832] bg-white/5 p-5">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-xs font-serif font-semibold text-white">Browsing activity</p>
@@ -81,7 +81,7 @@ export default function ExtensionPreview() {
                     {SIGNALS.map((signal) => {
                       const Icon = signal.icon;
                       return (
-                        <div key={signal.label} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/40 px-3 py-2.5">
+                        <div key={signal.label} className="flex items-center gap-3 rounded-xl border border-[#262832] bg-black/40 px-3 py-2.5">
                           <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${signal.tone}`}>
                             <Icon className="h-3.5 w-3.5" aria-hidden />
                           </span>

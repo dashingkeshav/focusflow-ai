@@ -24,11 +24,11 @@ export default function PricingPreview() {
       <div className="mt-14 grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl mx-auto">
         {/* FREE PLAN */}
         <Reveal>
-          <div className="flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-card p-8 md:p-10 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-white/20">
+          <div className="flex h-full flex-col justify-between rounded-3xl border border-[#262832] bg-[#12131A] p-8 md:p-10 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-white/20">
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-serif text-2xl font-bold text-white">Free Tier</h3>
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-mono text-gray-300">
+                <span className="rounded-full border border-[#262832] bg-white/5 px-3 py-1 text-xs font-mono text-gray-300">
                   Forever
                 </span>
               </div>
@@ -40,7 +40,7 @@ export default function PricingPreview() {
                 <span className="text-sm font-mono text-gray-500">/ forever</span>
               </div>
 
-              <ul className="mt-8 space-y-3.5 border-t border-white/10 pt-6 text-sm text-gray-300">
+              <ul className="mt-8 space-y-3.5 border-t border-[#262832] pt-6 text-sm text-gray-300">
                 {[
                   "Goals & Task Roadmap",
                   "Focus Sessions & Timer",
@@ -66,7 +66,7 @@ export default function PricingPreview() {
 
         {/* PRO PLAN */}
         <Reveal delay={0.12}>
-          <div className="relative flex h-full flex-col justify-between rounded-3xl border-2 border-[#FF4500] bg-card p-8 md:p-10 shadow-[0_20px_50px_rgba(255,69,0,0.25)] backdrop-blur-xl transition-all duration-300 hover:shadow-[0_25px_60px_rgba(255,69,0,0.35)]">
+          <div className="relative flex h-full flex-col justify-between rounded-3xl border-2 border-[#FF4500] bg-[#12131A] p-8 md:p-10 shadow-[0_20px_50px_rgba(255,69,0,0.25)] backdrop-blur-xl transition-all duration-300 hover:shadow-[0_25px_60px_rgba(255,69,0,0.35)]">
             <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-[#FF4500] px-4 py-1 text-[11px] font-mono font-bold uppercase tracking-widest text-white shadow-md">
               FocusFlow Pro
             </span>
@@ -89,7 +89,7 @@ export default function PricingPreview() {
                 <span className="text-sm font-mono text-gray-500">/ month</span>
               </div>
 
-              <ul className="mt-8 space-y-3.5 border-t border-white/10 pt-6 text-sm text-gray-200">
+              <ul className="mt-8 space-y-3.5 border-t border-[#262832] pt-6 text-sm text-gray-200">
                 {[
                   "Everything in Free Tier",
                   "Multimodal AI Planner (Voice + PDF/Docs)",

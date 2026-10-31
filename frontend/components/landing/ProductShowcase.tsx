@@ -91,8 +91,8 @@ export default function ProductShowcase() {
                   aria-pressed={isActive}
                   className={`group flex min-w-max items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all lg:min-w-0 ${
                     isActive
-                      ? "border-[#FF4500]/50 bg-card shadow-[0_12px_32px_-15px_rgba(255,69,0,0.3)]"
-                      : "border-white/5 bg-transparent hover:border-white/10 hover:bg-white/5"
+                      ? "border-[#FF4500]/50 bg-[#12131A] shadow-[0_12px_32px_-15px_rgba(255,69,0,0.3)]"
+                      : "border-white/5 bg-transparent hover:border-[#262832] hover:bg-white/5"
                   }`}
                 >
                   <span className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
@@ -125,15 +125,15 @@ export default function ProductShowcase() {
                 animate={{ opacity: 1, y: 0, rotateX: 0 }}
                 exit={reduce ? undefined : { opacity: 0, y: -8 }}
                 transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="relative min-h-73 overflow-hidden rounded-[26px] border border-white/10 bg-card p-6 shadow-[0_28px_74px_-44px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:p-8"
+                className="relative min-h-73 overflow-hidden rounded-[26px] border border-[#262832] bg-[#12131A] p-6 shadow-[0_28px_74px_-44px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:p-8"
                 style={{ transformStyle: "preserve-3d" }}
               >
-                <div className="flex items-center justify-between border-b border-white/10 pb-5">
+                <div className="flex items-center justify-between border-b border-[#262832] pb-5">
                   <span className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.16em] text-gray-400">
                     <Icon className="h-3.5 w-3.5 text-[#FF4500]" aria-hidden />
                     {selected.eyebrow}
                   </span>
-                  <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[9px] font-mono font-semibold text-gray-300">
+                  <span className="rounded-full border border-[#262832] bg-white/5 px-2.5 py-1 text-[9px] font-mono font-semibold text-gray-300">
                     FocusFlow workspace
                   </span>
                 </div>
@@ -147,7 +147,7 @@ export default function ProductShowcase() {
                       {PANELS[active].description}
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div className="rounded-2xl border border-[#262832] bg-white/5 p-4">
                     <div className="mb-4 flex items-center gap-2">
                       {active === "session" ? (
                         <Shield className="h-4 w-4 text-[#FF4500]" aria-hidden />

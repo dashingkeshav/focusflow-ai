@@ -60,7 +60,7 @@ export default function GlassCard({
         transformPerspective: 900,
       }}
       transition={{ type: "spring", stiffness: 160, damping: 18 }}
-      className={`glass-card relative overflow-hidden rounded-[22px] border border-white/10 bg-card/90 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.8)] text-white ${className}`}
+      className={`glass-card relative overflow-hidden rounded-[22px] border border-[#262832] bg-[#12131A]/95 shadow-[0_12px_40px_-8px_rgba(0,0,0,0.8)] text-white ${className}`}
     >
       {tilt && (
         <motion.div

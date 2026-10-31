@@ -132,10 +132,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (!userId || !token) return;
 
-    const socket = socketIO(getSocketUrl(), {
-      auth: { token },
-      transports: ["websocket", "polling"],
-    });
+    const socket = socketIO(getSocketUrl(), { auth: { token }, transports: ['websocket', 'polling'] } as any);
     socketRef.current = socket;
 
     socket.on("notification", (incoming: AppNotification) => {

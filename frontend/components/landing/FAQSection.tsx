@@ -57,7 +57,7 @@ export default function FAQSection() {
               <Reveal key={faq.q} delay={i * 0.05}>
                 <div
                   className={`overflow-hidden rounded-2xl border transition-all duration-300 ${
-                    isOpen ? "border-[#FF4500]/50 bg-slate-100 shadow-xl" : "border-white/10 bg-card"
+                    isOpen ? "border-[#FF4500]/50 bg-slate-100 shadow-xl" : "border-[#262832] bg-[#12131A]"
                   }`}
                 >
                   <button
@@ -71,7 +71,7 @@ export default function FAQSection() {
                       animate={{ rotate: isOpen ? 45 : 0 }}
                       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${
-                        isOpen ? "border-[#FF4500]/40 bg-[#FF4500]/10 text-[#FF4500]" : "border-white/10 bg-white/5 text-gray-400"
+                        isOpen ? "border-[#FF4500]/40 bg-[#FF4500]/10 text-[#FF4500]" : "border-[#262832] bg-white/5 text-gray-400"
                       }`}
                     >
                       <Plus className="h-4 w-4" aria-hidden />

@@ -185,11 +185,11 @@ export default function DashboardOverviewPage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-12 w-64 animate-pulse rounded-2xl bg-white/5" />
-        <div className="h-48 w-full animate-pulse rounded-3xl bg-white/5" />
+        <div className="h-12 w-64 animate-pulse rounded-2xl bg-[#08090D]" />
+        <div className="h-48 w-full animate-pulse rounded-3xl bg-[#08090D]" />
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="h-64 animate-pulse rounded-3xl bg-white/5" />
-          <div className="h-64 animate-pulse rounded-3xl bg-white/5" />
+          <div className="h-64 animate-pulse rounded-3xl bg-[#08090D]" />
+          <div className="h-64 animate-pulse rounded-3xl bg-[#08090D]" />
         </div>
       </div>
     );
@@ -198,7 +198,7 @@ export default function DashboardOverviewPage() {
   if (error) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="w-full max-w-md rounded-3xl border border-amber-500/20 bg-card p-8 text-center shadow-lg text-white">
+        <div className="w-full max-w-md rounded-3xl border border-amber-500/20 bg-[#12131A] p-8 text-center shadow-lg text-white">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-500">
             <AlertTriangle className="h-7 w-7" />
           </div>
@@ -231,7 +231,7 @@ export default function DashboardOverviewPage() {
   return (
     <div className="space-y-8 font-inter text-white">
       {/* Collaboration Ecosystem Hub */}
-      <section className="rounded-3xl border border-white/10 bg-[#0a0a0c]/85 p-6 shadow-2xl backdrop-blur-xl">
+      <section className="rounded-3xl border border-[#262832] bg-[#12131A]/90 p-6 shadow-2xl backdrop-blur-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-5 border-b border-white/5">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
@@ -258,14 +258,14 @@ export default function DashboardOverviewPage() {
           {/* 1. Focus Rooms */}
           <Link
             href="/dashboard/focus-rooms"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
+            className="group flex flex-col justify-between rounded-2xl border border-[#262832] bg-[#08090D] p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-9 h-9 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/25 flex items-center justify-center text-[#FF4500] group-hover:scale-110 transition-transform">
                   <Radio className="w-4.5 h-4.5" />
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 text-gray-400 border border-white/5">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#08090D] text-gray-400 border border-white/5">
                   Coworking
                 </span>
               </div>
@@ -285,14 +285,14 @@ export default function DashboardOverviewPage() {
           {/* 2. Focus Circles */}
           <Link
             href="/dashboard/focus-circles"
-            className="group flex flex-col justify-between rounded-2xl border border-white/10 bg-white/5 p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
+            className="group flex flex-col justify-between rounded-2xl border border-[#262832] bg-[#08090D] p-4.5 hover:border-[#FF4500]/50 hover:bg-white/8 transition-all"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
                 <div className="w-9 h-9 rounded-xl bg-[#FF4500]/10 border border-[#FF4500]/25 flex items-center justify-center text-[#FF4500] group-hover:scale-110 transition-transform">
                   <Users className="w-4.5 h-4.5" />
                 </div>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-white/5 text-gray-400 border border-white/5">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#08090D] text-gray-400 border border-white/5">
                   Habits
                 </span>
               </div>
@@ -315,7 +315,7 @@ export default function DashboardOverviewPage() {
       {/* ==============================================================
           HERO FOCAL SECTION: "WHAT SHOULD I FOCUS ON NOW?"
           ============================================================== */}
-      <section className="relative overflow-hidden rounded-4xl border border-white/10 bg-card p-7 shadow-2xl backdrop-blur-2xl sm:p-9">
+      <section className="relative overflow-hidden rounded-4xl border border-[#262832] bg-[#12131A] p-7 shadow-2xl backdrop-blur-2xl sm:p-9">
         {/* Soft Background Radial Diffusions */}
         <div className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[#FF4500]/10 blur-[90px]" />
         <div className="pointer-events-none absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-[#FF4500]/5 blur-[90px]" />
@@ -328,7 +328,7 @@ export default function DashboardOverviewPage() {
                 <span>{greeting}, {user?.name?.split(" ")[0] || "Explorer"}</span>
               </div>
               {isPro ? <ProBadge /> : <FreeBadge />}
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-mono text-gray-300">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#262832] bg-[#08090D] px-3 py-1 text-xs font-mono text-gray-300">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#FF4500]" />
                 AI Plans Today: <strong className="text-white">{planLimit?.used ?? 0}</strong> / {isPro ? 200 : 5}
               </span>
@@ -339,7 +339,7 @@ export default function DashboardOverviewPage() {
             </h2>
 
             {selectedTask ? (
-              <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm">
+              <div className="mt-4 rounded-2xl border border-[#262832] bg-[#08090D] p-4 shadow-sm">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -373,7 +373,7 @@ export default function DashboardOverviewPage() {
                       <button
                         type="button"
                         onClick={() => setShowTaskPicker(!showTaskPicker)}
-                        className="btn btn-ghost btn-sm text-xs text-gray-300 hover:text-white border border-white/10"
+                        className="btn btn-ghost btn-sm text-xs text-gray-300 hover:text-white border border-[#262832]"
                       >
                         <span>Choose another</span>
                         <ChevronDown className={`h-3 w-3 transition-transform ${showTaskPicker ? "rotate-180" : ""}`} />
@@ -383,14 +383,14 @@ export default function DashboardOverviewPage() {
                 </div>
 
                 {/* Explanatory rationale for recommendation */}
-                <div className="mt-3 rounded-xl border border-white/5 bg-white/5 px-3.5 py-2 text-xs leading-relaxed text-gray-300">
+                <div className="mt-3 rounded-xl border border-white/5 bg-[#08090D] px-3.5 py-2 text-xs leading-relaxed text-gray-300">
                   <span className="font-semibold text-[#FF4500]">Why FocusFlow recommends this: </span>
                   {nextActionData?.reason || "Highest priority actionable task aligned with your active timeline."}
                 </div>
 
                 {/* Alternative tasks selector */}
                 {showTaskPicker && nextActionData?.alternativeTasks && (
-                  <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
+                  <div className="mt-3 pt-3 border-t border-[#262832] space-y-2">
                     <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400">Alternative Tasks in Queue</span>
                     <div className="space-y-1.5 max-h-40 overflow-y-auto">
                       {nextActionData.alternativeTasks.map((alt) => (
@@ -401,7 +401,7 @@ export default function DashboardOverviewPage() {
                             setSelectedTask(alt);
                             setShowTaskPicker(false);
                           }}
-                          className="w-full flex items-center justify-between text-left text-xs p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition-colors"
+                          className="w-full flex items-center justify-between text-left text-xs p-2 rounded-lg bg-[#08090D] hover:bg-white/10 border border-white/5 transition-colors"
                         >
                           <span className="truncate pr-2 text-white font-medium">{alt.title}</span>
                           <span className="text-[10px] font-mono text-[#FF4500] shrink-0">{alt.priority || "Medium"}</span>
@@ -412,7 +412,7 @@ export default function DashboardOverviewPage() {
                 )}
               </div>
             ) : (
-              <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+              <div className="mt-4 rounded-2xl border border-[#262832] bg-[#08090D] p-4">
                 <p className="text-sm text-gray-400">
                   No active tasks right now. Create a milestone in Goals or ask the AI Planner to schedule your next sprint.
                 </p>
@@ -430,14 +430,14 @@ export default function DashboardOverviewPage() {
 
           {/* Quick Metrics Capsule Strip */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xs">
+            <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 shadow-xs">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400">Today Focused</span>
               <p className="mt-1 font-serif text-2xl font-bold text-white">
                 <CountUp value={todayMinutes} suffix="m" />
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xs">
+            <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 shadow-xs">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400">Day Streak</span>
               <p className="mt-1 flex items-center gap-1 font-serif text-2xl font-bold text-amber-400">
                 <Flame className="h-5 w-5 fill-amber-400" />
@@ -445,14 +445,14 @@ export default function DashboardOverviewPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xs">
+            <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 shadow-xs">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400">Focus Score</span>
               <p className="mt-1 font-serif text-2xl font-bold text-[#FF4500]">
                 {headlineScore != null ? `${headlineScore}` : "—"}
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-xs">
+            <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 shadow-xs">
               <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gray-400">Total Hours</span>
               <p className="mt-1 font-serif text-2xl font-bold text-white">
                 <CountUp value={totalHours} suffix="h" />
@@ -469,8 +469,8 @@ export default function DashboardOverviewPage() {
         {/* LEFT COLUMN: ACTIVE GOAL & TODAY'S PLAN & RECENT SESSIONS */}
         <div className="space-y-6 lg:col-span-7">
           {/* Current Goal Anchor */}
-          <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-4">
               <div className="flex items-center gap-2.5">
                 <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#FF4500]/10 text-[#FF4500]">
                   <Target className="h-4 w-4" />
@@ -516,8 +516,8 @@ export default function DashboardOverviewPage() {
           </div>
 
           {/* Recent Sessions Timeline */}
-          <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-4">
               <h3 className="font-serif text-base font-bold text-white flex items-center gap-2">
                 <Clock className="h-4 w-4 text-[#FF4500]" />
                 <span>Recent Focus Sessions</span>
@@ -535,7 +535,7 @@ export default function DashboardOverviewPage() {
                 stats.recentSessions.slice(0, 4).map((session) => (
                   <div
                     key={session.id || session._id}
-                    className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-3.5 transition-colors hover:bg-white/10"
+                    className="flex items-center justify-between rounded-2xl border border-[#262832] bg-[#08090D] p-3.5 transition-colors hover:bg-white/10"
                   >
                     <div>
                       <p className="text-xs font-bold text-white">
@@ -577,7 +577,7 @@ export default function DashboardOverviewPage() {
         {/* RIGHT COLUMN: FOCUS INTELLIGENCE & AI INSIGHT & TREND CHART */}
         <div className="space-y-6 lg:col-span-5">
           {/* Focus Score Gauge Card */}
-          <div className="rounded-3xl border border-white/10 bg-card p-6 text-center shadow-md backdrop-blur-xl">
+          <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 text-center shadow-md backdrop-blur-xl">
             <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-gray-400">
               Personal Focus Intelligence
             </span>
@@ -594,8 +594,8 @@ export default function DashboardOverviewPage() {
           </div>
 
           {/* AI Insight Card (Observation → Evidence → Impact → Recommendation) */}
-          <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
+          <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-3.5">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-[#FF4500]" />
                 <h3 className="font-serif text-sm font-bold text-white">AI Focus Insight</h3>
@@ -619,8 +619,8 @@ export default function DashboardOverviewPage() {
           </div>
 
           {/* Personal Weekly Focus Review Card */}
-          <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3.5">
+          <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-3.5">
               <div className="flex items-center gap-2">
                 <Timer className="h-4 w-4 text-[#FF4500]" />
                 <h3 className="font-serif text-sm font-bold text-white">Weekly Focus Review</h3>
@@ -632,7 +632,7 @@ export default function DashboardOverviewPage() {
               <div className="mt-4 space-y-4">
                 {/* 4 Core Quantitative Pillars */}
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+                  <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-3">
                     <span className="text-[10px] font-mono text-gray-400 uppercase">Focus Time</span>
                     <p className="mt-1 font-serif text-lg font-bold text-white">
                       {weeklyReview.totalFocusMinutes}m
@@ -642,7 +642,7 @@ export default function DashboardOverviewPage() {
                     </span>
                   </div>
 
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+                  <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-3">
                     <span className="text-[10px] font-mono text-gray-400 uppercase">Tasks Completed</span>
                     <p className="mt-1 font-serif text-lg font-bold text-emerald-400">
                       {weeklyReview.completedTasks}
@@ -652,7 +652,7 @@ export default function DashboardOverviewPage() {
                     </span>
                   </div>
 
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+                  <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-3">
                     <span className="text-[10px] font-mono text-gray-400 uppercase">Goals Status</span>
                     <p className="mt-1 font-serif text-lg font-bold text-amber-400">
                       {weeklyReview.goals.progressing} Active
@@ -662,7 +662,7 @@ export default function DashboardOverviewPage() {
                     </span>
                   </div>
 
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
+                  <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-3">
                     <span className="text-[10px] font-mono text-gray-400 uppercase">Task Duration</span>
                     <p className="mt-1 font-serif text-lg font-bold text-white">
                       {weeklyReview.durationVariancePercent != null
@@ -677,7 +677,7 @@ export default function DashboardOverviewPage() {
 
                 {/* Prior Period Trend Comparison */}
                 {weeklyReview.priorPeriod.hasPriorPeriod && weeklyReview.priorPeriod.focusTimeChangePercent != null && (
-                  <div className="flex items-center justify-between text-xs font-mono rounded-xl bg-white/5 px-3 py-2 border border-white/5">
+                  <div className="flex items-center justify-between text-xs font-mono rounded-xl bg-[#08090D] px-3 py-2 border border-white/5">
                     <span className="text-gray-400">vs Previous 7 Days</span>
                     <span className={weeklyReview.priorPeriod.focusTimeChangePercent >= 0 ? "text-emerald-400 font-bold" : "text-amber-400 font-bold"}>
                       {weeklyReview.priorPeriod.focusTimeChangePercent >= 0 ? "+" : ""}{weeklyReview.priorPeriod.focusTimeChangePercent}% focus time
@@ -689,7 +689,7 @@ export default function DashboardOverviewPage() {
                 {weeklyReview.recommendations && weeklyReview.recommendations.length > 0 && (
                   <div className="space-y-2">
                     {weeklyReview.recommendations.slice(0, 2).map((rec, idx) => (
-                      <div key={idx} className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs">
+                      <div key={idx} className="rounded-xl border border-[#262832] bg-[#08090D] p-3 text-xs">
                         <p className="text-gray-300 font-medium leading-relaxed">
                           <strong className="text-amber-400 font-semibold">Evidence: </strong>{rec.observation}
                         </p>
@@ -713,7 +713,7 @@ export default function DashboardOverviewPage() {
 
           {/* Weekly Focus Trend Chart */}
           {weekly.length > 0 && (
-            <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl">
+            <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl">
               <h3 className="font-serif text-sm font-bold text-white mb-4">
                 Weekly Focus Volume
               </h3>

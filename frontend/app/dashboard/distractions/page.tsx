@@ -130,7 +130,7 @@ export default function DistractionsPage() {
 
         <div className="flex flex-wrap items-center gap-2">
           {/* View toggle */}
-          <div className="flex items-center rounded-xl border border-white/10 bg-card p-1 shadow-xs">
+          <div className="flex items-center rounded-xl border border-[#262832] bg-[#12131A] p-1 shadow-xs">
             <button
               onClick={() => setViewMode("timeline")}
               className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition-all ${
@@ -156,7 +156,7 @@ export default function DistractionsPage() {
               className={`rounded-xl border px-3 py-1.5 text-xs font-medium transition-all ${
                 typeFilter === filterKey
                   ? "bg-[#FF4500] text-white border-[#FF4500] shadow-xs"
-                  : "bg-card text-white/60 border-white/10 hover:bg-white/5 hover:text-white"
+                  : "bg-[#12131A] text-white/60 border-[#262832] hover:bg-white/5 hover:text-white"
               }`}
             >
               {filterKey.charAt(0).toUpperCase() + filterKey.slice(1)}
@@ -165,7 +165,7 @@ export default function DistractionsPage() {
           <button
             onClick={() => load(false)}
             disabled={loading}
-            className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-card px-3 py-1.5 text-xs font-medium text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white"
+            className="inline-flex items-center gap-2 rounded-xl border border-[#262832] bg-[#12131A] px-3 py-1.5 text-xs font-medium text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[#FF4500]" : ""}`} aria-hidden />
             Refresh
@@ -175,7 +175,7 @@ export default function DistractionsPage() {
 
       {/* ── SUMMARY METRICS ── */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-white/10 bg-card p-5 shadow-sm space-y-1.5">
+        <div className="rounded-2xl border border-[#262832] bg-[#12131A] p-5 shadow-sm space-y-1.5">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-white/50">
             <span>Tab Switches</span>
             <MousePointerClick className="h-4 w-4 text-amber-400" aria-hidden />
@@ -186,7 +186,7 @@ export default function DistractionsPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-card p-5 shadow-sm space-y-1.5">
+        <div className="rounded-2xl border border-[#262832] bg-[#12131A] p-5 shadow-sm space-y-1.5">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-white/50">
             <span>Warnings Issued</span>
             <AlertTriangle className="h-4 w-4 text-rose-400" aria-hidden />
@@ -197,7 +197,7 @@ export default function DistractionsPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-card p-5 shadow-sm space-y-1.5">
+        <div className="rounded-2xl border border-[#262832] bg-[#12131A] p-5 shadow-sm space-y-1.5">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-white/50">
             <span>Blocked Sites</span>
             <Shield className="h-4 w-4 text-rose-400" aria-hidden />
@@ -206,7 +206,7 @@ export default function DistractionsPage() {
           <p className="text-[11px] text-white/40 font-mono">Strict mode blocks enforced</p>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-card p-5 shadow-sm space-y-1.5">
+        <div className="rounded-2xl border border-[#262832] bg-[#12131A] p-5 shadow-sm space-y-1.5">
           <div className="flex items-center justify-between text-xs font-mono uppercase tracking-wider text-white/50">
             <span>Camera Look-aways</span>
             <Moon className="h-4 w-4 text-sky-400" aria-hidden />
@@ -217,7 +217,7 @@ export default function DistractionsPage() {
       </div>
 
       {/* ── DISTRACTION LOAD INDICATOR ── */}
-      <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-2xl border border-[#262832] bg-[#12131A] p-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-400">
             <Flame className="h-5 w-5" aria-hidden />
@@ -260,8 +260,8 @@ export default function DistractionsPage() {
       </div>
 
       {/* ── TIMELINE / INCIDENT HISTORY ── */}
-      <div className="space-y-4 rounded-2xl border border-white/10 bg-card p-6">
-        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+      <div className="space-y-4 rounded-2xl border border-[#262832] bg-[#12131A] p-6">
+        <div className="flex items-center justify-between border-b border-[#262832] pb-4">
           <h2 className="flex items-center gap-2 text-base font-bold text-white font-serif">
             <ShieldAlert className="h-4 w-4 text-rose-400" aria-hidden />
             Distraction Event Timeline
@@ -284,7 +284,7 @@ export default function DistractionsPage() {
           </div>
         ) : !events || events.length === 0 ? (
           <div className="flex flex-col items-center py-16 text-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/30">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#262832] bg-white/5 text-white/30">
               <Ban className="h-6 w-6" aria-hidden />
             </div>
             <p className="text-base font-bold text-white font-serif">No distractions recorded yet</p>
@@ -326,7 +326,7 @@ export default function DistractionsPage() {
                       isBlocked ? "bg-rose-500" : isWarning ? "bg-amber-400" : "bg-sky-400"
                     }`}
                   />
-                  <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-4 shadow-xs transition-all hover:border-white/20">
+                  <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-4 shadow-xs transition-all hover:border-white/20">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span
@@ -373,7 +373,7 @@ export default function DistractionsPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs text-white/70">
-              <thead className="bg-white/5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/50 border-b border-white/10">
+              <thead className="bg-white/5 text-[11px] font-mono font-bold uppercase tracking-wider text-white/50 border-b border-[#262832]">
                 <tr>
                   <th className="p-3">Timestamp</th>
                   <th className="p-3">Domain</th>
@@ -432,7 +432,7 @@ export default function DistractionsPage() {
 
       {/* ── WEEKLY VIOLATION TREND ── */}
       {weekly.length > 0 && (
-        <div className="space-y-3 rounded-2xl border border-white/10 bg-card p-6">
+        <div className="space-y-3 rounded-2xl border border-[#262832] bg-[#12131A] p-6">
           <h2 className="flex items-center gap-2 text-base font-bold text-white font-serif">
             <Timer className="h-4 w-4 text-[#FF4500]" aria-hidden />
             Weekly Violation Distribution

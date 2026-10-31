@@ -42,13 +42,13 @@ export default function AnalyticsPreview() {
                 </span>
               </div>
 
-              <div className="relative mt-6 flex min-h-52.5 items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-slate-50">
+              <div className="relative mt-6 flex min-h-52.5 items-center justify-center overflow-hidden rounded-2xl border border-[#262832] bg-slate-50">
                 <div aria-hidden className="absolute inset-0 opacity-40" style={{
                   backgroundImage:
                     "linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px)",
                   backgroundSize: "54px 42px",
                 }} />
-                <div className="relative mx-4 max-w-xs rounded-2xl border border-white/10 bg-[#161616] px-5 py-4 text-center shadow-[0_16px_40px_-28px_rgba(0,0,0,0.8)] backdrop-blur">
+                <div className="relative mx-4 max-w-xs rounded-2xl border border-[#262832] bg-[#161616] px-5 py-4 text-center shadow-[0_16px_40px_-28px_rgba(0,0,0,0.8)] backdrop-blur">
                   <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-[#FF4500]/20 text-[#FF4500]">
                     <BarChart3 className="h-4 w-4" aria-hidden />
                   </span>
@@ -66,8 +66,8 @@ export default function AnalyticsPreview() {
               const Icon = measure.icon;
               return (
                 <Reveal key={measure.title} delay={index * 0.08}>
-                  <div className="flex min-h-22 items-center gap-3.5 rounded-2xl border border-white/10 bg-card px-4 py-4 shadow-[0_12px_35px_-26px_rgba(0,0,0,0.8)] backdrop-blur">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[#FF4500]">
+                  <div className="flex min-h-22 items-center gap-3.5 rounded-2xl border border-[#262832] bg-[#12131A] px-4 py-4 shadow-[0_12px_35px_-26px_rgba(0,0,0,0.8)] backdrop-blur">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#262832] bg-white/5 text-[#FF4500]">
                       <Icon className="h-4 w-4" aria-hidden />
                     </span>
                     <span>

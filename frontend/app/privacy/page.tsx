@@ -22,14 +22,14 @@ export default function PrivacyPage() {
         </div>
 
         <div className="space-y-6">
-          <section className="glass-card rounded-3xl border border-[#FF4500]/40 bg-card p-8 shadow-2xl">
+          <section className="glass-card rounded-3xl border border-[#FF4500]/40 bg-[#12131A] p-8 shadow-2xl">
             <h3 className="text-xl font-bold font-serif text-[#FF4500]">Privacy-First Architecture</h3>
             <p className="mt-3 text-sm leading-relaxed text-gray-300 font-light">
               FocusFlow AI records focus signals — never your private content. No webpage body text, form keystrokes, screenshots, or browsing history contents are ever stored or transmitted. Only numeric events (counts, durations, and policy classifications) power your personal analytics.
             </p>
           </section>
 
-          <section className="glass-card rounded-3xl border border-white/10 bg-card p-8 shadow-xl">
+          <section className="glass-card rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-xl">
             <h3 className="text-xl font-bold font-serif text-white">What Telemetry Is Captured</h3>
             <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">
               <strong className="text-white">Account Credentials:</strong> Full name, verified email, and your system preferences.<br /><br />
@@ -38,28 +38,28 @@ export default function PrivacyPage() {
             </p>
           </section>
 
-          <section className="glass-card rounded-3xl border border-white/10 bg-card p-8 shadow-xl">
+          <section className="glass-card rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-xl">
             <h3 className="text-xl font-bold font-serif text-white">On-Device Camera Monitoring</h3>
             <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">
               Camera-based look-away detection is strictly opt-in and disabled by default. Computer vision inference executes entirely on-device via local WebAssembly. Video frames are <strong className="text-white">never uploaded, streamed, or saved</strong> to any disk. Only an integer counter (&quot;look-away events&quot;) is saved to PostgreSQL.
             </p>
           </section>
 
-          <section className="glass-card rounded-3xl border border-white/10 bg-card p-8 shadow-xl">
+          <section className="glass-card rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-xl">
             <h3 className="text-xl font-bold font-serif text-white">How Data Is Utilized</h3>
             <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">
               Telemetry exists exclusively to calculate your personal analytics, streaks, and AI study plans. We never sell user data, license information to third parties, or utilize focus data for advertising.
             </p>
           </section>
 
-          <section className="glass-card rounded-3xl border border-white/10 bg-card p-8 shadow-xl">
+          <section className="glass-card rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-xl">
             <h3 className="text-xl font-bold font-serif text-white">Multimodal AI Processing</h3>
             <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">
               When you prompt the AI Planner, goal summaries and syllabus files are transmitted over TLS to our AI inference pipeline (Google Gemini) to synthesize tasks. Data is processed transiently and not used for training foundation models.
             </p>
           </section>
 
-          <section className="glass-card rounded-3xl border border-white/10 bg-card p-8 shadow-xl">
+          <section className="glass-card rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-xl">
             <h3 className="text-xl font-bold font-serif text-white">Data Deletion & Rights</h3>
             <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">
               You maintain complete ownership of your data. You may export your entire history in JSON or CSV format at any time, or contact{" "}

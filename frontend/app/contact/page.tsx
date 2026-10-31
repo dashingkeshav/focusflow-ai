@@ -106,7 +106,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.85fr_1.15fr] max-w-6xl mx-auto">
           {/* info panel */}
           <Reveal delay={0.1}>
-            <div className="glass-card flex h-full flex-col rounded-3xl border border-white/10 bg-card p-8 shadow-2xl">
+            <div className="glass-card flex h-full flex-col rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-2xl">
               <span className="section-label">Direct Inquiries</span>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-white font-serif">
                 We&apos;re eager to{" "}
@@ -117,8 +117,8 @@ export default function ContactPage() {
               </p>
 
               <div className="mt-auto pt-10">
-                <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 shadow-sm">
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-[#FF4500]">
+                <div className="flex items-center gap-4 rounded-2xl border border-[#262832] bg-white/5 p-4 shadow-sm">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[#262832] bg-white/5 text-[#FF4500]">
                     <Mail className="h-6 w-6" aria-hidden />
                   </span>
                   <div className="min-w-0">
@@ -141,7 +141,7 @@ export default function ContactPage() {
 
           {/* form panel */}
           <Reveal delay={0.2}>
-            <div className="glass-card rounded-3xl border border-white/10 bg-card p-8 shadow-2xl">
+            <div className="glass-card rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-2xl">
               <h2 className="text-2xl font-bold tracking-tight text-white font-serif">
                 Send a Message
               </h2>

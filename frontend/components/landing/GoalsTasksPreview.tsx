@@ -61,7 +61,7 @@ export default function GoalsTasksPreview() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.15, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                        className="flex flex-1 items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4"
+                        className="flex flex-1 items-center gap-3 rounded-2xl border border-[#262832] bg-white/5 p-4"
                       >
                         <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${step.tone}`}>
                           <Icon className="h-4.5 w-4.5" aria-hidden />
@@ -80,7 +80,7 @@ export default function GoalsTasksPreview() {
               </div>
 
               {/* goal card preview */}
-              <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5">
+              <div className="mt-6 rounded-2xl border border-[#262832] bg-white/5 p-5">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="text-[15px] font-semibold tracking-tight text-white">Your goal</p>
@@ -94,7 +94,7 @@ export default function GoalsTasksPreview() {
                 </div>
                 <div className="mt-4 grid grid-cols-3 gap-2">
                   {["Goal", "Milestones", "Tasks"].map((label) => (
-                    <div key={label} className="rounded-xl border border-white/10 bg-black/40 px-3 py-2.5">
+                    <div key={label} className="rounded-xl border border-[#262832] bg-black/40 px-3 py-2.5">
                       <span className="block h-1.5 w-1.5 rounded-full bg-[#FF4500]" />
                       <span className="mt-2 block text-[10px] font-mono font-medium text-gray-300">{label}</span>
                     </div>

@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth";
 
 // Integrated FocusFlow Intelligence & Product Showcase Components
 import IntelligenceCore3D from "@/components/three/IntelligenceCore3D";
+import HeroDashboardPreview from "@/components/landing/HeroDashboardPreview";
 import HowItWorks from "@/components/landing/HowItWorks";
 import ProductShowcase from "@/components/landing/ProductShowcase";
 import AIPlanner from "@/components/landing/AIPlanner";
@@ -90,54 +91,49 @@ export default function HomePage() {
           1. HERO SECTION (Surreal Red Atmosphere & Intelligent Focus Flow)
           Preserved in signature warm red/amber glow as requested
           ========================================================== */}
-      <section className="relative z-20 min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-20 bg-bg">
-        {/* Background Atmosphere */}
+      <section className="relative z-20 min-h-screen flex flex-col items-center justify-center overflow-hidden pt-28 pb-20 bg-[#08090D]">
+        {/* Ambient Atmospheric Lighting & Starfield Spark */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none">
-          <div className="absolute top-0 left-0 w-full h-full opacity-60 mix-blend-screen">
-            <img
-              src="https://framerusercontent.com/images/9zvwRJAavKKacVyhFCwHyXW1U.png?width=1536&height=1024"
-              alt="Atmosphere"
-              className="w-full h-full object-cover object-center opacity-70"
-            />
-          </div>
-          {/* Subtle radiant focus aura */}
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-162.5 h-162.5 rounded-full bg-[#FF4500]/15 blur-[160px] pointer-events-none" />
-          <div className="absolute inset-0 bg-linear-to-b from-transparent via-bg/40 to-bg/90 z-10" />
+          {/* Subtle radiant focus auras */}
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] rounded-full bg-[#FF4500]/12 blur-[160px] pointer-events-none" />
+          <div className="absolute top-1/2 right-10 w-[450px] h-[450px] rounded-full bg-[#FF7138]/10 blur-[180px] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#08090D]/50 to-[#08090D] z-10" />
         </div>
 
         {/* Hero Content */}
-        <div className="container mx-auto px-6 relative z-20 text-center flex flex-col items-center justify-center h-full">
+        <div className="container mx-auto px-6 relative z-20 text-center flex flex-col items-center justify-center w-full">
           <div id="hero-content-wrapper" ref={heroWrapperRef} className="max-w-4xl mx-auto transition-transform duration-75">
             {/* Live System Status */}
-            <div className="reveal mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md text-[11px] font-mono tracking-widest text-[#ffe0e0]/90 uppercase shadow-inner">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#FF4500] animate-ping" />
+            <div className="reveal mb-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#262832] bg-[#12131A]/90 backdrop-blur-md text-[11px] font-mono tracking-widest text-[#F4F4F5] uppercase shadow-inner">
+              <span className="h-2 w-2 rounded-full bg-[#FF4500] animate-ping" />
               <span>Autonomous Focus Intelligence</span>
             </div>
 
+            {/* Requested Hero Headline */}
             <div className="reveal">
               <h1
-                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-medium leading-[1.08] tracking-tight mb-6 text-[#ffe0e0] mix-blend-overlay font-serif"
-                style={{ textShadow: "0 0 16px rgba(255,255,255,0.7)" }}
+                className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-[1.06] tracking-tight mb-6 text-[#F4F4F5] font-serif"
+                style={{ textShadow: "0 0 32px rgba(255,69,0,0.25)" }}
               >
-                FocusFlow AI. <br />
-                <span className="italic font-light text-[#ffe0e0]">The intelligent focus agent.</span>
+                Own your attention. <br />
+                <span className="text-gradient-teal italic font-light">Unlock your flow.</span>
               </h1>
             </div>
 
-            <div className="reveal" style={{ transitionDelay: "200ms" }}>
+            <div className="reveal" style={{ transitionDelay: "150ms" }}>
               <p
-                className="text-base md:text-xl text-[#ffe0e0]/90 max-w-xl mx-auto mb-10 font-light tracking-wide leading-relaxed mix-blend-overlay"
-                style={{ textShadow: "0 0 12px rgba(255,255,255,0.7)" }}
+                className="text-base sm:text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto mb-10 font-normal tracking-normal leading-relaxed"
               >
-                Eliminate digital friction so your deepest work happens effortlessly. Multimodal AI planning, browser distraction shielding, and real-time focus intelligence.
+                FocusFlow AI eliminates digital friction so your deepest work happens effortlessly. Multimodal AI planning, browser distraction shielding, and real-time focus telemetry.
               </p>
             </div>
 
-            <div className="reveal flex flex-col sm:flex-row items-center justify-center gap-4" style={{ transitionDelay: "400ms" }}>
-              <Link href="/register" className="relative group cursor-pointer">
+            {/* Hero CTAs */}
+            <div className="reveal flex flex-col sm:flex-row items-center justify-center gap-4 mb-14" style={{ transitionDelay: "300ms" }}>
+              <Link href="/register" className="relative group cursor-pointer w-full sm:w-auto">
                 <div className="absolute inset-0 bg-[#FF4500]/40 blur-xl rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative border border-[#FF4500]/50 bg-[#FF4500] px-8 py-3 rounded-full flex items-center gap-2.5 text-xs md:text-sm font-semibold text-white uppercase tracking-widest hover:bg-[#FF4500]/90 transition-all duration-300 shadow-[0_0_24px_rgba(255,69,0,0.35)]">
-                  <span>Enter Flow State</span>
+                <div className="relative border border-[#FF4500]/60 bg-[#FF4500] px-8 py-3.5 rounded-full flex items-center justify-center gap-2.5 text-xs sm:text-sm font-bold text-white uppercase tracking-wider hover:bg-[#e03e00] transition-all duration-300 shadow-[0_0_24px_rgba(255,69,0,0.4)]">
+                  <span>Enter Flow State Free</span>
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </Link>
@@ -146,43 +142,48 @@ export default function HomePage() {
                 <Link
                   href="/dashboard"
                   id="hero-dashboard-btn"
-                  className="relative group cursor-pointer"
+                  className="relative group cursor-pointer w-full sm:w-auto"
                 >
-                  <div className="relative border border-white/20 bg-white/5 backdrop-blur-sm px-7 py-3 rounded-full flex items-center gap-2 text-xs md:text-sm text-white/90 uppercase tracking-widest hover:bg-white/10 hover:border-[#FF4500]/50 hover:text-white transition-all duration-300">
+                  <div className="relative border border-[#262832] bg-[#12131A] px-7 py-3.5 rounded-full flex items-center justify-center gap-2 text-xs sm:text-sm text-zinc-200 uppercase tracking-wider hover:bg-[#1A1C24] hover:border-[#FF4500]/50 hover:text-white transition-all duration-300">
                     <LayoutDashboard className="w-4 h-4 text-[#FF4500]" />
-                    <span>Dashboard</span>
+                    <span>Open Dashboard</span>
                   </div>
                 </Link>
               ) : (
                 <Link
                   href="/how-it-works"
                   id="hero-how-it-works-btn"
-                  className="relative group cursor-pointer"
+                  className="relative group cursor-pointer w-full sm:w-auto"
                 >
-                  <div className="relative border border-white/20 bg-white/5 backdrop-blur-sm px-7 py-3 rounded-full flex items-center gap-2 text-xs md:text-sm text-white/90 uppercase tracking-widest hover:bg-white/10 hover:border-[#FF4500]/50 hover:text-white transition-all duration-300">
+                  <div className="relative border border-[#262832] bg-[#12131A] px-7 py-3.5 rounded-full flex items-center justify-center gap-2 text-xs sm:text-sm text-zinc-200 uppercase tracking-wider hover:bg-[#1A1C24] hover:border-[#FF4500]/50 hover:text-white transition-all duration-300">
                     <span>See How It Works</span>
                   </div>
                 </Link>
               )}
 
-              <Link href="#capabilities" className="relative group cursor-pointer">
-                <div className="relative border border-white/10 bg-transparent px-6 py-3 rounded-full flex items-center gap-2 text-xs md:text-sm text-white/60 uppercase tracking-widest hover:text-white hover:border-white/30 transition-colors duration-300">
-                  <span>Explore Capabilities</span>
+              <Link href="#capabilities" className="relative group cursor-pointer w-full sm:w-auto">
+                <div className="relative border border-[#262832] bg-transparent px-6 py-3.5 rounded-full flex items-center justify-center gap-2 text-xs sm:text-sm text-zinc-400 uppercase tracking-wider hover:text-white hover:border-zinc-500 transition-colors duration-300">
+                  <span>Explore Features</span>
                 </div>
               </Link>
             </div>
 
             {/* Live Telemetry Bar */}
-            <div className="reveal flex items-center justify-center gap-4 text-[10px] md:text-xs text-white/40 uppercase tracking-widest mt-12 font-mono" style={{ transitionDelay: "500ms" }}>
+            <div className="reveal flex items-center justify-center gap-4 text-[10px] md:text-xs text-zinc-500 uppercase tracking-widest mb-12 font-mono" style={{ transitionDelay: "400ms" }}>
               <span className="flex items-center gap-1.5 text-emerald-400">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                 Telemetry Live
               </span>
-              <span className="w-px h-3 bg-white/20" />
+              <span className="w-px h-3 bg-[#262832]" />
               <span id="current-time">{timeStr}</span>
-              <span className="w-px h-3 bg-white/20" />
+              <span className="w-px h-3 bg-[#262832]" />
               <span>Gemini 2.5 Engine</span>
             </div>
+          </div>
+
+          {/* REAL PRODUCT DASHBOARD PREVIEW */}
+          <div className="reveal w-full max-w-5xl mx-auto mt-2" style={{ transitionDelay: "500ms" }}>
+            <HeroDashboardPreview />
           </div>
         </div>
       </section>

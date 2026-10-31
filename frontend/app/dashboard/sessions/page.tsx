@@ -63,7 +63,7 @@ export default function SessionsPage() {
         <div className="mb-3 flex items-center gap-3">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-mono font-semibold text-gray-300 shadow-xs transition-all hover:bg-white/10 hover:text-white"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#262832] bg-[#12131A] px-3 py-1.5 text-xs font-mono font-semibold text-gray-300 shadow-xs transition-all hover:bg-white/10 hover:text-white"
           >
             <ArrowLeft className="h-3.5 w-3.5" aria-hidden />
             <span>Dashboard</span>
@@ -102,7 +102,7 @@ export default function SessionsPage() {
       {/* =================================================
           FOCUS TIMER
       ================================================= */}
-      <div className="glass-card overflow-hidden rounded-[22px] border border-white/10">
+      <div className="glass-card overflow-hidden rounded-[22px] border border-[#262832]">
         {hasInvalidTaskId && (
           <p className="border-b border-amber-500/20 bg-amber-500/5 px-5 py-3 text-xs text-amber-700" role="status">
             The planner task link was invalid, so this session will start without linking a task.

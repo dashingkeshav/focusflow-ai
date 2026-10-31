@@ -135,7 +135,7 @@ export default function AnalyticsPage() {
 
         <div className="flex flex-wrap items-center gap-2.5">
           {/* Range Selector */}
-          <div className="flex items-center gap-1 bg-card p-1 rounded-2xl border border-white/10 text-xs">
+          <div className="flex items-center gap-1 bg-[#12131A] p-1 rounded-2xl border border-[#262832] text-xs">
             <button
               onClick={() => setSelectedRange('7d')}
               className={`px-2.5 py-1 rounded-xl font-mono text-[11px] transition ${
@@ -198,14 +198,14 @@ export default function AnalyticsPage() {
 
           <button
             onClick={fetchStats}
-            className="p-2.5 rounded-xl bg-card border border-white/10 text-white/60 hover:text-white transition-colors"
+            className="p-2.5 rounded-xl bg-[#12131A] border border-[#262832] text-white/60 hover:text-white transition-colors"
             title="Refresh"
           >
             <RefreshCw className="w-4 h-4" />
           </button>
 
           {/* View switcher */}
-          <div className="flex gap-1 bg-card p-1 rounded-2xl border border-white/10">
+          <div className="flex gap-1 bg-[#12131A] p-1 rounded-2xl border border-[#262832]">
             {([
               { key: 'overview', label: 'Weekly', icon: BarChart3 },
               { key: 'timeline', label: 'Timeline', icon: Activity },
@@ -239,7 +239,7 @@ export default function AnalyticsPage() {
             { label: 'Warnings', value: `${stats!.totalWarnings}`, unit: 'issued', color: 'text-amber-400', icon: Brain },
             { label: 'Blocked Attempts', value: `${stats!.totalBlocked}`, unit: 'total', color: 'text-rose-400', icon: Lock },
           ].map(({ label, value, unit, color, icon: Icon }) => (
-            <div key={label} className="rounded-3xl border border-white/10 bg-card p-5 shadow-sm space-y-2">
+            <div key={label} className="rounded-3xl border border-[#262832] bg-[#12131A] p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between text-xs text-white/50 font-mono uppercase tracking-wider">
                 <span>{label}</span>
                 <Icon className={`w-4 h-4 ${color}`} />
@@ -255,7 +255,7 @@ export default function AnalyticsPage() {
       {/* ── OVERVIEW VIEW ── */}
       {activeView === 'overview' && (
         <>
-          <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+          <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
             <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#FF4500]" />
               <span>Weekly Focus Performance</span>
@@ -290,7 +290,7 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+            <div className="lg:col-span-2 rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
               <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-[#FF4500]" />
                 <span>Study Hours vs Focus Score</span>
@@ -315,7 +315,7 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Distraction breakdown pie */}
-            <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+            <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
               <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
                 <PieIcon className="w-4 h-4 text-[#FF4500]" />
                 <span>Distraction Sources</span>
@@ -356,7 +356,7 @@ export default function AnalyticsPage() {
 
       {/* ── TIMELINE VIEW ── */}
       {activeView === 'timeline' && (
-        <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+        <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
           <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
             <Activity className="w-4 h-4 text-[#FF4500]" />
             <span>Session Timeline</span>
@@ -396,7 +396,7 @@ export default function AnalyticsPage() {
       {activeView === 'distractions' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+            <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
               <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
                 <Brain className="w-4 h-4 text-[#FF4500]" />
                 <span>Distraction Breakdown</span>
@@ -433,7 +433,7 @@ export default function AnalyticsPage() {
               )}
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+            <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
               <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
                 <Video className="w-4 h-4 text-[#FF4500]" />
                 <span>Camera vs Tab Violations</span>
@@ -480,7 +480,7 @@ export default function AnalyticsPage() {
               {/* Adherence & Recommendations Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Planned vs Actual Duration Adherence */}
-                <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+                <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
                       <Clock className="w-4 h-4 text-[#FF4500]" />
@@ -517,7 +517,7 @@ export default function AnalyticsPage() {
                 </div>
 
                 {/* Evidence-Based Recommendations */}
-                <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+                <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
                       <Compass className="w-4 h-4 text-[#FF4500]" />
@@ -556,7 +556,7 @@ export default function AnalyticsPage() {
               </div>
 
               {/* 24-Hour Productivity Distribution */}
-              <div className="rounded-3xl border border-white/10 bg-card p-6 shadow-md backdrop-blur-xl space-y-4">
+              <div className="rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-md backdrop-blur-xl space-y-4">
                 <div className="flex items-center justify-between">
                   <h2 className="text-base font-bold text-white font-serif flex items-center gap-2">
                     <TrendingUp className="w-4 h-4 text-[#FF4500]" />

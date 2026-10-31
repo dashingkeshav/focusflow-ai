@@ -95,19 +95,19 @@ export default function AboutPage() {
               const Icon = layer.icon;
               return (
                 <Reveal key={layer.title} delay={(i % 3) * 0.1} className="h-full">
-                  <div className="glass-card flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-card p-8 shadow-2xl transition-all duration-300 hover:border-[#FF4500]/50 hover:-translate-y-1">
+                  <div className="glass-card flex h-full flex-col justify-between rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-2xl transition-all duration-300 hover:border-[#FF4500]/50 hover:-translate-y-1">
                     <div>
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-[#FF4500] mb-5">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#262832] bg-white/5 text-[#FF4500] mb-5">
                         <Icon className="h-6 w-6" aria-hidden />
                       </div>
                       <h3 className="text-xl font-bold font-serif text-white">{layer.title}</h3>
                       <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">{layer.desc}</p>
                     </div>
-                    <div className="mt-8 flex flex-wrap gap-2 pt-5 border-t border-white/10">
+                    <div className="mt-8 flex flex-wrap gap-2 pt-5 border-t border-[#262832]">
                       {layer.chips.map((chip) => (
                         <span
                           key={chip}
-                          className="rounded-full border border-white/10 bg-white/5 px-3 py-0.5 text-[10px] font-mono text-gray-300"
+                          className="rounded-full border border-[#262832] bg-white/5 px-3 py-0.5 text-[10px] font-mono text-gray-300"
                         >
                           {chip}
                         </span>
@@ -124,7 +124,7 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="relative z-10 py-24 px-6">
         <Reveal>
-          <div className="glass-card relative overflow-hidden rounded-3xl border border-white/10 bg-card px-8 py-16 text-center shadow-2xl max-w-4xl mx-auto">
+          <div className="glass-card relative overflow-hidden rounded-3xl border border-[#262832] bg-[#12131A] px-8 py-16 text-center shadow-2xl max-w-4xl mx-auto">
             <div
               aria-hidden
               className="pointer-events-none absolute -top-24 left-1/2 h-56 w-96 -translate-x-1/2 rounded-full bg-[#FF4500]/15 blur-3xl"

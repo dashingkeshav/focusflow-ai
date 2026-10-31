@@ -93,7 +93,7 @@ const initialPrefs: Prefs = {
 };
 
 const inputClass =
-  'mt-1.5 w-full rounded-xl border border-white/10 bg-[#0a0a0a] px-3.5 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-[#FF4500] focus:ring-1 focus:ring-[#FF4500]/40 shadow-xs transition-colors';
+  'mt-1.5 w-full rounded-xl border border-[#262832] bg-[#0a0a0a] px-3.5 py-2.5 text-sm text-white placeholder-white/30 outline-none focus:border-[#FF4500] focus:ring-1 focus:ring-[#FF4500]/40 shadow-xs transition-colors';
 
 const TABS: { id: TabId; label: string; Icon: React.ComponentType<{ className?: string }> }[] = [
   { id: 'account', label: 'Account', Icon: UserRound },
@@ -489,7 +489,7 @@ export default function SettingsPage() {
               className={`flex items-center gap-2 whitespace-nowrap rounded-xl border px-3.5 py-2 font-medium transition-all ${
                 isActive
                   ? 'border-[#FF4500] bg-[#FF4500] text-white font-bold shadow-md shadow-[#FF4500]/25'
-                  : 'border-white/10 bg-[#0a0a0a] text-white/60 hover:border-white/25 hover:bg-white/5 hover:text-white'
+                  : 'border-[#262832] bg-[#0a0a0a] text-white/60 hover:border-white/25 hover:bg-white/5 hover:text-white'
               }`}
             >
               <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-white' : 'text-[#FF4500]'}`} />
@@ -533,7 +533,7 @@ export default function SettingsPage() {
           ========================================================================= */}
       {activeTab === 'account' && (
         <div className="space-y-6">
-          <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl">
+          <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl">
             <div className="mb-6 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
                 <UserRound className="h-5 w-5" />
@@ -592,7 +592,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Password Update Subsection */}
-            <div className="mt-8 border-t border-white/10 pt-6">
+            <div className="mt-8 border-t border-[#262832] pt-6">
               <h3 className="text-base font-bold text-white font-serif flex items-center gap-2">
                 <Lock className="h-4 w-4 text-[#FF4500]" />
                 <span>Update Password</span>
@@ -679,7 +679,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Danger Zone: Log Out */}
-            <div className="mt-8 border-t border-white/10 pt-6 flex items-center justify-between">
+            <div className="mt-8 border-t border-[#262832] pt-6 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-white">Device Authentication</p>
                 <p className="text-[11px] text-white/40">Sign out of active FocusFlow session on this machine.</p>
@@ -701,7 +701,7 @@ export default function SettingsPage() {
           TAB 2: BILLING & SUBSCRIPTIONS
           ========================================================================= */}
       {activeTab === 'billing' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <CreditCard className="h-5 w-5" />
@@ -714,7 +714,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-5">
+          <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
@@ -723,7 +723,7 @@ export default function SettingsPage() {
                     className={`rounded-full px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider ${
                       isPro
                         ? 'border border-[#FF4500]/30 bg-[#FF4500]/15 text-[#FF4500]'
-                        : 'border border-white/10 bg-white/5 text-gray-400'
+                        : 'border border-[#262832] bg-white/5 text-gray-400'
                     }`}
                   >
                     {isPro ? 'PRO ACTIVE' : 'FREE TIER'}
@@ -746,7 +746,7 @@ export default function SettingsPage() {
                 </Link>
                 <Link
                   href="/pricing"
-                  className="rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                  className="rounded-xl border border-[#262832] bg-white/5 px-4 py-2.5 text-xs font-bold text-white/80 hover:bg-white/10 hover:text-white transition-colors"
                 >
                   View all plans
                 </Link>
@@ -754,7 +754,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-4 flex items-center justify-between">
+          <div className="border-t border-[#262832] pt-4 flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-white">Billing Statement & Receipts</p>
               <p className="text-[11px] text-white/40">Download verified telemetry statement with account entitlement proof.</p>
@@ -762,7 +762,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleDownloadTelemetry}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#0a0a0a] px-4 py-2 text-xs font-semibold text-white hover:bg-white/5 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#262832] bg-[#0a0a0a] px-4 py-2 text-xs font-semibold text-white hover:bg-white/5 transition-colors"
             >
               <Download className="h-3.5 w-3.5 text-[#FF4500]" />
               <span>Download statement JSON</span>
@@ -775,7 +775,7 @@ export default function SettingsPage() {
           TAB 3: APPEARANCE & DISPLAY
           ========================================================================= */}
       {activeTab === 'appearance' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <Monitor className="h-5 w-5" />
@@ -807,7 +807,7 @@ export default function SettingsPage() {
                   className={`rounded-xl border p-3 text-left transition-all ${
                     p.theme === t.id
                       ? 'border-[#FF4500] bg-[#FF4500]/15 text-white shadow-xs'
-                      : 'border-white/10 bg-[#0a0a0a] text-white/60 hover:border-white/20 hover:text-white'
+                      : 'border-[#262832] bg-[#0a0a0a] text-white/60 hover:border-white/20 hover:text-white'
                   }`}
                 >
                   <p className="text-xs font-bold">{t.label}</p>
@@ -818,7 +818,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Galaxy Starfield Density */}
-          <div className="border-t border-white/10 pt-5">
+          <div className="border-t border-[#262832] pt-5">
             <label className="text-xs font-mono font-medium text-white/70 block mb-3">
               Celestial Galaxy Background Density
             </label>
@@ -831,7 +831,7 @@ export default function SettingsPage() {
                   className={`rounded-xl border px-4 py-2 text-xs font-semibold capitalize transition-all ${
                     p.starDensity === density
                       ? 'border-[#FF4500] bg-[#FF4500] text-white'
-                      : 'border-white/10 bg-[#0a0a0a] text-white/60 hover:bg-white/5 hover:text-white'
+                      : 'border-[#262832] bg-[#0a0a0a] text-white/60 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   {density === 'off' ? 'Disabled' : `${density} velocity`}
@@ -841,7 +841,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Typography Scale */}
-          <div className="border-t border-white/10 pt-5">
+          <div className="border-t border-[#262832] pt-5">
             <div className="flex items-center justify-between text-xs font-mono font-medium text-white/70 mb-2">
               <span>Interface Font Scale</span>
               <span className="text-[#FF4500] font-bold">{p.fontSize}px</span>
@@ -860,7 +860,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-4 flex justify-end">
+          <div className="border-t border-[#262832] pt-4 flex justify-end">
             <button
               type="button"
               onClick={handleSaveAppearance}
@@ -877,7 +877,7 @@ export default function SettingsPage() {
           TAB 4: SYSTEM NOTIFICATIONS
           ========================================================================= */}
       {activeTab === 'notifications' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <Bell className="h-5 w-5" />
@@ -891,7 +891,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Desktop Push Alert */}
-          <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-4 flex items-center justify-between gap-4">
+          <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-4 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-white">Desktop push notifications</p>
               <p className="text-xs text-white/50">
@@ -912,7 +912,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Audio Chimes */}
-          <div className="border-t border-white/10 pt-5 space-y-4">
+          <div className="border-t border-[#262832] pt-5 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-white">Focus chime audio cues</p>
@@ -941,7 +941,7 @@ export default function SettingsPage() {
                 <button
                   type="button"
                   onClick={handleTestChime}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#262832] bg-white/5 px-3 py-1.5 text-xs text-white/80 hover:bg-white/10 transition-colors"
                 >
                   <Volume2 className="h-3.5 w-3.5 text-[#FF4500]" />
                   <span>Preview sound chime</span>
@@ -951,7 +951,7 @@ export default function SettingsPage() {
           </div>
 
           {/* 20-20-20 Eye Strain Break Reminders */}
-          <div className="border-t border-white/10 pt-5 flex items-center justify-between gap-4">
+          <div className="border-t border-[#262832] pt-5 flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-white">20-20-20 Restorative eye breaks</p>
               <p className="text-xs text-white/50">
@@ -967,7 +967,7 @@ export default function SettingsPage() {
           TAB 5: CAMERA MONITORING
           ========================================================================= */}
       {activeTab === 'camera' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <Camera className="h-5 w-5" />
@@ -980,7 +980,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-[#0a0a0a] p-5">
+          <div className="flex items-center justify-between gap-4 rounded-xl border border-[#262832] bg-[#0a0a0a] p-5">
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-white font-serif">Attention Gaze Sensor</span>
@@ -988,7 +988,7 @@ export default function SettingsPage() {
                   className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-mono font-bold uppercase ${
                     cameraEnabled
                       ? 'border border-emerald-500/30 bg-emerald-950/40 text-emerald-400'
-                      : 'border border-white/10 bg-white/5 text-gray-400'
+                      : 'border border-[#262832] bg-white/5 text-gray-400'
                   }`}
                 >
                   <span
@@ -1033,7 +1033,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Sensitivity Settings */}
-          <div className="border-t border-white/10 pt-5 space-y-4">
+          <div className="border-t border-[#262832] pt-5 space-y-4">
             <div>
               <label className="text-xs font-mono font-medium text-white/70 block mb-2">
                 Posture Sensitivity Calibration
@@ -1050,7 +1050,7 @@ export default function SettingsPage() {
                     className={`rounded-xl border p-3 text-center text-xs font-semibold capitalize transition-all ${
                       p.cameraPosture === mode
                         ? 'border-[#FF4500] bg-[#FF4500]/15 text-[#FF4500] font-bold'
-                        : 'border-white/10 bg-[#0a0a0a] text-white/60 hover:text-white'
+                        : 'border-[#262832] bg-[#0a0a0a] text-white/60 hover:text-white'
                     }`}
                   >
                     {mode}
@@ -1073,7 +1073,7 @@ export default function SettingsPage() {
           TAB 6: PRIVACY & SECURITY
           ========================================================================= */}
       {activeTab === 'privacy' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <ShieldCheck className="h-5 w-5" />
@@ -1086,7 +1086,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-5 space-y-4">
+          <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-5 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-white">PostgreSQL telemetry synchronization</p>
@@ -1122,7 +1122,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="border-t border-white/10 pt-4 flex items-center justify-between">
+          <div className="border-t border-[#262832] pt-4 flex items-center justify-between">
             <div>
               <p className="text-xs font-semibold text-white">Export Raw Telemetry</p>
               <p className="text-[11px] text-white/40">Download your personal database telemetry history in JSON.</p>
@@ -1130,7 +1130,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleDownloadTelemetry}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#0a0a0a] px-4 py-2 text-xs font-semibold text-white hover:bg-white/5 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#262832] bg-[#0a0a0a] px-4 py-2 text-xs font-semibold text-white hover:bg-white/5 transition-colors"
             >
               <Download className="h-3.5 w-3.5 text-[#FF4500]" />
               <span>Export telemetry JSON</span>
@@ -1143,7 +1143,7 @@ export default function SettingsPage() {
           TAB 7: LANGUAGE & REGIONAL SETTINGS
           ========================================================================= */}
       {activeTab === 'region' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <Globe2 className="h-5 w-5" />
@@ -1233,7 +1233,7 @@ export default function SettingsPage() {
           TAB 8: ACCESSIBILITY & MOTION
           ========================================================================= */}
       {activeTab === 'accessibility' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <Accessibility className="h-5 w-5" />
@@ -1246,7 +1246,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-5 space-y-4">
+          <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-5 space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-semibold text-white">High contrast outlines</p>
@@ -1283,7 +1283,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Keyboard Shortcuts Cheatsheet */}
-          <div className="border-t border-white/10 pt-5">
+          <div className="border-t border-[#262832] pt-5">
             <p className="text-xs font-mono font-medium text-white/70 mb-3">
               Workspace Keyboard Shortcuts
             </p>
@@ -1313,7 +1313,7 @@ export default function SettingsPage() {
           TAB 9: DATA MANAGEMENT
           ========================================================================= */}
       {activeTab === 'data' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <Download className="h-5 w-5" />
@@ -1326,7 +1326,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-4 text-xs text-white/60 leading-relaxed">
+          <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-4 text-xs text-white/60 leading-relaxed">
             Export your workspace configuration, focus goals, and session telemetry in standard JSON format,
             or reset cached device storage.
           </div>
@@ -1344,7 +1344,7 @@ export default function SettingsPage() {
             <button
               type="button"
               onClick={handleDownloadTelemetry}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#262832] bg-white/5 px-4 py-2.5 text-xs font-bold text-white hover:bg-white/10 transition-colors"
             >
               <Download className="h-4 w-4 text-[#FF4500]" />
               <span>Export telemetry backup</span>
@@ -1366,7 +1366,7 @@ export default function SettingsPage() {
           TAB 10: HELP & SUPPORT
           ========================================================================= */}
       {activeTab === 'support' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <HelpCircle className="h-5 w-5" />
@@ -1379,7 +1379,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-5 space-y-4">
+          <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-5 space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-xs font-mono font-medium text-white/60">
                 Inquiry Category
@@ -1445,7 +1445,7 @@ export default function SettingsPage() {
           TAB 11: ABOUT FOCUSFLOW AI
           ========================================================================= */}
       {activeTab === 'about' && (
-        <section className="rounded-2xl border border-white/10 bg-card p-6 sm:p-7 shadow-xl space-y-6">
+        <section className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 sm:p-7 shadow-xl space-y-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
               <Info className="h-5 w-5" />
@@ -1458,7 +1458,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-5 space-y-3">
+          <div className="rounded-xl border border-[#262832] bg-[#0a0a0a] p-5 space-y-3">
             <div className="flex items-center justify-between text-xs">
               <span className="text-white/50">Platform Version</span>
               <span className="font-mono font-bold text-white">4.2.0 FocusFlow Intelligence Edition</span>
@@ -1496,7 +1496,7 @@ export default function SettingsPage() {
       {/* Clear Cache Confirmation Dialog Modal */}
       {deleteOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-          <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-white/10 bg-card p-6 shadow-2xl">
+          <div role="dialog" aria-modal="true" className="w-full max-w-md rounded-2xl border border-[#262832] bg-[#12131A] p-6 shadow-2xl">
             <h2 className="text-lg font-bold text-white font-serif">Clear local cache on this device?</h2>
             <p className="mt-2 text-xs leading-relaxed text-white/60">
               This purges cached browser preferences and signs out of this machine. It does not delete your cloud account

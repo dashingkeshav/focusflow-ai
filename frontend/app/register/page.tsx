@@ -13,7 +13,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-import { AuthShell, AuthBrand } from "@/app/login/page";
+import { AuthShell, AuthBrand } from "@/components/auth/AuthShell";
 
 export default function RegisterPage() {
   const { register } = useAuth();

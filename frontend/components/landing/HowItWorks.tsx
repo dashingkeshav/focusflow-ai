@@ -63,7 +63,7 @@ export default function HowItWorks() {
   const lineScale = useTransform(scrollYProgress, [0, 1], [0.02, 1]);
 
   // Highlight the stage whose band of the journey is currently in view.
-  useMotionValueEvent(scrollYProgress, "change", (v) => {
+  useMotionValueEvent(scrollYProgress, "change", (v: any) => {
     setActive(Math.min(STAGES.length - 1, Math.max(0, Math.floor(v * STAGES.length))));
   });
 
@@ -108,7 +108,7 @@ export default function HowItWorks() {
                       className={`relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl border backdrop-blur-md transition-all duration-500 ${
                         isActive
                           ? "border-[#FF4500] bg-[#FF4500]/15 shadow-[0_0_34px_rgba(255,69,0,0.35)]"
-                          : "border-white/10 bg-card hover:border-white/20"
+                          : "border-[#262832] bg-[#12131A] hover:border-white/20"
                       }`}
                     >
                       <Icon
