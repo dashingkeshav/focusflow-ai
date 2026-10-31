@@ -23,6 +23,8 @@ import {
   ExternalLink,
   ChevronRight,
   Settings,
+  Search,
+  Command,
 } from "lucide-react";
 import { ProBadge } from "@/components/ui/ProLockCard";
 import { useCameraMonitoring } from "@/context/CameraContext";
@@ -78,6 +80,23 @@ export default function TopHeader({
   const [notifOpen, setNotifOpen] = useState(false);
   const [filterTab, setFilterTab] = useState<"all" | "unread">("all");
   const [testSending, setTestSending] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+      if (e.key === "Escape") {
+        setSearchOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const popoverRef = useRef<HTMLDivElement>(null);
 
   const viewParam = searchParams.get("view");
@@ -93,7 +112,7 @@ export default function TopHeader({
         : viewParam === "calendar"
         ? "Chronos Flow"
         : "Goals"
-      : ({
+      : (({
           "/dashboard": "Overview",
           "/dashboard/sessions": "Study Sessions",
           "/dashboard/analytics": "Analytics & Trends",
@@ -104,7 +123,7 @@ export default function TopHeader({
           "/dashboard/focus-rooms": "Focus Rooms",
           "/dashboard/focus-circles": "Focus Circles",
           "/dashboard/settings": "Settings",
-        }[pathname] || "Workspace");
+        } as Record<string, string>)[pathname] || "Workspace");
 
   const hasScore = typeof currentScore === "number" && Number.isFinite(currentScore);
   const score = hasScore ? Math.max(0, Math.min(100, currentScore as number)) : null;
@@ -190,7 +209,7 @@ export default function TopHeader({
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-[#0a0a0a]/85 px-4 backdrop-blur-xl sm:px-6 text-white">
+    <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-[#262832] bg-[#0E0F15]/90 px-4 backdrop-blur-xl sm:px-6 text-white">
       <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         <button
           type="button"
@@ -231,6 +250,19 @@ export default function TopHeader({
       </div>
 
       <div className="flex items-center gap-3">
+                {/* Command / Search Trigger */}
+        <button
+          type="button"
+          onClick={() => setSearchOpen(true)}
+          className="hidden md:flex items-center gap-2 rounded-xl border border-[#262832] bg-[#12131A] px-3 py-1.5 text-xs text-zinc-400 hover:text-white hover:border-[#FF4500]/50 transition-all"
+        >
+          <Search className="h-3.5 w-3.5 text-zinc-500" />
+          <span className="font-sans">Search workspace...</span>
+          <kbd className="ml-1 rounded bg-[#1A1C24] border border-[#262832] px-1.5 py-0.5 text-[10px] font-mono text-zinc-500">
+            Ctrl+K
+          </kbd>
+        </button>
+
         {/* Camera Monitoring Badge */}
         <div
           className={`hidden items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium lg:flex ${
@@ -580,6 +612,67 @@ export default function TopHeader({
           </div>
         )}
       </div>
+          {/* Command Palette / Search Modal */}
+      {searchOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 sm:pt-28 bg-black/80 backdrop-blur-md p-4">
+          <div
+            className="w-full max-w-xl rounded-2xl border border-[#262832] bg-[#12131A] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 border-b border-[#262832] px-4 py-3 bg-[#08090D]">
+              <Search className="h-4 w-4 text-[#FF4500]" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search commands, focus sessions, or features..."
+                autoFocus
+                className="w-full bg-transparent text-sm text-white placeholder-zinc-500 outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setSearchOpen(false)}
+                className="p-1 rounded-md text-zinc-500 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="max-h-80 overflow-y-auto p-2 space-y-1 text-xs">
+              {[
+                { name: "Focus Mode (Study Sessions)", href: "/dashboard/sessions", icon: "Timer" },
+                { name: "Command Center (Overview)", href: "/dashboard", icon: "LayoutDashboard" },
+                { name: "AI Planner (Gemini Synthesis)", href: "/dashboard/planner", icon: "Bot" },
+                { name: "Tasks & Goals", href: "/dashboard/goals", icon: "Target" },
+                { name: "Analytics & Focus Velocity", href: "/dashboard/analytics", icon: "BarChart3" },
+                { name: "Distraction Shield Log", href: "/dashboard/distractions", icon: "AlertTriangle" },
+                { name: "Focus Rooms (Coworking)", href: "/dashboard/focus-rooms", icon: "Users" },
+                { name: "Settings & Cloud", href: "/dashboard/settings", icon: "Settings" },
+              ]
+                .filter((cmd) =>
+                  cmd.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map((cmd) => (
+                  <Link
+                    key={cmd.href}
+                    href={cmd.href}
+                    onClick={() => setSearchOpen(false)}
+                    className="flex items-center justify-between rounded-xl px-3 py-2 text-zinc-300 hover:bg-[#FF4500]/10 hover:text-[#FF4500] transition-colors"
+                  >
+                    <span>{cmd.name}</span>
+                    <ChevronRight className="h-3.5 w-3.5 text-zinc-600" />
+                  </Link>
+                ))}
+            </div>
+
+            <div className="border-t border-[#262832] bg-[#08090D] px-4 py-2 text-[11px] font-mono text-zinc-500 flex justify-between">
+              <span>Press ESC to close</span>
+              <span>FocusFlow Quick Navigation</span>
+            </div>
+          </div>
+        </div>
+      )}
+
     </header>
   );
 }

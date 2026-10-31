@@ -1,49 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Inter, Space_Grotesk, Plus_Jakarta_Sans, Fraunces, Manrope } from "next/font/google";
-import "./globals.css";
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-playfair",
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-});
-
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
-
-const body = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-plus-jakarta",
-  display: "swap",
-});
-
-const accent = Fraunces({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-fraunces",
-  display: "swap",
-  axes: ["SOFT", "WONK", "opsz"],
-});
-
-const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-  weight: ["200", "400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
+const playfair = { variable: 'font-playfair' };
+const display = { variable: 'font-space-grotesk' };
+const body = { variable: 'font-plus-jakarta' };
+const accent = { variable: 'font-fraunces' };
+const manrope = { variable: 'font-manrope' };
+const inter = { variable: 'font-inter' };
 
 import Providers from "./providers";
 import ScrollProgress from "@/components/ui/ScrollProgress";

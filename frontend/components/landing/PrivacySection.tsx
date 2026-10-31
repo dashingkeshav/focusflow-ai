@@ -50,7 +50,7 @@ export default function PrivacySection() {
             const Icon = point.icon;
             return (
               <Reveal key={point.title} delay={i * 0.1}>
-                <div className="flex h-full gap-5 rounded-3xl border border-white/10 bg-card p-8 shadow-xl transition-all duration-300 hover:border-white/20">
+                <div className="flex h-full gap-5 rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-xl transition-all duration-300 hover:border-white/20">
                   <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
                     <Icon className="h-6 w-6" aria-hidden />
                   </span>

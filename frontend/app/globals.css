@@ -8,33 +8,33 @@
    ========================================================================== */
 
 :root {
-  --bg: #050505;
+  --bg: #08090D;
   --accent: #FF4500;
-  --card: #111111;
+  --card: #12131A;
 
   --font-serif: var(--font-playfair), "Playfair Display", Georgia, serif;
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* FocusFlow & Global Theme Alignment */
-  --ff-bg: #050505;
+  --ff-bg: #08090D;
   --ff-bg-pearl: #0a0a0a;
   --ff-bg-ivory: #0f0f0f;
-  --ff-bg-canvas: #050505;
-  --ff-bg-subtle: #121212;
+  --ff-bg-canvas: #08090D;
+  --ff-bg-subtle: #12131A;
 
-  --ff-ink: #ffffff;
+  --ff-ink: #F4F4F5;
   --ff-ink-2: #f3f4f6;
   --ff-muted: #9ca3af;
   --ff-subtle: #6b7280;
 
-  --ff-surface: rgba(17, 17, 17, 0.9);
-  --ff-surface-raised: #181818;
+  --ff-surface: #12131A;
+  --ff-surface-raised: #1A1C24;
   --ff-glass: rgba(17, 17, 17, 0.75);
   --ff-glass-hover: rgba(28, 28, 28, 0.9);
 
-  --ff-border: rgba(255, 255, 255, 0.08);
+  --ff-border: #262832;
   --ff-border-light: rgba(255, 255, 255, 0.05);
-  --ff-border-strong: rgba(255, 255, 255, 0.18);
+  --ff-border-strong: rgba(255, 255, 255, 0.16);
   --ff-border-accent: rgba(255, 69, 0, 0.4);
 
   --ff-teal: #FF4500;
@@ -62,9 +62,9 @@
 
 @theme {
   --color-accent: #FF4500;
-  --color-card: #111111;
-  --color-bg: #050505;
-  --color-ink: #ffffff;
+  --color-card: #12131A;
+  --color-bg: #08090D;
+  --color-ink: #F4F4F5;
 
   --color-tide-400: #ff6a33;
   --color-tide-500: #FF4500;
@@ -283,12 +283,12 @@ select {
 }
 
 .glass-card {
-  background: linear-gradient(145deg, rgba(20, 20, 20, 0.95), rgba(12, 12, 12, 0.9));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 20px 50px rgba(0, 0, 0, 0.6);
+  background: linear-gradient(145deg, rgba(18, 19, 26, 0.95), rgba(12, 13, 18, 0.9));
+  border: 1px solid #262832;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset, 0 20px 50px rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  color: #ffffff;
+  color: #F4F4F5;
 }
 
 .glass-card-hover {
@@ -301,11 +301,11 @@ select {
 }
 
 .glass-panel {
-  background: rgba(17, 17, 17, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(18, 19, 26, 0.85);
+  border: 1px solid #262832;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  color: #ffffff;
+  color: #F4F4F5;
 }
 
 .surface {
@@ -317,27 +317,27 @@ select {
 .dashboard-shell {
   background:
     radial-gradient(ellipse 70% 50% at 85% -10%, rgba(255, 69, 0, 0.06), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 10% 20%, rgba(255, 110, 50, 0.04), transparent 60%),
-    #050505;
-  color: #ffffff;
+    radial-gradient(ellipse 60% 40% at 10% 20%, rgba(255, 113, 56, 0.04), transparent 60%),
+    #08090D;
+  color: #F4F4F5;
 }
 
 .dashboard-sidebar {
-  background: rgba(13, 13, 13, 0.95);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(14, 15, 21, 0.96);
+  border-color: #262832;
   box-shadow: 4px 0 28px -12px rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  color: #ffffff;
+  color: #F4F4F5;
 }
 
 .dashboard-topbar {
-  border-color: rgba(255, 255, 255, 0.08);
-  background: rgba(10, 10, 10, 0.85);
+  border-color: #262832;
+  background: rgba(10, 11, 16, 0.88);
   box-shadow: 0 4px 24px -10px rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  color: #ffffff;
+  color: #F4F4F5;
 }
 
 /* Ambient Backdrop Glow */
@@ -589,8 +589,8 @@ html, body {
 
 /* High Contrast Mode */
 html.high-contrast {
-  --ff-border: rgba(255, 255, 255, 0.35);
-  --ff-border-strong: rgba(255, 255, 255, 0.6);
+  --ff-border: #262832;
+  --ff-border-strong: rgba(255, 255, 255, 0.16);
   filter: contrast(112%);
 }
 html.high-contrast button,

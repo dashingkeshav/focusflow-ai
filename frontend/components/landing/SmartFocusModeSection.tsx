@@ -35,9 +35,9 @@ export default function SmartFocusModeSection() {
       </div>
 
       {/* Browser Simulation Container */}
-      <div className="mt-14 overflow-hidden rounded-4xl border border-white/10 bg-card shadow-[0_32px_80px_-46px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
+      <div className="mt-14 overflow-hidden rounded-4xl border border-[#262832] bg-[#12131A] shadow-[0_32px_80px_-46px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
         {/* Browser Top Window Chrome */}
-        <div className="flex flex-wrap items-center justify-between border-b border-white/10 bg-white/3 px-5 py-3 gap-3">
+        <div className="flex flex-wrap items-center justify-between border-b border-[#262832] bg-white/3 px-5 py-3 gap-3">
           {/* Traffic Lights */}
           <div className="flex items-center gap-2">
             <span className="h-3 w-3 rounded-full bg-rose-500/80" />
@@ -60,7 +60,7 @@ export default function SmartFocusModeSection() {
         </div>
 
         {/* Tab Bar */}
-        <div className="flex border-b border-white/10 bg-black/40 px-4 pt-2 gap-2 text-xs">
+        <div className="flex border-b border-[#262832] bg-black/40 px-4 pt-2 gap-2 text-xs">
           <button
             type="button"
             onClick={() => setActiveTab("github")}

@@ -12,6 +12,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import FocusScoreGauge from './FocusScoreGauge';
 import CameraTracker from './CameraTracker';
+import AmbientSoundPlayer from './AmbientSoundPlayer';
 import FocusProtectionCore, { type CoreMood } from '@/components/three/FocusProtectionCore';
 import { api, getLiveFocusMetrics, startFocusSession } from '@/lib/api';
 import { useFocusState } from '@/lib/useFocusState';
@@ -768,7 +769,7 @@ export default function FocusTimer({
   if (!showUI) return null;
 
   return (
-    <div className="rounded-2xl p-6 border border-white/10 bg-card shadow-2xl space-y-6 text-white font-inter">
+    <div className="rounded-2xl p-6 border border-[#262832] bg-card shadow-2xl space-y-6 text-white font-inter">
 
       {/* ── Completion Banner ── */}
       {/* ── End-of-Session Review ── */}
@@ -793,21 +794,21 @@ export default function FocusTimer({
 
           {/* Metrics Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="rounded-xl border border-[#262832] bg-white/5 p-3">
               <span className="text-[10px] font-mono text-gray-400 uppercase">Duration</span>
               <p className="mt-1 font-serif text-base font-bold text-white">
                 {endSessionSummary.actualMinutes}m <span className="text-xs font-normal text-gray-400">/ {endSessionSummary.plannedMinutes}m</span>
               </p>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="rounded-xl border border-[#262832] bg-white/5 p-3">
               <span className="text-[10px] font-mono text-gray-400 uppercase">Focus Score</span>
               <p className="mt-1 font-serif text-base font-bold text-[#FF4500]">
                 {endSessionSummary.score != null ? `${endSessionSummary.score}/100` : 'Not available'}
               </p>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="rounded-xl border border-[#262832] bg-white/5 p-3">
               <span className="text-[10px] font-mono text-gray-400 uppercase">Distraction Alerts</span>
               <p className="mt-1 font-serif text-base font-bold text-amber-400">
                 {endSessionSummary.warnings + endSessionSummary.blockedAttempts}
@@ -817,7 +818,7 @@ export default function FocusTimer({
               </span>
             </div>
 
-            <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="rounded-xl border border-[#262832] bg-white/5 p-3">
               <span className="text-[10px] font-mono text-gray-400 uppercase">Input Activity</span>
               <p className="mt-1 font-serif text-base font-bold text-white">
                 {endSessionSummary.keyboardEvents + endSessionSummary.mouseEvents > 0
@@ -843,7 +844,7 @@ export default function FocusTimer({
                   className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
                     taskOutcome === 'completed'
                       ? 'border-emerald-500 bg-emerald-500/15 text-emerald-300 font-bold'
-                      : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10'
+                      : 'border-[#262832] bg-white/5 text-gray-300 hover:bg-white/10'
                   }`}
                 >
                   <p className="font-semibold text-white">Completed</p>
@@ -856,7 +857,7 @@ export default function FocusTimer({
                   className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
                     taskOutcome === 'in_progress'
                       ? 'border-amber-500 bg-amber-500/15 text-amber-300 font-bold'
-                      : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10'
+                      : 'border-[#262832] bg-white/5 text-gray-300 hover:bg-white/10'
                   }`}
                 >
                   <p className="font-semibold text-white">In Progress (Partial)</p>
@@ -869,7 +870,7 @@ export default function FocusTimer({
                   className={`p-3 rounded-xl border text-xs font-medium text-left transition-all ${
                     taskOutcome === 'todo'
                       ? 'border-rose-500 bg-rose-500/15 text-rose-300 font-bold'
-                      : 'border-white/10 bg-white/5 text-gray-300 hover:bg-white/10'
+                      : 'border-[#262832] bg-white/5 text-gray-300 hover:bg-white/10'
                   }`}
                 >
                   <p className="font-semibold text-white">Incomplete</p>
@@ -886,7 +887,7 @@ export default function FocusTimer({
                   onChange={(e) => setSessionNotes(e.target.value)}
                   placeholder="Notes, key milestones reached, or blockers encountered..."
                   maxLength={500}
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:border-[#FF4500] focus:outline-hidden"
+                  className="w-full rounded-xl border border-[#262832] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:border-[#FF4500] focus:outline-hidden"
                 />
               </div>
 
@@ -962,7 +963,7 @@ export default function FocusTimer({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
 
         {/* Focus Score Gauge */}
-        <div className="flex flex-col items-center justify-center p-4 bg-[#0a0a0a] rounded-2xl border border-white/10">
+        <div className="flex flex-col items-center justify-center p-4 bg-[#12131A] rounded-2xl border border-[#262832]">
           <FocusScoreGauge
             score={currentScore}
             size={190}
@@ -1004,7 +1005,7 @@ export default function FocusTimer({
                     onChange={(event) => { setTaskTitle(event.target.value); setSessionError(null); }}
                     placeholder="Example: Complete React authentication architecture"
                     maxLength={160}
-                    className="w-full rounded-xl border border-white/10 bg-[#0a0a0a] px-3.5 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
+                    className="w-full rounded-xl border border-[#262832] bg-[#12131A] px-3.5 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
                   />
                   <div className="grid grid-cols-2 gap-2">
                     <input
@@ -1012,12 +1013,12 @@ export default function FocusTimer({
                       onChange={(event) => setSubject(event.target.value)}
                       placeholder="Subject (optional)"
                       maxLength={80}
-                      className="rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-xs text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
+                      className="rounded-xl border border-[#262832] bg-[#12131A] px-3 py-2 text-xs text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
                     />
                     <select
                       value={strictness}
                       onChange={(event) => setStrictness(event.target.value as 'balanced' | 'strict' | 'custom')}
-                      className="rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-xs text-white shadow-xs outline-none focus:border-[#FF4500]"
+                      className="rounded-xl border border-[#262832] bg-[#12131A] px-3 py-2 text-xs text-white shadow-xs outline-none focus:border-[#FF4500]"
                       aria-label="Focus protection mode"
                     >
                       <option value="balanced">Balanced — block distractions</option>
@@ -1031,14 +1032,14 @@ export default function FocusTimer({
                       onChange={(event) => setAllowedSitesText(event.target.value)}
                       placeholder="Allow: react.dev, github.com"
                       maxLength={240}
-                      className="rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-[11px] text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
+                      className="rounded-xl border border-[#262832] bg-[#12131A] px-3 py-2 text-[11px] text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
                     />
                     <input
                       value={blockedSitesText}
                       onChange={(event) => setBlockedSitesText(event.target.value)}
                       placeholder="Block: instagram.com, facebook.com"
                       maxLength={240}
-                      className="rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-[11px] text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
+                      className="rounded-xl border border-[#262832] bg-[#12131A] px-3 py-2 text-[11px] text-white shadow-xs outline-none focus:border-[#FF4500] placeholder:text-white/30"
                     />
                   </div>
                   <input
@@ -1046,7 +1047,7 @@ export default function FocusTimer({
                     onChange={(event) => setWarningSitesText(event.target.value)}
                     placeholder="Ask me first: youtube.com, reddit.com"
                     maxLength={240}
-                    className="w-full rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-[11px] text-white shadow-xs outline-none focus:border-amber-500 placeholder:text-white/30"
+                    className="w-full rounded-xl border border-[#262832] bg-[#12131A] px-3 py-2 text-[11px] text-white shadow-xs outline-none focus:border-amber-500 placeholder:text-white/30"
                   />
                   <label className="flex items-center gap-2 text-xs text-white/70">
                     <input
@@ -1070,7 +1071,7 @@ export default function FocusTimer({
                       className={`px-3 py-2 rounded-xl text-xs font-semibold border transition-all ${
                         targetDurationSeconds === opt.value
                           ? 'bg-[#FF4500] text-white border-[#FF4500] shadow-xs'
-                          : 'bg-[#0a0a0a] text-white/70 border-white/10 hover:bg-white/5 hover:text-white'
+                          : 'bg-[#12131A] text-white/70 border-[#262832] hover:bg-white/5 hover:text-white'
                       }`}
                     >
                       {opt.label}
@@ -1086,7 +1087,7 @@ export default function FocusTimer({
                     value={customMinutes}
                     onChange={(e) => { setCustomMinutes(e.target.value); setDurationError(''); }}
                     placeholder="Custom (1–480 min)"
-                    className="flex-1 rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-xs text-white shadow-xs outline-none focus:border-[#FF4500]"
+                    className="flex-1 rounded-xl border border-[#262832] bg-[#12131A] px-3 py-2 text-xs text-white shadow-xs outline-none focus:border-[#FF4500]"
                   />
                   <button type="button" onClick={applyCustomDuration} className="rounded-xl border border-[#FF4500]/40 bg-[#FF4500]/10 px-3 text-xs font-bold text-[#FF4500] hover:bg-[#FF4500]/20">
                     Set
@@ -1102,7 +1103,7 @@ export default function FocusTimer({
             </div>
             {isActive && <p className="max-w-xs text-xs text-white/60">Working on: <span className="font-semibold text-white">{taskTitle}</span></p>}
             {isActive && currentSite && (
-              <div className="mt-3 max-w-xs rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-xs">
+              <div className="mt-3 max-w-xs rounded-xl border border-[#262832] bg-[#12131A] px-3 py-2 text-xs">
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-white/40">Current site</span>
                   <span className={currentSite.category === 'productive' ? 'text-emerald-400 font-bold' : currentSite.category === 'distracting' ? 'text-rose-400 font-bold' : 'text-amber-400 font-bold'}>
@@ -1138,7 +1139,7 @@ export default function FocusTimer({
               <span className={`px-2.5 py-1 rounded-full flex items-center gap-1.5 border text-[10px] font-mono font-medium ${
                 extensionConnected
                   ? 'bg-[#FF4500]/10 text-[#FF4500] border-[#FF4500]/30'
-                  : 'bg-white/5 text-white/40 border-white/10'
+                  : 'bg-white/5 text-white/40 border-[#262832]'
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${extensionConnected ? 'bg-[#FF4500]' : 'bg-white/40'}`} />
                 {extensionConnected
@@ -1202,8 +1203,8 @@ export default function FocusTimer({
       </div>
 
       {/* ── Metrics strip ── */}
-      <div className="pt-4 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-        <div className="bg-[#0a0a0a] p-3 rounded-xl border border-white/10">
+      <div className="pt-4 border-t border-[#262832] grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+        <div className="bg-[#12131A] p-3 rounded-xl border border-[#262832]">
           <div className="text-white/40 mb-1 flex items-center justify-between uppercase tracking-wider text-[10px]">
             <span>Tab Switches</span>
             <Lock className="w-3.5 h-3.5 text-rose-400" />
@@ -1213,7 +1214,7 @@ export default function FocusTimer({
           </div>
         </div>
 
-        <div className="bg-[#0a0a0a] p-3 rounded-xl border border-white/10">
+        <div className="bg-[#12131A] p-3 rounded-xl border border-[#262832]">
           <div className="text-white/40 mb-1 flex items-center justify-between uppercase tracking-wider text-[10px]">
             <span>Camera Events</span>
             <Video className="w-3.5 h-3.5 text-sky-400" />
@@ -1223,14 +1224,14 @@ export default function FocusTimer({
           </div>
         </div>
 
-        <div className="bg-[#0a0a0a] p-3 rounded-xl border border-white/10">
+        <div className="bg-[#12131A] p-3 rounded-xl border border-[#262832]">
           <div className="text-white/40 mb-1 uppercase tracking-wider text-[10px]">Warnings</div>
           <div className={`text-lg font-bold ${warningCount >= 3 ? 'text-rose-400' : warningCount > 0 ? 'text-amber-400' : 'text-white'}`}>
             {warningCount} <span className="text-xs text-white/40">/ 3</span>
           </div>
         </div>
 
-        <div className="bg-[#0a0a0a] p-3 rounded-xl border border-white/10">
+        <div className="bg-[#12131A] p-3 rounded-xl border border-[#262832]">
           <div className="text-white/40 mb-1 uppercase tracking-wider text-[10px]">Target</div>
           <div className="text-lg font-bold text-[#FF4500] flex items-center gap-1 font-serif">
             <Flame className="w-4 h-4" />
@@ -1242,7 +1243,7 @@ export default function FocusTimer({
       {/* ── Live site classification panel (extension-driven) ── */}
       {isActive && (smartFocus.currentSite || smartFocus.activityLog.length > 0) && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="bg-[#0a0a0a] p-4 rounded-xl border border-white/10">
+          <div className="bg-[#12131A] p-4 rounded-xl border border-[#262832]">
             <div className="flex items-center gap-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-white/50 mb-3">
               <Globe className="w-3.5 h-3.5 text-[#FF4500]" />
               Current Site
@@ -1268,7 +1269,7 @@ export default function FocusTimer({
             )}
           </div>
 
-          <div className="lg:col-span-2 bg-[#0a0a0a] p-4 rounded-xl border border-white/10">
+          <div className="lg:col-span-2 bg-[#12131A] p-4 rounded-xl border border-[#262832]">
             <div className="flex items-center gap-2 text-[11px] font-mono font-semibold uppercase tracking-wider text-white/50 mb-3">
               <History className="w-3.5 h-3.5 text-sky-400" />
               Previous Activity
@@ -1302,7 +1303,7 @@ export default function FocusTimer({
 
       {/* ── 3D Focus Protection Core ── */}
       {isActive && (
-        <div className="flex items-center justify-center gap-4 rounded-2xl border border-white/10 bg-[#0a0a0a] p-4">
+        <div className="flex items-center justify-center gap-4 rounded-2xl border border-[#262832] bg-[#12131A] p-4">
           <FocusProtectionCore
             mood={(
               (smartFocus.currentSite?.category === 'distracting'

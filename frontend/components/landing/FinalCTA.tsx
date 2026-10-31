@@ -37,7 +37,7 @@ export default function FinalCTA() {
         </Reveal>
 
         <div className="relative mx-auto mt-12 max-w-2xl perspective-[1000px]">
-          <div className="relative grid grid-cols-4 gap-2 rounded-3xl border border-white/10 bg-card p-4 backdrop-blur-xl sm:p-6 shadow-2xl">
+          <div className="relative grid grid-cols-4 gap-2 rounded-3xl border border-[#262832] bg-[#12131A] p-4 backdrop-blur-xl sm:p-6 shadow-2xl">
             {FLOW.map((stage, index) => {
               const Icon = stage.icon;
               return (
@@ -49,7 +49,7 @@ export default function FinalCTA() {
                   transition={{ delay: index * 0.07, duration: 0.4 }}
                   className="relative flex flex-col items-center gap-2 py-2"
                 >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-[#FF4500] shadow-sm sm:h-12 sm:w-12">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#262832] bg-white/5 text-[#FF4500] shadow-sm sm:h-12 sm:w-12">
                     <Icon className="h-5 w-5" aria-hidden />
                   </span>
                   <span className="text-[11px] font-mono font-medium text-gray-200 sm:text-xs">{stage.label}</span>

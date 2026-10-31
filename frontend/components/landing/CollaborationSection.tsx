@@ -99,13 +99,13 @@ export default function CollaborationSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="group relative flex flex-col justify-between rounded-3xl border border-white/10 bg-[#0a0a0c]/80 p-8 sm:p-10 backdrop-blur-2xl shadow-2xl transition-all duration-300 hover:border-[#FF4500]/40 hover:shadow-[0_20px_50px_rgba(255,69,0,0.12)]"
+                className="group relative flex flex-col justify-between rounded-3xl border border-[#262832] bg-[#0a0a0c]/80 p-8 sm:p-10 backdrop-blur-2xl shadow-2xl transition-all duration-300 hover:border-[#FF4500]/40 hover:shadow-[0_20px_50px_rgba(255,69,0,0.12)]"
               >
                 <div>
                   {/* Top Bar */}
                   <div className="flex items-center justify-between gap-4 mb-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FF4500] group-hover:scale-110 group-hover:bg-[#FF4500]/10 transition-all duration-300">
+                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-[#262832] flex items-center justify-center text-[#FF4500] group-hover:scale-110 group-hover:bg-[#FF4500]/10 transition-all duration-300">
                         <Icon className="w-6 h-6" />
                       </div>
                       <div>
@@ -117,7 +117,7 @@ export default function CollaborationSection() {
                         </h3>
                       </div>
                     </div>
-                    <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-[11px] font-mono font-medium border border-white/10 bg-white/5 text-gray-300">
+                    <span className="hidden sm:inline-flex px-3 py-1 rounded-full text-[11px] font-mono font-medium border border-[#262832] bg-white/5 text-gray-300">
                       {card.badge}
                     </span>
                   </div>
@@ -173,7 +173,7 @@ export default function CollaborationSection() {
           initial={reduce ? false : { opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-12 rounded-3xl border border-white/10 bg-gradient-to-r from-white/[0.03] via-white/[0.05] to-white/[0.03] p-6 sm:p-8 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-6"
+          className="mt-12 rounded-3xl border border-[#262832] bg-gradient-to-r from-white/[0.03] via-white/[0.05] to-white/[0.03] p-6 sm:p-8 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-6"
         >
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-[#FF4500]/10 border border-[#FF4500]/20 flex items-center justify-center text-[#FF4500] shrink-0">

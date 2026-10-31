@@ -41,6 +41,7 @@ import {
   fetchCollaborationRoomMessages,
   sendCollaborationRoomMessage,
   getApiBaseUrl,
+  getSocketUrl,
   type FocusRoom,
   type FocusRoomMember,
   type FocusRoomMessage,
@@ -156,10 +157,7 @@ export default function FocusRoomLivePage({
   useEffect(() => {
     if (!token || !roomId) return;
 
-    const socket = socketIO(getSocketUrl(), {
-      auth: { token },
-      transports: ['websocket', 'polling'],
-    });
+    const socket = socketIO(getSocketUrl(), { auth: { token }, transports: ['websocket', 'polling'] } as any);
 
     socketRef.current = socket;
 
@@ -398,7 +396,7 @@ export default function FocusRoomLivePage({
   return (
     <div className="space-y-6 font-inter text-white pb-16 max-w-5xl mx-auto">
       {/* Top Navigation & Room Status Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#262832] pb-4">
         <div className="flex items-center gap-3">
           <button
             onClick={handleLeaveRoom}
@@ -424,7 +422,7 @@ export default function FocusRoomLivePage({
           {/* Copy Invite Link */}
           <button
             onClick={copyInvite}
-            className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold px-3 py-2 rounded-xl border border-white/10 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold px-3 py-2 rounded-xl border border-[#262832] transition-all cursor-pointer"
           >
             {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copiedLink ? 'Link Copied!' : 'Invite Link'}</span>
@@ -437,7 +435,7 @@ export default function FocusRoomLivePage({
               className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all cursor-pointer ${
                 room.status === 'locked'
                   ? 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-                  : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                  : 'bg-white/5 border-[#262832] text-gray-300 hover:bg-white/10'
               }`}
             >
               {room.status === 'locked' ? <Lock className="w-3.5 h-3.5" /> : <Unlock className="w-3.5 h-3.5" />}
@@ -459,7 +457,7 @@ export default function FocusRoomLivePage({
       {/* Main Coworking Layout: Timer on Left, Presence on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Synchronized Focus Timer Hero Card */}
-        <div className="lg:col-span-2 rounded-3xl border border-white/10 bg-[#0e0e12] p-8 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
+        <div className="lg:col-span-2 rounded-3xl border border-[#262832] bg-[#0e0e12] p-8 shadow-2xl flex flex-col items-center justify-center text-center relative overflow-hidden">
           {/* Subtle Ambient Glow */}
           <div
             className={`absolute -top-24 w-80 h-80 rounded-full blur-3xl pointer-events-none transition-all duration-700 ${
@@ -547,7 +545,7 @@ export default function FocusRoomLivePage({
 
               <button
                 onClick={() => handleTimerAction('reset')}
-                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-semibold px-4 py-3 rounded-2xl border border-white/10 transition-all cursor-pointer"
+                className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-gray-300 text-sm font-semibold px-4 py-3 rounded-2xl border border-[#262832] transition-all cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>Reset</span>
@@ -560,7 +558,7 @@ export default function FocusRoomLivePage({
           )}
 
           {/* Personal Focus Integration Section */}
-          <div className="mt-8 pt-6 border-t border-white/10 w-full flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/2 p-4 rounded-2xl">
+          <div className="mt-8 pt-6 border-t border-[#262832] w-full flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/2 p-4 rounded-2xl">
             <div className="text-left space-y-0.5">
               <div className="flex items-center gap-1.5 text-xs font-bold text-white">
                 <ShieldCheck className="w-4 h-4 text-[#FF4500]" />
@@ -598,9 +596,9 @@ export default function FocusRoomLivePage({
         </div>
 
         {/* Live Presence / Participants Sidebar */}
-        <div className="rounded-3xl border border-white/10 bg-[#0e0e12] p-6 shadow-xl flex flex-col justify-between space-y-6">
+        <div className="rounded-3xl border border-[#262832] bg-[#0e0e12] p-6 shadow-xl flex flex-col justify-between space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-3">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-[#FF4500]" />
                 <h2 className="text-sm font-bold text-white uppercase tracking-wider">
@@ -621,11 +619,11 @@ export default function FocusRoomLivePage({
                 return (
                   <div
                     key={p.id || p.user_id}
-                    className="flex items-center justify-between p-2.5 rounded-2xl bg-white/2 border border-white/5 hover:border-white/10 transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-2xl bg-white/2 border border-white/5 hover:border-[#262832] transition-colors"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="relative shrink-0">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-[#FF4500]/30 to-purple-500/30 flex items-center justify-center font-bold text-xs text-white uppercase border border-white/10">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-tr from-[#FF4500]/30 to-purple-500/30 flex items-center justify-center font-bold text-xs text-white uppercase border border-[#262832]">
                           {p.name ? p.name.slice(0, 2) : 'FF'}
                         </div>
                         <span
@@ -668,7 +666,7 @@ export default function FocusRoomLivePage({
           </div>
 
           {/* Quiet Status & Focus Feed */}
-          <div className="space-y-3 pt-4 border-t border-white/10">
+          <div className="space-y-3 pt-4 border-t border-[#262832]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs font-bold text-gray-300">
                 <MessageSquare className="w-3.5 h-3.5 text-[#FF4500]" />
@@ -740,7 +738,7 @@ export default function FocusRoomLivePage({
                 value={newMsg}
                 onChange={(e) => setNewMsg(e.target.value)}
                 maxLength={240}
-                className="w-full text-xs rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
+                className="w-full text-xs rounded-xl border border-[#262832] bg-white/5 px-3 py-2 text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
               />
               <button
                 type="submit"
@@ -768,7 +766,7 @@ export default function FocusRoomLivePage({
       {/* Post-Session Summary Modal */}
       {showSummaryModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-white/10 rounded-3xl w-full max-w-md p-6 text-center space-y-5 shadow-2xl">
+          <div className="bg-[#0e0e12] border border-[#262832] rounded-3xl w-full max-w-md p-6 text-center space-y-5 shadow-2xl">
             <div className="w-16 h-16 rounded-3xl bg-[#FF4500]/15 text-[#FF4500] flex items-center justify-center mx-auto shadow-lg shadow-[#FF4500]/20">
               <Award className="w-8 h-8" />
             </div>
@@ -780,7 +778,7 @@ export default function FocusRoomLivePage({
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/3 border border-white/10 text-left space-y-2">
+            <div className="p-4 rounded-2xl bg-white/3 border border-[#262832] text-left space-y-2">
               <div className="flex justify-between text-xs">
                 <span className="text-gray-400">Session Duration:</span>
                 <span className="font-bold text-white">{Math.round(timerDuration / 60)} minutes</span>

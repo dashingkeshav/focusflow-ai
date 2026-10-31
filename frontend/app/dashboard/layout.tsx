@@ -254,7 +254,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* First-login onboarding */}
       {onboardingStep !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-          <div className="w-full max-w-lg rounded-[28px] border border-white/10 bg-card p-7 shadow-2xl backdrop-blur-2xl md:p-8 text-white">
+          <div className="w-full max-w-lg rounded-[28px] border border-[#262832] bg-[#12131A] p-7 shadow-2xl backdrop-blur-2xl md:p-8 text-white">
             <div className="mb-7 flex items-center justify-between">
               <div>
                 <p className="text-xs font-mono font-bold uppercase tracking-[0.18em] text-[#FF4500]">
@@ -296,7 +296,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   className={`group flex min-h-14 items-center justify-between rounded-xl border px-4 text-left text-sm transition-colors ${
                     currentAnswer === option
                       ? "border-[#FF4500] bg-[#FF4500]/15 text-[#FF4500] font-bold shadow-xs"
-                      : "border-white/10 bg-white/5 text-gray-300 hover:border-[#FF4500]/50 hover:bg-[#FF4500]/10 hover:text-white"
+                      : "border-[#262832] bg-white/5 text-gray-300 hover:border-[#FF4500]/50 hover:bg-[#FF4500]/10 hover:text-white"
                   }`}
                 >
                   {option}
@@ -347,7 +347,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Camera Permission Prompt Overlay */}
       {cameraPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
-          <div className="w-full max-w-md space-y-6 rounded-[28px] border border-white/10 bg-card p-7 shadow-2xl backdrop-blur-2xl text-white">
+          <div className="w-full max-w-md space-y-6 rounded-[28px] border border-[#262832] bg-[#12131A] p-7 shadow-2xl backdrop-blur-2xl text-white">
             <div className="flex items-start justify-between">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF4500]/15 text-[#FF4500] border border-[#FF4500]/30">
                 <Camera className="h-6 w-6" aria-hidden />
@@ -434,8 +434,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           role="status"
           className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl border px-4 py-3 text-xs font-semibold shadow-xl transition-all ${
             cameraGranted
-              ? "border-emerald-500/30 bg-card text-emerald-400"
-              : "border-amber-500/30 bg-card text-amber-400"
+              ? "border-emerald-500/30 bg-[#12131A] text-emerald-400"
+              : "border-amber-500/30 bg-[#12131A] text-amber-400"
           }`}
         >
           <Camera
@@ -450,7 +450,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       {/* Persistent focus protection banner (all dashboard pages) */}
       {activeFocus?.active && pathname !== "/dashboard/sessions" && (
-        <div className="sticky top-16 z-30 border-b border-white/10 bg-slate-50/90 px-4 py-2 backdrop-blur-md md:px-6">
+        <div className="sticky top-16 z-30 border-b border-[#262832] bg-slate-50/90 px-4 py-2 backdrop-blur-md md:px-6">
           <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 text-xs">
             <span className="flex items-center gap-2 font-bold text-[#FF4500] font-mono">
               <span className="relative flex h-2 w-2">
@@ -486,7 +486,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar mobileOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       {/* Main Content Area */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col lg:pl-60">
         <TopHeader
           activeSession={!!activeFocus?.active && !activeFocus.paused}
           currentScore={liveScore}

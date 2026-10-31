@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Mail, AlertCircle, CheckCircle, Lock } from "lucide-react";
-import { AuthBrand, AuthShell } from "@/app/login/page";
+import { AuthBrand, AuthShell } from "@/components/auth/AuthShell";
 import { forgotPassword, verifyOTP } from "@/lib/api";
 
 export default function ForgotPasswordPage() {

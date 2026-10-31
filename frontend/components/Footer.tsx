@@ -42,13 +42,13 @@ export default function Footer() {
     <footer id="footer" className="w-full py-16 px-4 sm:px-6 lg:px-8 bg-transparent text-white relative">
       <div className="container mx-auto max-w-7xl">
         {/* Single Contained Obsidian Dark Glass Card */}
-        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] border border-white/10 bg-[#08080a]/85 p-8 sm:p-12 backdrop-blur-2xl shadow-[0_30px_90px_-20px_rgba(0,0,0,0.9)]">
+        <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] border border-[#262832] bg-[#12131A]/90 p-8 sm:p-12 backdrop-blur-2xl shadow-[0_30px_90px_-20px_rgba(0,0,0,0.9)]">
           {/* Subtle Ambient Glow */}
           <div className="pointer-events-none absolute -bottom-24 left-1/2 -translate-x-1/2 h-72 w-72 rounded-full bg-[#FF4500]/10 blur-[120px]" />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#FF4500]/30 to-transparent" />
 
           {/* Clean 4-Column Layout */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8 pb-10 border-b border-white/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8 pb-10 border-b border-[#262832]">
             {/* 1. Brand Intro */}
             <div className="sm:col-span-2 lg:col-span-3 space-y-4">
               <BrandWordmark size="md" href="/" />

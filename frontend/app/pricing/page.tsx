@@ -109,7 +109,7 @@ const FAQS = [
 
 export default function PricingPage() {
   return (
-    <div className="relative min-h-screen bg-transparent text-white pt-32 pb-24 selection:bg-[#FF4500] selection:text-white">
+    <div className="relative min-h-screen bg-[#08090D] text-[#F4F4F5] pt-32 pb-24 selection:bg-[#FF4500] selection:text-white">
       {/* Background Dot Matrix Pattern */}
       <div
         className="pointer-events-none fixed inset-0 z-0 opacity-15"
@@ -141,8 +141,8 @@ export default function PricingPage() {
               <article
                 className={`relative flex h-full flex-col justify-between rounded-3xl border p-8 md:p-10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 ${
                   plan.featured
-                    ? "border-2 border-[#FF4500] bg-card shadow-[0_20px_50px_rgba(255,69,0,0.3)] ring-4 ring-[#FF4500]/10"
-                    : "border-white/10 bg-card shadow-2xl hover:border-white/20"
+                    ? "border-2 border-[#FF4500] bg-[#12131A] shadow-[0_20px_50px_rgba(255,69,0,0.3)] ring-4 ring-[#FF4500]/10"
+                    : "border-[#262832] bg-[#12131A] shadow-2xl hover:border-white/20"
                 }`}
               >
                 {plan.featured && (
@@ -166,7 +166,7 @@ export default function PricingPage() {
                   </div>
                   <p className="mt-1.5 text-xs font-mono text-gray-500">{plan.note}</p>
 
-                  <ul className="mt-8 space-y-3.5 border-t border-white/10 pt-6 text-sm">
+                  <ul className="mt-8 space-y-3.5 border-t border-[#262832] pt-6 text-sm">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-2.5 text-gray-300">
                         <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#FF4500] font-bold" />
@@ -207,11 +207,11 @@ export default function PricingPage() {
             </h2>
           </div>
 
-          <div className="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-card shadow-2xl">
+          <div className="mt-10 overflow-hidden rounded-3xl border border-[#262832] bg-[#12131A] shadow-2xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 bg-white/5 text-xs font-mono uppercase tracking-wider text-gray-400">
+                  <tr className="border-b border-[#262832] bg-white/5 text-xs font-mono uppercase tracking-wider text-gray-400">
                     <th className="py-4 px-6 font-semibold">Capability</th>
                     <th className="py-4 px-6 font-semibold">Free</th>
                     <th className="py-4 px-6 font-semibold text-[#FF4500]">FocusFlow Pro</th>
@@ -251,7 +251,7 @@ export default function PricingPage() {
               {FAQS.map((faq) => (
                 <div
                   key={faq.question}
-                  className="rounded-2xl border border-white/10 bg-card p-6 shadow-xl"
+                  className="rounded-2xl border border-[#262832] bg-[#12131A] p-6 shadow-xl"
                 >
                   <h3 className="font-semibold font-serif text-lg text-white">{faq.question}</h3>
                   <p className="mt-2.5 text-sm text-gray-400 leading-relaxed font-light">{faq.answer}</p>

@@ -4,7 +4,7 @@ import React, { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ArrowLeft, Lock, AlertCircle, CheckCircle, Eye, EyeOff } from "lucide-react";
-import { AuthBrand, AuthShell } from "@/app/login/page";
+import { AuthBrand, AuthShell } from "@/components/auth/AuthShell";
 import { resetPassword } from "@/lib/api";
 
 function ResetPasswordForm() {

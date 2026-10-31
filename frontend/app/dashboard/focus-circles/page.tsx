@@ -45,6 +45,7 @@ import {
   fetchCollaborationCircleHistory,
   archiveCollaborationCircle,
   getApiBaseUrl,
+  getSocketUrl,
   type FocusCircle,
   type FocusCircleMember,
   type FocusCircleCommitment,
@@ -108,10 +109,7 @@ function FocusCirclesPageContent() {
   useEffect(() => {
     if (!token || !selectedCircleId) return;
 
-    const socket = socketIO(getSocketUrl(), {
-      auth: { token },
-      transports: ['websocket', 'polling'],
-    });
+    const socket = socketIO(getSocketUrl(), { auth: { token }, transports: ['websocket', 'polling'] } as any);
 
     socketRef.current = socket;
 
@@ -374,7 +372,7 @@ function FocusCirclesPageContent() {
   return (
     <div className="space-y-8 font-inter text-white pb-16">
       {/* Top Banner */}
-      <div className="rounded-3xl border border-white/10 bg-linear-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-3xl border border-[#262832] bg-linear-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
             <CircleDot className="w-4 h-4" />
@@ -403,7 +401,7 @@ function FocusCirclesPageContent() {
       </div>
 
       {/* Join with Code Bar */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 p-4 rounded-2xl border border-white/10 bg-[#0e0e12]">
+      <div className="flex flex-col sm:flex-row items-center gap-3 p-4 rounded-2xl border border-[#262832] bg-[#0e0e12]">
         <span className="text-xs font-semibold text-gray-300 shrink-0">Have an invitation code?</span>
         <div className="flex items-center gap-2 w-full sm:max-w-xs">
           <input
@@ -411,7 +409,7 @@ function FocusCirclesPageContent() {
             placeholder="Enter code (e.g. fc-...) or paste invite link..."
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
+            className="w-full rounded-xl border border-[#262832] bg-white/5 px-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
           />
           <button
             onClick={() => handleJoinByCode()}
@@ -431,7 +429,7 @@ function FocusCirclesPageContent() {
           <div className="md:col-span-2 h-64 rounded-3xl bg-white/5 animate-pulse border border-white/5" />
         </div>
       ) : circles.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl border border-white/10 bg-[#0e0e12] space-y-4">
+        <div className="p-12 text-center rounded-3xl border border-[#262832] bg-[#0e0e12] space-y-4">
           <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mx-auto text-gray-400">
             <CircleDot className="w-7 h-7" />
           </div>
@@ -478,7 +476,7 @@ function FocusCirclesPageContent() {
                     className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer ${
                       isSelected
                         ? 'border-[#FF4500]/50 bg-[#FF4500]/10 shadow-lg shadow-[#FF4500]/10'
-                        : 'border-white/10 bg-[#0e0e12] hover:border-white/20'
+                        : 'border-[#262832] bg-[#0e0e12] hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -508,7 +506,7 @@ function FocusCirclesPageContent() {
             ) : (
               <div className="space-y-6">
                 {/* Circle Header Card */}
-                <div className="p-6 rounded-3xl border border-white/10 bg-[#0e0e12] shadow-xl space-y-4">
+                <div className="p-6 rounded-3xl border border-[#262832] bg-[#0e0e12] shadow-xl space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
@@ -525,7 +523,7 @@ function FocusCirclesPageContent() {
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         onClick={copyInvite}
-                        className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold px-3 py-2 rounded-xl border border-white/10 transition-all cursor-pointer"
+                        className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-semibold px-3 py-2 rounded-xl border border-[#262832] transition-all cursor-pointer"
                       >
                         {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedLink ? 'Copied' : 'Invite'}</span>
@@ -536,7 +534,7 @@ function FocusCirclesPageContent() {
                         className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all cursor-pointer ${
                           showHistory
                             ? 'bg-[#FF4500]/20 border-[#FF4500]/40 text-[#FF4500]'
-                            : 'bg-white/5 hover:bg-white/10 text-gray-300 border-white/10'
+                            : 'bg-white/5 hover:bg-white/10 text-gray-300 border-[#262832]'
                         }`}
                       >
                         <History className="w-3.5 h-3.5" />
@@ -555,7 +553,7 @@ function FocusCirclesPageContent() {
                         <button
                           onClick={handleArchiveCircle}
                           title="Archive Circle"
-                          className="p-2 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 transition-colors cursor-pointer"
+                          className="p-2 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-[#262832] transition-colors cursor-pointer"
                         >
                           <Archive className="w-3.5 h-3.5" />
                         </button>
@@ -563,7 +561,7 @@ function FocusCirclesPageContent() {
                         <button
                           onClick={() => user?.id && handleRemoveMember(user.id)}
                           title="Leave Circle"
-                          className="p-2 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 transition-colors cursor-pointer"
+                          className="p-2 rounded-xl bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-[#262832] transition-colors cursor-pointer"
                         >
                           <LogOut className="w-3.5 h-3.5" />
                         </button>
@@ -598,8 +596,8 @@ function FocusCirclesPageContent() {
 
                 {/* Multi-Week History View OR Active Weekly Commitments */}
                 {showHistory ? (
-                  <div className="p-6 rounded-3xl border border-white/10 bg-[#0e0e12] shadow-xl space-y-5">
-                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                  <div className="p-6 rounded-3xl border border-[#262832] bg-[#0e0e12] shadow-xl space-y-5">
+                    <div className="flex items-center justify-between border-b border-[#262832] pb-4">
                       <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
                         <History className="w-4 h-4" />
                         <span>MULTI-WEEK COMMITMENT ARCHIVE</span>
@@ -624,7 +622,7 @@ function FocusCirclesPageContent() {
                             className={`p-4 rounded-2xl border transition-all ${
                               h.is_completed
                                 ? 'border-emerald-500/20 bg-emerald-500/3'
-                                : 'border-white/10 bg-white/2'
+                                : 'border-[#262832] bg-white/2'
                             }`}
                           >
                             <div className="flex items-start justify-between gap-3">
@@ -659,8 +657,8 @@ function FocusCirclesPageContent() {
                   </div>
                 ) : (
                   /* Weekly Commitments Section */
-                  <div className="p-6 rounded-3xl border border-white/10 bg-[#0e0e12] shadow-xl space-y-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+                  <div className="p-6 rounded-3xl border border-[#262832] bg-[#0e0e12] shadow-xl space-y-5">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#262832] pb-4">
                       <div>
                         <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
                           <Calendar className="w-4 h-4" />
@@ -718,7 +716,7 @@ function FocusCirclesPageContent() {
                               className={`p-4 rounded-2xl border transition-all ${
                                 c.is_completed
                                   ? 'border-emerald-500/20 bg-emerald-500/3'
-                                  : 'border-white/10 bg-white/2'
+                                  : 'border-[#262832] bg-white/2'
                               }`}
                             >
                               <div className="flex items-start justify-between gap-3">
@@ -774,8 +772,8 @@ function FocusCirclesPageContent() {
       {/* Set Commitment Modal */}
       {showCommitModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-white/10 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div className="bg-[#0e0e12] border border-[#262832] rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-3">
               <h3 className="text-base font-bold text-white">Set Weekly Commitment</h3>
               <button onClick={() => setShowCommitModal(false)} className="text-gray-400 hover:text-white p-1">
                 ✕
@@ -793,7 +791,7 @@ function FocusCirclesPageContent() {
                   placeholder="e.g. Complete first draft of Chapter 3, ship the payment gateway integration..."
                   value={commitmentText}
                   onChange={(e) => setCommitmentText(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500] resize-none"
+                  className="w-full rounded-xl border border-[#262832] bg-white/5 p-3 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500] resize-none"
                 />
                 <p className="text-[10px] text-gray-500 mt-1">
                   Keep it concise. Your Circle members see this commitment to hold you accountable.
@@ -824,8 +822,8 @@ function FocusCirclesPageContent() {
       {/* Check In Modal */}
       {showCheckInModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-white/10 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div className="bg-[#0e0e12] border border-[#262832] rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-3">
               <h3 className="text-base font-bold text-white">Check In: Commitment Complete</h3>
               <button onClick={() => setShowCheckInModal(false)} className="text-gray-400 hover:text-white p-1">
                 ✕
@@ -842,7 +840,7 @@ function FocusCirclesPageContent() {
                   placeholder="e.g. Wrapped up chapter draft in 3 focus sessions. Moving to review next week."
                   value={completionNote}
                   onChange={(e) => setCompletionNote(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500] resize-none"
+                  className="w-full rounded-xl border border-[#262832] bg-white/5 p-3 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500] resize-none"
                 />
               </div>
 
@@ -870,8 +868,8 @@ function FocusCirclesPageContent() {
       {/* Create Circle Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-white/10 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div className="bg-[#0e0e12] border border-[#262832] rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-3">
               <h3 className="text-base font-bold text-white">Create Private Focus Circle</h3>
               <button onClick={() => setShowCreateModal(false)} className="text-gray-400 hover:text-white p-1">
                 ✕
@@ -895,7 +893,7 @@ function FocusCirclesPageContent() {
                   placeholder="e.g. Master's Thesis Cohort, Founders Circle..."
                   value={createName}
                   onChange={(e) => setCreateName(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
+                  className="w-full rounded-xl border border-[#262832] bg-white/5 px-3 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
                 />
               </div>
 
@@ -908,7 +906,7 @@ function FocusCirclesPageContent() {
                   placeholder="What is this Circle focusing on together?"
                   value={createDescription}
                   onChange={(e) => setCreateDescription(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
+                  className="w-full rounded-xl border border-[#262832] bg-white/5 px-3 py-2 text-xs text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
                 />
               </div>
 
@@ -919,7 +917,7 @@ function FocusCirclesPageContent() {
                 <select
                   value={createCategory}
                   onChange={(e) => setCreateCategory(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-[#16161c] px-3 py-2 text-xs text-white outline-none focus:border-[#FF4500]"
+                  className="w-full rounded-xl border border-[#262832] bg-[#16161c] px-3 py-2 text-xs text-white outline-none focus:border-[#FF4500]"
                 >
                   <option value="general">General</option>
                   <option value="studying">Academic / Studying</option>

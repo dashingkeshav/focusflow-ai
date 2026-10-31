@@ -1,276 +1,378 @@
 import type { Metadata } from "next";
+import type { ComponentType } from "react";
 import Link from "next/link";
 import {
-  Activity,
-  Award,
-  BarChart3,
-  BrainCircuit,
-  Check,
-  AppWindow,
-  EyeOff,
-  FolderGit2,
-  Goal,
-  HelpCircle,
-  Lightbulb,
-  Radio,
-  ShieldCheck,
   Timer,
+  Target,
+  BrainCircuit,
+  BarChart3,
+  ShieldAlert,
+  Sparkles,
+  FileText,
   Users,
+  CircleDot,
+  FolderKanban,
+  LifeBuoy,
+  Camera,
+  Puzzle,
+  Laptop,
+  ArrowRight,
+  CheckCircle2,
   Zap,
 } from "lucide-react";
-import Badge from "@/components/ui/Badge";
-import MagneticButton from "@/components/ui/MagneticButton";
-import Reveal from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Features — FocusFlow AI",
   description:
-    "Explore FocusFlow AI's multimodal planner, real browser focus monitoring, objective tracking, analytics, and telemetry isolation.",
+    "Explore the complete suite of FocusFlow AI features across focus & productivity, insights & protection, collaboration, and hardware workspace integrations.",
 };
 
-const FEATURES = [
+interface FeatureItem {
+  title: string;
+  tagline: string;
+  description: string;
+  icon: ComponentType<{ className?: string }>;
+  href: string;
+  previewType: "timer" | "tasks" | "planner" | "analytics" | "shield" | "insights" | "reports" | "rooms" | "circles" | "pods" | "unblock" | "camera" | "extension" | "desktop";
+  badge?: string;
+}
+
+interface FeatureCategory {
+  category: string;
+  subtitle: string;
+  items: FeatureItem[];
+}
+
+const CATEGORIES: FeatureCategory[] = [
   {
-    title: "Multimodal AI Planner",
-    description:
-      "Voice your intent, type constraints, or upload syllabus documents. The unified composer synthesizes milestones and realistic daily blocks powered by Google Gemini 2.5.",
-    icon: BrainCircuit,
-    href: "/dashboard/planner",
-    link: "Open AI Planner",
+    category: "Focus & Productivity",
+    subtitle: "Eliminate cognitive fragmentation with deep-work timers, intelligent task queues, and automated planning.",
+    items: [
+      {
+        title: "Focus Timer HUD",
+        tagline: "Distraction-locked Pomodoro sprints",
+        description: "Immersive deep-work countdown with customizable sprint intervals, ambient audio soundscapes, and real-time tab shielding. Tied directly to your active task backlog.",
+        icon: Timer,
+        href: "/dashboard/sessions",
+        previewType: "timer",
+      },
+      {
+        title: "Tasks & Goals",
+        tagline: "Milestone-driven backlog execution",
+        description: "Connect big quarterly objectives to daily micro-sprints. Completing sub-tasks automatically advances goal progress gauges and maintains completion momentum.",
+        icon: Target,
+        href: "/dashboard/goals",
+        previewType: "tasks",
+      },
+      {
+        title: "AI Daily Planner",
+        tagline: "Multimodal Gemini-powered roadmapping",
+        description: "Speak your intention, type constraints, or upload syllabus documents. Gemini 2.5 synthesizes realistic daily focus blocks that you can review and commit.",
+        icon: BrainCircuit,
+        href: "/dashboard/planner",
+        previewType: "planner",
+        badge: "Gemini 2.5",
+      },
+    ],
   },
   {
-    title: "Smart Focus Sessions",
-    description:
-      "Immersive full-screen focus timers with custom durations, Pomodoro rhythms, ambient audio, and strict distraction policies tied directly to your tasks.",
-    icon: Timer,
-    href: "/dashboard/sessions",
-    link: "View focus sessions",
+    category: "Insights & Protection",
+    subtitle: "Quantify your flow state with verifiable browser telemetry and evidence-backed cognitive recommendations.",
+    items: [
+      {
+        title: "Analytics & Trends",
+        tagline: "Hourly heatmaps & focus velocity",
+        description: "Inspect daily study velocity, tab switch patterns, and peak cognitive performance windows. Derived from real session timestamps with zero simulated metrics.",
+        icon: BarChart3,
+        href: "/dashboard/analytics",
+        previewType: "analytics",
+      },
+      {
+        title: "Distraction Shield",
+        tagline: "Manifest V3 browser telemetry",
+        description: "Automated 3-strike warning policy. Warns when navigating off-task during sprints and intercepts known dopamine-trap domains before you break flow.",
+        icon: ShieldAlert,
+        href: "/dashboard/distractions",
+        previewType: "shield",
+      },
+      {
+        title: "AI Cognitive Insights",
+        tagline: "Evidence-based routine diagnosis",
+        description: "Structured diagnostic reports following Observation → Evidence → Impact → Recommendation. Evaluated strictly from your verified PostgreSQL session data.",
+        icon: Sparkles,
+        href: "/dashboard/insights",
+        previewType: "insights",
+        badge: "AI Diagnostic",
+      },
+      {
+        title: "Reports & Export",
+        tagline: "Executive CSV & PDF data dossiers",
+        description: "Generate verifiable documentation of your deep-work hours, milestone velocity, and focus ratings for academic or client reporting.",
+        icon: FileText,
+        href: "/dashboard/reports",
+        previewType: "reports",
+      },
+    ],
   },
   {
-    title: "Authentic Telemetry Monitoring",
-    description:
-      "Real-time focus scores derived from measured tab switches, active window focus shifts, and idle intervals during work sprints. No synthetic numbers.",
-    icon: Activity,
-    href: "/dashboard/sessions",
-    link: "Live score telemetry",
+    category: "Collaboration Ecosystem",
+    subtitle: "Synchronized coworking rooms, accountability circles, and unblocking exchanges for ambitious teams.",
+    items: [
+      {
+        title: "Focus Rooms",
+        tagline: "Live synchronized coworking chambers",
+        description: "Cowork with peers in real time with synchronized Pomodoro timers, shared goals, live status telemetry, and ambient focus soundscapes.",
+        icon: Users,
+        href: "/dashboard/focus-rooms",
+        previewType: "rooms",
+      },
+      {
+        title: "Focus Circles",
+        tagline: "Persistent study & accountability guilds",
+        description: "Form high-trust circles with peers. Track collective focus streaks, milestone completions, and weekly leaderboards without intrusive micromanagement.",
+        icon: CircleDot,
+        href: "/dashboard/focus-circles",
+        previewType: "circles",
+      },
+      {
+        title: "Project Pods",
+        tagline: "Time-bound sprint deliverables",
+        description: "Deliver shared projects with collaborative kanban task distribution, sprint milestones, and collective hours contributed.",
+        icon: FolderKanban,
+        href: "/dashboard/project-pods",
+        previewType: "pods",
+      },
+      {
+        title: "Unblock Exchange",
+        tagline: "Asynchronous peer bottleneck solver",
+        description: "Get stuck on an algorithm, thesis question, or code bug? Post a focused blocker and receive timely peer guidance.",
+        icon: LifeBuoy,
+        href: "/dashboard/unblock-exchange",
+        previewType: "unblock",
+      },
+    ],
   },
   {
-    title: "Objectives & Linked Backlog",
-    description:
-      "Connect long-term milestones to immediate tasks. Completing tasks automatically updates progress gauges and unblocks dependent milestones.",
-    icon: Goal,
-    href: "/dashboard/goals",
-    link: "Organize objectives",
-  },
-  {
-    title: "Behavioral Analytics & Trends",
-    description:
-      "Inspect daily focus velocity, tab switch patterns, and peak cognitive performance windows with 7-day history in Free and all-time trends in Pro.",
-    icon: BarChart3,
-    href: "/dashboard/analytics",
-    link: "Explore analytics",
-  },
-  {
-    title: "Evidence-Based AI Insights",
-    description:
-      "Structured analysis following Observation → Evidence → Impact → Recommendation. Strictly derived from your verified PostgreSQL activity log.",
-    icon: Lightbulb,
-    href: "/dashboard/insights",
-    link: "Inspect AI insights",
-  },
-  {
-    title: "Verified Milestones & Badges",
-    description:
-      "Celebrate hard-earned focus streaks and task milestones with restrained, physical unlock cards backed strictly by real database queries.",
-    icon: Award,
-    href: "/dashboard/goals?view=achievements",
-    link: "View achievements",
-  },
-  {
-    title: "Chrome Extension Protection",
-    description:
-      "Enforces site rules, detects off-task tab switching, and logs incident timestamps directly to your personal PostgreSQL log.",
-    icon: AppWindow,
-    href: "/download",
-    link: "Get Chrome extension",
-  },
-  {
-    title: "Privacy by Design",
-    description:
-      "Only interaction counts and domain classifications are analyzed locally. No webpage text, search queries, or camera recordings are ever collected.",
-    icon: ShieldCheck,
-    href: "/privacy",
-    link: "Read privacy architecture",
-  },
-  {
-    title: "Focus Rooms (Real-Time Coworking)",
-    description:
-      "Live coworking spaces with synchronized timers (host up to 4 in Free, 12 in Pro). Keep personal tasks confidential while focusing alongside motivated peers.",
-    icon: Radio,
-    href: "/focus-rooms",
-    link: "Explore Focus Rooms",
-  },
-  {
-    title: "Focus Circles (Habit Accountability)",
-    description:
-      "Private weekly accountability groups (own 1 in Free, up to 10 in Pro). Track target commitments, transparent check-ins, and shared focus streaks.",
-    icon: Users,
-    href: "/dashboard/focus-circles",
-    link: "View Focus Circles",
+    category: "Hardware & Workspace",
+    subtitle: "Biometric attention tracking, browser extension enforcement, and native desktop power.",
+    items: [
+      {
+        title: "Camera Attention AI",
+        tagline: "MediaPipe local face & gaze detection",
+        description: "Optional on-device neural attention monitoring. Detects presence and posture drifts completely client-side in your browser. Zero video frames ever leave your device.",
+        icon: Camera,
+        href: "/dashboard/sessions",
+        previewType: "camera",
+        badge: "Local AI",
+      },
+      {
+        title: "Chrome Extension",
+        tagline: "Manifest V3 active site blocker",
+        description: "Lightweight companion that syncs with your FocusFlow workspace, enforces distraction policies, and records authentic tab switch telemetry.",
+        icon: Puzzle,
+        href: "/download",
+        previewType: "extension",
+      },
+      {
+        title: "Windows Desktop Companion",
+        tagline: "Native system integration",
+        description: "Companion app for Windows with global keyboard shortcuts, system tray status, and cross-application focus management.",
+        icon: Laptop,
+        href: "/download",
+        previewType: "desktop",
+      },
+    ],
   },
 ];
 
-const SIGNALS = [
-  "Verified tab and active window focus shifts",
-  "Idle detection with configurable inactivity thresholds",
-  "Session elapsed duration and dynamic focus score algorithm",
-  "PostgreSQL-linked goal and task completions",
-];
+function FeaturePreviewBox({ type }: { type: FeatureItem["previewType"] }) {
+  switch (type) {
+    case "timer":
+      return (
+        <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 font-mono text-xs">
+          <div className="flex items-center justify-between text-zinc-400 mb-2">
+            <span>SPRINT STATUS</span>
+            <span className="text-[#FF4500] font-bold">24:18 REMAINING</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-[#1A1C24] overflow-hidden">
+            <div className="h-full bg-[#FF4500] w-3/4" />
+          </div>
+          <div className="mt-3 flex justify-between text-[11px] text-zinc-500">
+            <span>Score: 98/100</span>
+            <span className="text-emerald-400">0 Tab Swings</span>
+          </div>
+        </div>
+      );
+    case "planner":
+      return (
+        <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 font-mono text-xs space-y-2">
+          <div className="flex items-center gap-1.5 text-[#FF7138] text-[11px] font-bold">
+            <Sparkles className="h-3 w-3" />
+            <span>GEMINI SCHEDULE READY</span>
+          </div>
+          <div className="text-zinc-300 text-xs truncate">09:00 · Architecture & Flow Engine (90m)</div>
+          <div className="text-zinc-500 text-[11px] truncate">11:00 · Telemetry & API Verification (60m)</div>
+        </div>
+      );
+    case "analytics":
+      return (
+        <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 font-mono text-xs">
+          <div className="text-zinc-400 text-[11px] mb-1">WEEKLY PEAK FOCUS</div>
+          <div className="flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">4.2h</span>
+            <span className="text-[11px] text-emerald-400 font-semibold">+18% this week</span>
+          </div>
+          <div className="mt-2 flex gap-1 h-6 items-end">
+            <div className="bg-[#FF4500] w-full h-3 rounded-xs" />
+            <div className="bg-[#FF4500] w-full h-5 rounded-xs" />
+            <div className="bg-[#FF4500] w-full h-6 rounded-xs" />
+            <div className="bg-[#FF7138] w-full h-4 rounded-xs" />
+          </div>
+        </div>
+      );
+    case "camera":
+      return (
+        <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 font-mono text-xs">
+          <div className="flex items-center justify-between text-[11px] text-zinc-400 mb-1">
+            <span>ATTENTION TRACKER</span>
+            <span className="text-emerald-400 font-bold">PRESENT (LOCAL)</span>
+          </div>
+          <p className="text-[11px] text-zinc-500 leading-tight">
+            MediaPipe Client Face Detection · 0 frames sent to server
+          </p>
+        </div>
+      );
+    default:
+      return (
+        <div className="rounded-2xl border border-[#262832] bg-[#08090D] p-4 font-mono text-xs flex items-center justify-between">
+          <span className="text-zinc-300 text-[11px]">System Status: Connected</span>
+          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+        </div>
+      );
+  }
+}
 
 export default function FeaturesPage() {
   return (
-    <div className="relative min-h-screen bg-transparent text-white selection:bg-[#FF4500] selection:text-white">
-      {/* Background Dot Matrix Pattern */}
-      <div
-        className="pointer-events-none fixed inset-0 z-0 opacity-15"
-        style={{
-          backgroundImage: "radial-gradient(circle, #444 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
+    <div className="relative min-h-screen bg-[#08090D] text-[#F4F4F5] pt-28 pb-32">
+      {/* Ambient Atmospheric Background Light */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-[#FF4500]/10 blur-[180px]" />
+      </div>
 
-      <section className="relative z-10 pt-36 pb-20">
-        <Reveal>
-          <div className="flex flex-col items-center text-center max-w-4xl mx-auto px-6">
-            <Badge accent>Complete Intelligence Suite</Badge>
-            <h1 className="mt-6 font-serif text-4xl sm:text-6xl font-bold tracking-tight text-white leading-[1.1]">
-              Focus deeper with{" "}
-              <span className="serif-italic text-gradient-teal">complete clarity.</span>
-            </h1>
-            <p className="mt-5 max-w-2xl text-base text-gray-400 sm:text-lg font-light leading-relaxed">
-              Explore every capability implemented in FocusFlow AI: multimodal planning, task backlogs, protected focus sessions, real browser telemetry, and honest analytics.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <MagneticButton href="/register" ariaLabel="Create free account">
-                Start for Free
-              </MagneticButton>
-              <MagneticButton href="/how-it-works" variant="ghost" ariaLabel="See how it works">
-                See How It Works
-              </MagneticButton>
-            </div>
+      <div className="relative z-10 container mx-auto px-6 max-w-7xl">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#262832] bg-[#12131A] text-xs font-mono font-bold text-[#FF4500] uppercase tracking-wider mb-4 shadow-sm">
+            <Zap className="h-3.5 w-3.5" />
+            <span>Comprehensive Platform Architecture</span>
           </div>
-        </Reveal>
-      </section>
-
-      <section className="relative z-10 py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <Reveal>
-            <div className="mb-16 text-center">
-              <span className="section-label">Unified Architecture</span>
-              <h2 className="section-title mt-3">
-                Every tool crafted to protect your concentration.
-              </h2>
-              <p className="section-description mt-3 mx-auto">
-                Every module feeds directly into your personal workspace, turning scattered intentions into measurable accomplishments.
-              </p>
-            </div>
-          </Reveal>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((feature, index) => {
-              const Icon = feature.icon;
-              return (
-                <Reveal key={feature.title} delay={(index % 3) * 0.08} className="h-full">
-                  <article className="glass-card flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-card p-8 shadow-2xl transition-all duration-300 hover:border-[#FF4500]/50 hover:-translate-y-1">
-                    <div>
-                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-[#FF4500] mb-5">
-                        <Icon className="h-6 w-6" aria-hidden />
-                      </div>
-                      <h3 className="text-xl font-bold font-serif text-white">{feature.title}</h3>
-                      <p className="mt-3 text-sm leading-relaxed text-gray-400 font-light">{feature.description}</p>
-                    </div>
-                    <Link
-                      href={feature.href}
-                      className="mt-6 inline-flex items-center gap-1.5 text-xs font-mono font-bold tracking-wider uppercase text-[#FF4500] transition-colors hover:text-tide-400"
-                    >
-                      {feature.link}
-                      <span aria-hidden>→</span>
-                    </Link>
-                  </article>
-                </Reveal>
-              );
-            })}
-          </div>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight font-serif text-white mb-6">
+            Engineered for <br />
+            <span className="text-gradient-teal italic font-light">pure cognitive velocity.</span>
+          </h1>
+          <p className="text-base sm:text-lg text-zinc-400 leading-relaxed">
+            Every feature in FocusFlow AI is built to preserve and amplify your deepest intellectual state. Explore the 4 foundational pillars below.
+          </p>
         </div>
-      </section>
 
-      <section className="relative z-10 py-20 px-6 border-t border-white/5">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 max-w-7xl mx-auto">
-          <Reveal>
-            <span className="section-label">Verifiable Telemetry</span>
-            <h2 className="section-title mt-3">
-              Feedback built on{" "}
-              <span className="serif-italic text-gradient-teal">authentic signals.</span>
-            </h2>
-            <p className="section-description mt-3">
-              FocusFlow computes session metrics from genuine activity recorded during your work intervals. When no sessions exist, honest empty states are presented instead of synthetic filler data.
-            </p>
+        {/* 4 Categorized Sections */}
+        <div className="space-y-24">
+          {CATEGORIES.map((cat, catIdx) => (
+            <section key={cat.category} className="space-y-8">
+              {/* Category Header */}
+              <div className="border-b border-[#262832] pb-4 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                  <div className="text-xs font-mono font-bold text-[#FF7138] uppercase tracking-widest mb-1">
+                    Pillar 0{catIdx + 1}
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-bold font-serif text-white">
+                    {cat.category}
+                  </h2>
+                </div>
+                <p className="text-sm text-zinc-400 max-w-xl">
+                  {cat.subtitle}
+                </p>
+              </div>
+
+              {/* Feature Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cat.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div
+                      key={item.title}
+                      className="group relative rounded-3xl border border-[#262832] bg-[#12131A] p-6 shadow-xl hover:border-[#FF4500]/50 hover:shadow-[0_12px_40px_rgba(255,69,0,0.15)] transition-all duration-300 flex flex-col justify-between"
+                    >
+                      <div>
+                        {/* Icon & Badge */}
+                        <div className="flex items-center justify-between mb-5">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#08090D] border border-[#262832] text-[#FF4500] group-hover:scale-105 group-hover:border-[#FF4500]/50 transition-all duration-300">
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          {item.badge && (
+                            <span className="rounded-full bg-[#FF4500]/15 border border-[#FF4500]/30 px-2.5 py-0.5 text-[10px] font-mono font-bold text-[#FF4500]">
+                              {item.badge}
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="text-lg font-bold font-serif text-white mb-1">
+                          {item.title}
+                        </h3>
+                        <div className="text-xs font-mono text-[#FF7138] mb-3">
+                          {item.tagline}
+                        </div>
+                        <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6">
+                          {item.description}
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-[#262832]">
+                        <FeaturePreviewBox type={item.previewType} />
+
+                        <Link
+                          href={item.href}
+                          className="inline-flex items-center gap-1.5 text-xs font-bold font-mono text-[#FF4500] group-hover:text-[#FF7138] group-hover:translate-x-1 transition-all"
+                        >
+                          <span>Explore {item.title}</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
+
+        {/* Bottom CTA Banner */}
+        <div className="mt-28 rounded-3xl border border-[#262832] bg-[#12131A] p-8 sm:p-12 text-center max-w-4xl mx-auto shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-[#FF4500]/10 rounded-full blur-3xl pointer-events-none" />
+          <h3 className="text-2xl sm:text-3xl font-bold font-serif text-white mb-3">
+            Experience the complete platform in action.
+          </h3>
+          <p className="text-sm text-zinc-400 max-w-lg mx-auto mb-8">
+            Create your account today. Free tier includes personal timers, backlog, extension shielding, and AI planning.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FF4500] px-7 py-3 text-xs sm:text-sm font-bold text-white uppercase tracking-wider hover:bg-[#e03e00] shadow-[0_0_24px_rgba(255,69,0,0.35)] transition-all"
+            >
+              <span>Get Started Free</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
             <Link
               href="/how-it-works"
-              className="mt-6 inline-flex items-center gap-2 text-xs font-mono font-bold tracking-wider uppercase text-[#FF4500] transition-colors hover:text-tide-400"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-[#262832] bg-[#08090D] px-7 py-3 text-xs sm:text-sm font-semibold text-zinc-300 hover:text-white hover:border-zinc-500 transition-all"
             >
-              Understand how signals are measured
-              <span aria-hidden>→</span>
+              <span>See Walkthrough</span>
             </Link>
-          </Reveal>
-
-          <div className="space-y-3.5">
-            {SIGNALS.map((signal, index) => (
-              <Reveal key={signal} delay={index * 0.07}>
-                <div className="glass-card flex items-center gap-4 rounded-2xl border border-white/10 bg-card px-6 py-4 shadow-xl">
-                  <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
-                    {index === 0 ? (
-                      <EyeOff className="h-4 w-4 text-[#FF4500]" aria-hidden />
-                    ) : (
-                      <Check className="h-4 w-4 text-[#FF4500]" aria-hidden />
-                    )}
-                  </div>
-                  <p className="text-sm font-medium text-gray-200">{signal}</p>
-                </div>
-              </Reveal>
-            ))}
           </div>
         </div>
-      </section>
-
-      <section className="relative z-10 py-24 px-6">
-        <Reveal>
-          <div className="glass-card relative overflow-hidden rounded-3xl border border-white/10 bg-card px-8 py-16 text-center shadow-2xl max-w-4xl mx-auto">
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -top-24 left-1/2 h-56 w-96 -translate-x-1/2 rounded-full bg-[#FF4500]/15 blur-3xl"
-            />
-            <div className="relative mx-auto flex max-w-xl flex-col items-center">
-              <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
-                <Zap className="h-6 w-6" aria-hidden />
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white font-serif">
-                A calmer, focused workday begins with one choice.
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-gray-400 font-light">
-                Unite your goals, plans, and protected focus sessions under one intelligent roof.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                <MagneticButton href="/download" variant="ghost" ariaLabel="Get the Chrome extension">
-                  Get Chrome Extension
-                </MagneticButton>
-                <MagneticButton href="/register" ariaLabel="Start free today">
-                  Start Free Today
-                </MagneticButton>
-              </div>
-            </div>
-          </div>
-        </Reveal>
-      </section>
+      </div>
     </div>
   );
 }

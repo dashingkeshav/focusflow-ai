@@ -338,7 +338,7 @@ export default function ReportsPage() {
         <button
           onClick={load}
           disabled={loading}
-          className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-[#111111] px-3.5 py-2 text-xs font-medium text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white"
+          className="inline-flex items-center gap-2 rounded-xl border border-[#262832] bg-[#111111] px-3.5 py-2 text-xs font-medium text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin text-[#FF4500]" : ""}`} aria-hidden />
           Refresh Report
@@ -361,7 +361,7 @@ export default function ReportsPage() {
       )}
 
       {/* ── DATE RANGE BUILDER ── */}
-      <div className="space-y-4 rounded-2xl border border-white/10 bg-[#111111] p-6 shadow-sm">
+      <div className="space-y-4 rounded-2xl border border-[#262832] bg-[#111111] p-6 shadow-sm">
         <div className="flex items-center gap-2">
           <CalendarRange className="h-4 w-4 text-[#FF4500]" aria-hidden />
           <h2 className="text-base font-bold text-white font-serif">Select Date Range</h2>
@@ -380,7 +380,7 @@ export default function ReportsPage() {
                 className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-1.5 text-xs font-semibold transition-all ${
                   active
                     ? "border-[#FF4500] bg-[#FF4500] text-white shadow-xs"
-                    : "border-white/10 bg-[#111111] text-white/60 hover:bg-white/5 hover:text-white"
+                    : "border-[#262832] bg-[#111111] text-white/60 hover:bg-white/5 hover:text-white"
                 }`}
               >
                 <span>{p.label}</span>
@@ -395,7 +395,7 @@ export default function ReportsPage() {
             From
             <input
               type="date"
-              className="mt-1 block rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500]"
+              className="mt-1 block rounded-xl border border-[#262832] bg-[#0a0a0a] px-3 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500]"
               value={start}
               max={end}
               onChange={(e) => setStart(e.target.value)}
@@ -405,7 +405,7 @@ export default function ReportsPage() {
             To
             <input
               type="date"
-              className="mt-1 block rounded-xl border border-white/10 bg-[#0a0a0a] px-3 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500]"
+              className="mt-1 block rounded-xl border border-[#262832] bg-[#0a0a0a] px-3 py-2 text-sm text-white shadow-xs outline-none focus:border-[#FF4500]"
               value={end}
               min={start}
               max={isoDay(0)}
@@ -427,7 +427,7 @@ export default function ReportsPage() {
       {/* ── EXPORT CARDS ── */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* PDF Card */}
-        <div className="flex flex-col justify-between space-y-4 rounded-2xl border border-white/10 bg-[#111111] p-6 shadow-sm">
+        <div className="flex flex-col justify-between space-y-4 rounded-2xl border border-[#262832] bg-[#111111] p-6 shadow-sm">
           <div>
             <div className="flex items-center justify-between">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500]">
@@ -453,7 +453,7 @@ export default function ReportsPage() {
         </div>
 
         {/* CSV Card */}
-        <div className="flex flex-col justify-between space-y-4 rounded-2xl border border-white/10 bg-[#111111] p-6 shadow-sm">
+        <div className="flex flex-col justify-between space-y-4 rounded-2xl border border-[#262832] bg-[#111111] p-6 shadow-sm">
           <div>
             <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-sky-500/30 bg-sky-500/10 text-sky-400">
               <FileSpreadsheet className="h-5 w-5" aria-hidden />
@@ -467,7 +467,7 @@ export default function ReportsPage() {
           <button
             onClick={handleExportCSV}
             disabled={loading || !stats}
-            className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#0a0a0a] py-3 text-xs font-bold text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#262832] bg-[#0a0a0a] py-3 text-xs font-bold text-white/80 shadow-xs transition-all hover:bg-white/5 hover:text-white disabled:opacity-50"
           >
             <Download className="h-4 w-4" aria-hidden />
             Export CSV Data
@@ -477,8 +477,8 @@ export default function ReportsPage() {
 
       {/* ── REPORT PREVIEW ── */}
       {stats && (
-        <div className="space-y-4 rounded-2xl border border-white/10 bg-[#111111] p-6 shadow-sm">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="space-y-4 rounded-2xl border border-[#262832] bg-[#111111] p-6 shadow-sm">
+          <div className="flex items-center justify-between border-b border-[#262832] pb-4">
             <h2 className="flex items-center gap-2 text-base font-bold text-white font-serif">
               <Calendar className="h-4 w-4 text-[#FF4500]" aria-hidden />
               Report Data Preview
@@ -509,7 +509,7 @@ export default function ReportsPage() {
           {/* daily table */}
           <div className="overflow-x-auto pt-2">
             <table className="w-full text-left text-xs text-white/70">
-              <thead className="bg-white/5 text-[10px] font-mono font-bold uppercase tracking-wider text-white/50 border-b border-white/10">
+              <thead className="bg-white/5 text-[10px] font-mono font-bold uppercase tracking-wider text-white/50 border-b border-[#262832]">
                 <tr>
                   <th className="p-3">Day</th>
                   <th className="p-3">Hours</th>
@@ -547,8 +547,8 @@ export default function ReportsPage() {
       )}
 
       {!loading && !hasAnyData && !error && (
-        <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-[#111111] p-16 text-center shadow-xs">
-          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-white/30">
+        <div className="flex flex-col items-center rounded-2xl border border-[#262832] bg-[#111111] p-16 text-center shadow-xs">
+          <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#262832] bg-white/5 text-white/30">
             <FileText className="h-6 w-6" aria-hidden />
           </div>
           <h3 className="text-base font-bold text-white font-serif">No telemetry for {start} → {end}</h3>

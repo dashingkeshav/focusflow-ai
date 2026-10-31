@@ -135,7 +135,7 @@ export default function DarkExtensionPage() {
           {/* Left Column: Headline & Value Proposition */}
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
             <Reveal>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/4 border border-white/10 text-xs font-mono uppercase tracking-widest text-[#FF4500] backdrop-blur-md">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/4 border border-[#262832] text-xs font-mono uppercase tracking-widest text-[#FF4500] backdrop-blur-md">
                 <Sparkles className="w-3.5 h-3.5 text-[#FF4500]" />
                 FocusFlow Smart Focus Mode
               </div>
@@ -220,10 +220,10 @@ export default function DarkExtensionPage() {
                     rotateY,
                     transformStyle: "preserve-3d",
                   }}
-                  className="relative rounded-2xl border border-white/10 bg-black/60 backdrop-blur-2xl shadow-2xl shadow-black/80 overflow-hidden"
+                  className="relative rounded-2xl border border-[#262832] bg-black/60 backdrop-blur-2xl shadow-2xl shadow-black/80 overflow-hidden"
                 >
                   {/* Browser Chrome Header */}
-                  <div className="px-4 py-3 border-b border-white/10 bg-white/3 flex items-center justify-between gap-3">
+                  <div className="px-4 py-3 border-b border-[#262832] bg-[#12131A] flex items-center justify-between gap-3">
                     {/* Window dots */}
                     <div className="flex items-center gap-1.5">
                       <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
@@ -232,7 +232,7 @@ export default function DarkExtensionPage() {
                     </div>
 
                     {/* Omnibar / Address bar */}
-                    <div className="flex-1 max-w-sm mx-auto px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-gray-300 truncate flex items-center justify-between">
+                    <div className="flex-1 max-w-sm mx-auto px-3 py-1 rounded-lg bg-white/5 border border-[#262832] text-xs font-mono text-gray-300 truncate flex items-center justify-between">
                       <div className="flex items-center gap-1.5 truncate">
                         <Lock className="w-3 h-3 text-[#FF4500] shrink-0" />
                         <span className="truncate">{currentTab.url}</span>
@@ -269,7 +269,7 @@ export default function DarkExtensionPage() {
                           onClick={() => setActiveTab(tab.id)}
                           className={`px-3 py-1.5 rounded-t-lg text-xs font-mono flex items-center gap-2 transition-all ${
                             isActive
-                              ? "bg-white/8 text-white border-t border-x border-white/10 font-bold"
+                              ? "bg-white/8 text-white border-t border-x border-[#262832] font-bold"
                               : "text-gray-400 hover:text-gray-200 hover:bg-white/2"
                           }`}
                         >
@@ -311,7 +311,7 @@ export default function DarkExtensionPage() {
                   <div className="p-6 sm:p-8 min-h-65 flex flex-col justify-center">
                     {activeTab === "github" && (
                       <div className="space-y-4">
-                        <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                        <div className="flex items-center justify-between pb-3 border-b border-[#262832]">
                           <div className="flex items-center gap-2">
                             <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                             <span className="text-sm font-bold text-white">
@@ -323,7 +323,7 @@ export default function DarkExtensionPage() {
                           </span>
                         </div>
 
-                        <div className="bg-black/60 rounded-xl p-3 border border-white/10 font-mono text-xs text-gray-300 space-y-1">
+                        <div className="bg-black/60 rounded-xl p-3 border border-[#262832] font-mono text-xs text-gray-300 space-y-1">
                           <div className="text-gray-500">{"// Pull Request #42: Session JWT Handshake"}</div>
                           <div className="text-emerald-400">{"+ const sessionToken = await auth.getToken();"}</div>
                           <div className="text-emerald-400">{"+ chrome.storage.local.set({ sessionToken });"}</div>
@@ -414,7 +414,7 @@ export default function DarkExtensionPage() {
       {/* ===================================================================== */}
       {/* 2. CORE FEATURES SECTION                                             */}
       {/* ===================================================================== */}
-      <section id="how-it-works" className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+      <section id="how-it-works" className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#262832]">
         <Reveal>
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="section-label">
@@ -435,7 +435,7 @@ export default function DarkExtensionPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {/* Card 1: Smart Focus Mode */}
           <Reveal delay={0.1} className="h-full">
-            <div className="rounded-3xl border border-white/10 bg-white/2 p-8 backdrop-blur-xl h-full flex flex-col justify-between hover:border-[#FF4500]/40 transition-all duration-300">
+            <div className="rounded-3xl border border-[#262832] bg-white/2 p-8 backdrop-blur-xl h-full flex flex-col justify-between hover:border-[#FF4500]/40 transition-all duration-300">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#FF4500]/10 border border-[#FF4500]/30 text-[#FF4500] flex items-center justify-center mb-6">
                   <Brain className="w-6 h-6" />
@@ -448,7 +448,7 @@ export default function DarkExtensionPage() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10">
+              <div className="mt-6 pt-4 border-t border-[#262832]">
                 <div className="text-[11px] font-mono text-gray-400 uppercase tracking-wider mb-2">
                   Active Context Keywords:
                 </div>
@@ -462,7 +462,7 @@ export default function DarkExtensionPage() {
                   <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                     react
                   </span>
-                  <span className="px-2 py-0.5 rounded bg-white/5 text-gray-400 border border-white/10">
+                  <span className="px-2 py-0.5 rounded bg-white/5 text-gray-400 border border-[#262832]">
                     docs
                   </span>
                 </div>
@@ -472,7 +472,7 @@ export default function DarkExtensionPage() {
 
           {/* Card 2: Distraction Protection */}
           <Reveal delay={0.2} className="h-full">
-            <div className="rounded-3xl border border-white/10 bg-white/2 p-8 backdrop-blur-xl h-full flex flex-col justify-between hover:border-[#FF4500]/40 transition-all duration-300">
+            <div className="rounded-3xl border border-[#262832] bg-white/2 p-8 backdrop-blur-xl h-full flex flex-col justify-between hover:border-[#FF4500]/40 transition-all duration-300">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center mb-6">
                   <ShieldAlert className="w-6 h-6" />
@@ -485,12 +485,12 @@ export default function DarkExtensionPage() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 space-y-2 text-xs">
-                <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/10">
+              <div className="mt-6 pt-4 border-t border-[#262832] space-y-2 text-xs">
+                <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-[#262832]">
                   <span className="text-gray-300 font-medium">Soft Overlay</span>
                   <span className="text-amber-400 font-mono text-[11px]">30s countdown</span>
                 </div>
-                <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-white/10">
+                <div className="flex items-center justify-between p-2 rounded-lg bg-black/40 border border-[#262832]">
                   <span className="text-gray-300 font-medium">Hard Shield</span>
                   <span className="text-rose-400 font-mono text-[11px]">blocked.html</span>
                 </div>
@@ -500,7 +500,7 @@ export default function DarkExtensionPage() {
 
           {/* Card 3: Focus Session Sync */}
           <Reveal delay={0.3} className="h-full">
-            <div className="rounded-3xl border border-white/10 bg-white/2 p-8 backdrop-blur-xl h-full flex flex-col justify-between hover:border-[#FF4500]/40 transition-all duration-300">
+            <div className="rounded-3xl border border-[#262832] bg-white/2 p-8 backdrop-blur-xl h-full flex flex-col justify-between hover:border-[#FF4500]/40 transition-all duration-300">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center mb-6">
                   <Radio className="w-6 h-6" />
@@ -513,7 +513,7 @@ export default function DarkExtensionPage() {
                 </p>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 space-y-2 text-xs">
+              <div className="mt-6 pt-4 border-t border-[#262832] space-y-2 text-xs">
                 <div className="flex items-center justify-between text-gray-400">
                   <span>Backend Sync:</span>
                   <span className="text-[11px] font-mono text-cyan-400 bg-white/5 px-2 py-0.5 rounded">
@@ -537,7 +537,7 @@ export default function DarkExtensionPage() {
       {/* ===================================================================== */}
       {/* 3. VERIFIED DOWNLOADS SECTION                                        */}
       {/* ===================================================================== */}
-      <section id="downloads" className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+      <section id="downloads" className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#262832]">
         <Reveal>
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="section-label">
@@ -556,7 +556,7 @@ export default function DarkExtensionPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Chrome Extension (Primary) */}
           <Reveal className="h-full">
-            <article className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border-2 border-[#FF4500]/60 bg-white/3 p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-[#FF4500] sm:p-10">
+            <article className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border-2 border-[#FF4500]/60 bg-[#12131A] p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-[#FF4500] sm:p-10">
               <div className="absolute top-6 right-6">
                 <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#FF4500]/20 border border-[#FF4500]/40 text-[#FF4500] text-xs font-mono uppercase tracking-wider font-bold">
                   Primary
@@ -578,7 +578,7 @@ export default function DarkExtensionPage() {
                 </p>
 
                 {/* Technical Meta */}
-                <div className="mt-6 p-4 rounded-2xl bg-black/50 border border-white/10 space-y-2 text-xs font-mono text-gray-300">
+                <div className="mt-6 p-4 rounded-2xl bg-[#08090D] border border-[#262832] space-y-2 text-xs font-mono text-gray-300">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Version:</span>
                     <span className="text-white font-bold">v3.0.0 (Manifest V3)</span>
@@ -621,16 +621,16 @@ export default function DarkExtensionPage() {
           <Reveal delay={0.15} className="h-full">
             <article
               id="windows"
-              className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-white/3 p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-white/20 sm:p-10"
+              className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-2xl backdrop-blur-xl transition-all hover:border-white/20 sm:p-10"
             >
               <div className="absolute top-6 right-6">
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs font-mono uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/5 border border-[#262832] text-gray-400 text-xs font-mono uppercase tracking-wider">
                   Companion
                 </span>
               </div>
 
               <div>
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-gray-300 shadow-sm">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-[#262832] text-gray-300 shadow-sm">
                   <MonitorDown className="h-7 w-7" aria-hidden />
                 </div>
                 <p className="mt-6 text-xs font-mono font-bold uppercase tracking-[0.2em] text-gray-400">
@@ -644,7 +644,7 @@ export default function DarkExtensionPage() {
                 </p>
 
                 {/* Technical Meta */}
-                <div className="mt-6 p-4 rounded-2xl bg-black/50 border border-white/10 space-y-2.5 text-xs font-mono text-gray-300">
+                <div className="mt-6 p-4 rounded-2xl bg-[#08090D] border border-[#262832] space-y-2.5 text-xs font-mono text-gray-300">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-500">Version:</span>
                     <span className="text-white font-bold">v3.0.4 (Windows x64)</span>
@@ -709,7 +709,7 @@ export default function DarkExtensionPage() {
       {/* ===================================================================== */}
       {/* 4. INTERACTIVE STEP-BY-STEP SETUP GUIDES                             */}
       {/* ===================================================================== */}
-      <section id="installation" className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-white/10">
+      <section id="installation" className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-[#262832]">
         <Reveal>
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="section-label">
@@ -724,7 +724,7 @@ export default function DarkExtensionPage() {
             </p>
 
             {/* Platform Toggle Tabs */}
-            <div className="mt-8 inline-flex items-center p-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-xl">
+            <div className="mt-8 inline-flex items-center p-1.5 rounded-full border border-[#262832] bg-white/5 backdrop-blur-xl">
               <button
                 type="button"
                 onClick={() => setSetupTab("windows")}
@@ -792,7 +792,7 @@ export default function DarkExtensionPage() {
                     href="https://github.com/dashingkeshav/focusflow-ai/releases/latest"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-[#262832] text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                   >
                     <ShieldCheck className="w-3.5 h-3.5 text-[#FF4500]" />
                     <span>Open release checksums</span>
@@ -822,7 +822,7 @@ export default function DarkExtensionPage() {
               },
             ].map((step, idx) => (
               <Reveal key={step.num} delay={idx * 0.08}>
-                <div className="p-6 rounded-2xl border border-white/10 bg-white/2 backdrop-blur-xl hover:border-[#FF4500]/30 transition-all">
+                <div className="p-6 rounded-2xl border border-[#262832] bg-white/2 backdrop-blur-xl hover:border-[#FF4500]/30 transition-all">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-start sm:items-center gap-4">
                       <span className="text-2xl font-mono font-bold text-[#FF4500] shrink-0">
@@ -875,7 +875,7 @@ export default function DarkExtensionPage() {
                 action: (
                   <button
                     onClick={handleCopyUrl}
-                    className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono px-2.5 py-1 rounded bg-white/5 border border-[#262832] text-gray-300 hover:text-white hover:bg-white/10 transition-colors"
                   >
                     {copiedUrl ? (
                       <>
@@ -908,7 +908,7 @@ export default function DarkExtensionPage() {
               },
             ].map((step, idx) => (
               <Reveal key={step.num} delay={idx * 0.08}>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl border border-white/10 bg-white/2 backdrop-blur-xl hover:border-[#FF4500]/30 transition-all">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl border border-[#262832] bg-white/2 backdrop-blur-xl hover:border-[#FF4500]/30 transition-all">
                   <div className="flex items-start sm:items-center gap-4">
                     <span className="text-2xl font-mono font-bold text-[#FF4500] shrink-0">
                       {step.num}
@@ -931,7 +931,7 @@ export default function DarkExtensionPage() {
       {/* ===================================================================== */}
       {/* 5. WINDOWS COMPANION ARCHITECTURE & CAPABILITIES                      */}
       {/* ===================================================================== */}
-      <section className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+      <section className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-[#262832]">
         <Reveal>
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="section-label">
@@ -973,9 +973,9 @@ export default function DarkExtensionPage() {
             const Icon = item.icon;
             return (
               <Reveal key={item.title} delay={idx * 0.08} className="h-full">
-                <div className="h-full rounded-3xl border border-white/10 bg-white/2 p-7 backdrop-blur-xl flex flex-col justify-between hover:border-[#FF4500]/40 transition-all">
+                <div className="h-full rounded-3xl border border-[#262832] bg-white/2 p-7 backdrop-blur-xl flex flex-col justify-between hover:border-[#FF4500]/40 transition-all">
                   <div>
-                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FF4500] mb-5">
+                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-[#262832] flex items-center justify-center text-[#FF4500] mb-5">
                       <Icon className="w-6 h-6" />
                     </div>
                     <h3 className="text-lg font-serif font-bold text-white">{item.title}</h3>
@@ -993,9 +993,9 @@ export default function DarkExtensionPage() {
       {/* ===================================================================== */}
       {/* 6. FINAL CALL TO ACTION                                              */}
       {/* ===================================================================== */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-white/10">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-[#262832]">
         <Reveal>
-          <div className="rounded-3xl border border-white/10 bg-linear-to-b from-white/4 to-transparent p-10 sm:p-14 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
+          <div className="rounded-3xl border border-[#262832] bg-linear-to-b from-white/4 to-transparent p-10 sm:p-14 text-center relative overflow-hidden shadow-2xl backdrop-blur-2xl">
             <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-[#FF4500] to-transparent" />
 
             <span className="section-label mx-auto mb-4">
@@ -1035,7 +1035,7 @@ export default function DarkExtensionPage() {
 
               <Link
                 href="/dashboard"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-medium text-sm backdrop-blur-md transition-all duration-200"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-white/5 hover:bg-white/10 border border-[#262832] text-white font-medium text-sm backdrop-blur-md transition-all duration-200"
               >
                 <span>Open Dashboard</span>
                 <ArrowRight className="w-4 h-4 text-gray-400" />

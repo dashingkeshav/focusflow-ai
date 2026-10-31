@@ -164,7 +164,7 @@ function FocusRoomsPageContent() {
   return (
     <div className="space-y-8 font-inter text-white pb-12">
       {/* Header Banner */}
-      <div className="rounded-3xl border border-white/10 bg-linear-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="rounded-3xl border border-[#262832] bg-linear-to-r from-[#FF4500]/15 via-[#0a0a0a] to-[#0a0a0a] p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#FF4500]">
             <Radio className="w-4 h-4 animate-pulse" />
@@ -203,7 +203,7 @@ function FocusRoomsPageContent() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && loadRooms()}
-            className="w-full rounded-2xl border border-white/10 bg-[#0e0e12] pl-11 pr-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
+            className="w-full rounded-2xl border border-[#262832] bg-[#0e0e12] pl-11 pr-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
           />
         </div>
 
@@ -215,7 +215,7 @@ function FocusRoomsPageContent() {
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleJoinByCode()}
-            className="w-full rounded-2xl border border-white/10 bg-[#0e0e12] px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
+            className="w-full rounded-2xl border border-[#262832] bg-[#0e0e12] px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
           />
           <button
             onClick={() => handleJoinByCode()}
@@ -234,7 +234,7 @@ function FocusRoomsPageContent() {
       )}
 
       {/* Room Scope Filters (Discover / My Rooms / Active) */}
-      <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+      <div className="flex items-center gap-2 border-b border-[#262832] pb-3">
         {[
           { id: 'all', label: 'Discover All' },
           { id: 'my', label: 'My Rooms' },
@@ -277,7 +277,7 @@ function FocusRoomsPageContent() {
           {[1, 2, 3].map((n) => (
             <div
               key={n}
-              className="rounded-3xl border border-white/10 bg-[#0e0e12] p-5 shadow-lg flex flex-col justify-between gap-5 animate-pulse"
+              className="rounded-3xl border border-[#262832] bg-[#0e0e12] p-5 shadow-lg flex flex-col justify-between gap-5 animate-pulse"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -309,7 +309,7 @@ function FocusRoomsPageContent() {
           </button>
         </div>
       ) : rooms.length === 0 ? (
-        <div className="p-8 md:p-12 text-center rounded-3xl border border-white/10 bg-[#0e0e12] space-y-6">
+        <div className="p-8 md:p-12 text-center rounded-3xl border border-[#262832] bg-[#0e0e12] space-y-6">
           <div className="w-14 h-14 rounded-2xl bg-[#FF4500]/10 border border-[#FF4500]/20 flex items-center justify-center mx-auto text-[#FF4500]">
             <Radio className="w-7 h-7" />
           </div>
@@ -344,7 +344,7 @@ function FocusRoomsPageContent() {
             ].map((tpl) => (
               <div
                 key={tpl.title}
-                className="group rounded-2xl border border-white/10 bg-white/5 hover:border-[#FF4500]/40 p-4 flex flex-col justify-between transition-all"
+                className="group rounded-2xl border border-[#262832] bg-white/5 hover:border-[#FF4500]/40 p-4 flex flex-col justify-between transition-all"
               >
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-mono uppercase text-[#FF4500]">
@@ -407,7 +407,7 @@ function FocusRoomsPageContent() {
             return (
               <div
                 key={room.id}
-                className="group rounded-3xl border border-white/10 bg-[#0e0e12] hover:border-white/20 p-5 shadow-lg transition-all flex flex-col justify-between gap-4"
+                className="group rounded-3xl border border-[#262832] bg-[#0e0e12] hover:border-white/20 p-5 shadow-lg transition-all flex flex-col justify-between gap-4"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -476,7 +476,7 @@ function FocusRoomsPageContent() {
                       e.stopPropagation();
                       copyInviteLink(room);
                     }}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-mono text-gray-300 hover:text-white transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-[#262832] text-xs font-mono text-gray-300 hover:text-white transition-all cursor-pointer"
                     title="Click to copy invite code"
                   >
                     {copiedId === room.id ? (
@@ -513,8 +513,8 @@ function FocusRoomsPageContent() {
       {/* Create Room Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#0e0e12] border border-white/10 rounded-3xl w-full max-w-lg p-6 space-y-5 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="bg-[#0e0e12] border border-[#262832] rounded-3xl w-full max-w-lg p-6 space-y-5 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#262832] pb-4">
               <div className="flex items-center gap-2">
                 <Radio className="w-5 h-5 text-[#FF4500]" />
                 <h2 className="text-lg font-bold text-white">Create Focus Room</h2>
@@ -544,7 +544,7 @@ function FocusRoomsPageContent() {
                   placeholder="e.g. Deep Work Sprint, Physics Problem Set..."
                   value={createTitle}
                   onChange={(e) => setCreateTitle(e.target.value)}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
+                  className="w-full rounded-xl border border-[#262832] bg-white/5 px-3.5 py-2 text-sm text-white placeholder-gray-500 outline-none focus:border-[#FF4500]"
                 />
               </div>
 
@@ -556,7 +556,7 @@ function FocusRoomsPageContent() {
                   <select
                     value={createCategory}
                     onChange={(e) => setCreateCategory(e.target.value)}
-                    className="w-full rounded-xl border border-white/10 bg-[#16161c] px-3.5 py-2 text-sm text-white outline-none focus:border-[#FF4500]"
+                    className="w-full rounded-xl border border-[#262832] bg-[#16161c] px-3.5 py-2 text-sm text-white outline-none focus:border-[#FF4500]"
                   >
                     <option value="deep_work">Deep Work</option>
                     <option value="coding">Coding</option>
@@ -574,7 +574,7 @@ function FocusRoomsPageContent() {
                   <select
                     value={createDuration}
                     onChange={(e) => setCreateDuration(Number(e.target.value))}
-                    className="w-full rounded-xl border border-white/10 bg-[#16161c] px-3.5 py-2 text-sm text-white outline-none focus:border-[#FF4500]"
+                    className="w-full rounded-xl border border-[#262832] bg-[#16161c] px-3.5 py-2 text-sm text-white outline-none focus:border-[#FF4500]"
                   >
                     <option value={900}>15 minutes</option>
                     <option value={1500}>25 minutes (Pomodoro)</option>
@@ -600,11 +600,11 @@ function FocusRoomsPageContent() {
                   max={isPro ? 12 : 4}
                   value={createMaxParticipants}
                   onChange={(e) => setCreateMaxParticipants(Number(e.target.value))}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-sm text-white outline-none focus:border-[#FF4500]"
+                  className="w-full rounded-xl border border-[#262832] bg-white/5 px-3.5 py-2 text-sm text-white outline-none focus:border-[#FF4500]"
                 />
               </div>
 
-              <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5">
+              <div className="flex items-center gap-3 p-3 rounded-xl border border-[#262832] bg-white/5">
                 <input
                   type="checkbox"
                   id="isPublicCheck"

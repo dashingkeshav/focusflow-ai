@@ -115,10 +115,7 @@ export default function AchievementManager({ flash }: AchievementManagerProps) {
     let socket: Socket | null = null;
 
     if (token) {
-      socket = socketIO(getSocketUrl(), {
-        auth: { token },
-        transports: ["websocket", "polling"],
-      });
+      socket = socketIO(getSocketUrl(), { auth: { token }, transports: ['websocket', 'polling'] } as any);
 
       socket.on("achievement_unlocked", (unlockedAch: AchievementItem) => {
         setUnlockNotification(unlockedAch);

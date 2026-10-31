@@ -38,7 +38,7 @@ export default function TheProblem() {
 
         <Reveal delay={0.1} className="mt-14">
           <div className="grid gap-6 lg:grid-cols-[1.08fr_.92fr]">
-            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-card p-6 sm:p-8 shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl border border-[#262832] bg-[#12131A] p-6 sm:p-8 shadow-2xl">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-[#FF4500]">
@@ -61,10 +61,10 @@ export default function TheProblem() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.4 }}
                       transition={{ duration: 0.45, delay: index * 0.08 }}
-                      className={`flex min-h-19.5 items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 border-white/10 ${
+                      className={`flex min-h-19.5 items-center gap-3 rounded-2xl border bg-white/5 px-4 py-3 border-[#262832] ${
                         index === 3
                           ? "border-amber-500/20 sm:col-span-2"
-                          : "border-white/10"
+                          : "border-[#262832]"
                       }`}
                     >
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/5 text-[#FF4500]">
@@ -85,7 +85,7 @@ export default function TheProblem() {
               </div>
             </div>
 
-            <div className="relative flex min-h-75 flex-col justify-between overflow-hidden rounded-3xl border border-[#FF4500]/30 bg-card p-6 sm:p-8 shadow-2xl">
+            <div className="relative flex min-h-75 flex-col justify-between overflow-hidden rounded-3xl border border-[#FF4500]/30 bg-[#12131A] p-6 sm:p-8 shadow-2xl">
               <div aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(255,69,0,0.15),transparent_70%)] blur-2xl" />
               <div className="relative">
                 <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#FF4500]/30 bg-[#FF4500]/10 text-[#FF4500] shadow-sm">
@@ -104,7 +104,7 @@ export default function TheProblem() {
               <div className="relative mt-8 flex items-center gap-2">
                 {["Goal", "Plan", "Focus", "Progress"].map((label, index) => (
                   <div key={label} className="flex min-w-0 flex-1 items-center gap-2">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-[9px] font-mono font-bold text-[#FF4500] shadow-sm">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#262832] bg-white/5 text-[9px] font-mono font-bold text-[#FF4500] shadow-sm">
                       0{index + 1}
                     </span>
                     <span className="hidden truncate text-[10px] font-mono font-medium text-gray-300 sm:block">{label}</span>

@@ -36,7 +36,7 @@ export default function AIPlanner() {
         />
 
         <Reveal delay={0.1} className="mt-14">
-          <div className="relative grid overflow-hidden rounded-[26px] border border-white/10 bg-card shadow-[0_32px_80px_-46px_rgba(0,0,0,0.8)] backdrop-blur-xl lg:grid-cols-[0.9fr_0.2fr_0.9fr]">
+          <div className="relative grid overflow-hidden rounded-[26px] border border-[#262832] bg-[#12131A] shadow-[0_32px_80px_-46px_rgba(0,0,0,0.8)] backdrop-blur-xl lg:grid-cols-[0.9fr_0.2fr_0.9fr]">
             <div className="p-6 sm:p-8">
               <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.15em] text-gray-400">
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-[#FF4500]">
@@ -58,7 +58,7 @@ export default function AIPlanner() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.4 }}
                       transition={{ delay: index * 0.07, duration: 0.4 }}
-                      className="flex min-h-13.5 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2"
+                      className="flex min-h-13.5 items-center gap-2 rounded-xl border border-[#262832] bg-white/5 px-3 py-2"
                     >
                       <Icon className="h-3.5 w-3.5 shrink-0 text-[#FF4500]" aria-hidden />
                       <span className="text-[10px] font-mono font-medium text-gray-300">{item.label}</span>
@@ -74,7 +74,7 @@ export default function AIPlanner() {
                 <Sparkles className="h-4 w-4" aria-hidden />
               </span>
             </div>
-            <div className="border-t border-white/10 bg-white/2 p-6 sm:p-8 lg:border-l lg:border-t-0">
+            <div className="border-t border-[#262832] bg-white/2 p-6 sm:p-8 lg:border-l lg:border-t-0">
               <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.15em] text-[#FF4500]">
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FF4500]/20 text-[#FF4500]">
                   <Sparkles className="h-3.5 w-3.5" aria-hidden />
@@ -93,7 +93,7 @@ export default function AIPlanner() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, amount: 0.4 }}
                     transition={{ delay: 0.14 + index * 0.08, duration: 0.42 }}
-                    className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2.5"
+                    className="flex items-center gap-3 rounded-xl border border-[#262832] bg-white/5 px-3.5 py-2.5"
                   >
                     <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#FF4500]/20 text-[9px] font-mono font-bold text-[#FF4500]">
                       0{index + 1}

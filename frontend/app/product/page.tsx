@@ -171,7 +171,7 @@ export default function ProductPage() {
               const Icon = step.icon;
               return (
                 <Reveal key={step.number} delay={(index % 3) * 0.08} className="h-full">
-                  <article className="glass-card flex h-full flex-col justify-between rounded-3xl border border-white/10 bg-card p-8 shadow-2xl transition-all duration-300 hover:border-[#FF4500]/50 hover:-translate-y-1">
+                  <article className="glass-card flex h-full flex-col justify-between rounded-3xl border border-[#262832] bg-[#12131A] p-8 shadow-2xl transition-all duration-300 hover:border-[#FF4500]/50 hover:-translate-y-1">
                     <div>
                       <div className="flex items-center justify-between">
                         <span className="font-mono text-xs font-bold text-[#FF4500] bg-[#FF4500]/10 px-2.5 py-1 rounded-md border border-[#FF4500]/30">
@@ -203,7 +203,7 @@ export default function ProductPage() {
 
       <section className="relative z-10 py-24 px-6">
         <Reveal>
-          <div className="glass-card relative overflow-hidden rounded-3xl border border-white/10 bg-card px-8 py-16 text-center shadow-2xl max-w-4xl mx-auto">
+          <div className="glass-card relative overflow-hidden rounded-3xl border border-[#262832] bg-[#12131A] px-8 py-16 text-center shadow-2xl max-w-4xl mx-auto">
             <div
               aria-hidden
               className="pointer-events-none absolute -top-24 left-1/2 h-56 w-96 -translate-x-1/2 rounded-full bg-[#FF4500]/15 blur-3xl"
